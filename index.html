@@ -562,7 +562,7 @@ body.noscroll{overflow:hidden}
 .sstats{margin:6px 0}
 .sdet{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0;background:var(--panel)}
 .sdet summary{cursor:pointer;font-weight:700}
-.slist{max-height:280px;overflow:auto;margin-top:6px}
+.slist{flex:none;max-height:280px;overflow:auto;margin-top:6px}
 .slist .row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:14px}
 .slist .num{font-variant-numeric:tabular-nums;white-space:nowrap}.warnt{color:var(--warn)}
 #sText{width:100%;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--panel);color:var(--ink);resize:vertical}
@@ -577,6 +577,28 @@ body.noscroll{overflow:hidden}
 .sone{border:1px solid var(--brand);border-radius:14px;padding:14px;background:var(--panel)}
 .sone .r-main{display:flex;flex-direction:column;margin-bottom:8px}
 .spreview{white-space:pre-wrap;background:var(--panel-2);border-radius:12px;padding:10px;margin:6px 0 10px;font-size:14px}
+
+/* Messages: steps, filters, tick list */
+.ssteps{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap}
+.ssteps button{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);padding:8px 14px;border-radius:999px;cursor:pointer}
+.ssteps button[aria-current="true"]{background:var(--brand);color:var(--brand-on);border-color:var(--brand)}
+.sfilt{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px 10px}
+.sfilt .field{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sfilt .field span{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.sfilt select{width:100%;min-width:0}
+.slisttools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 6px}
+.slisttools input[type=search]{flex:1;min-width:180px}
+.sppl{flex:none;border:1px solid var(--line);border-radius:12px;max-height:55vh;overflow:auto;background:var(--panel);margin:6px 0 10px}
+.sp{display:flex;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer}
+.sp:last-child{border-bottom:0}
+.sp input{width:20px;height:20px;accent-color:var(--brand);flex:none}
+.sp .r-main{display:flex;flex-direction:column;min-width:0}.sp small{color:var(--ink-3);overflow-wrap:anywhere}
+.sp.off b{color:var(--ink-3)}
+#sQuick{display:flex;flex-wrap:wrap;gap:6px}
+.sdel{margin-left:4px;opacity:.7}
+#sPaste{width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--panel);color:var(--ink)}
+.sbarfoot{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:20;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--brand);border-radius:14px;padding:10px 14px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 </style>
 </head>
 <body>
@@ -732,7 +754,7 @@ body.noscroll{overflow:hidden}
     <!-- ================= DISCIPLES ================= -->
     <div class="view" id="v-dis" hidden>
       <header class="topbar"><div><h1>People</h1><p id="dSub"></p></div>
-        <div class="filters"><div class="dlwrap"><button class="btn" id="dDl" hidden aria-haspopup="true" aria-expanded="false">⬇ Download</button><div class="dlmenu" id="dDlMenu" hidden></div></div><button class="btn primary" id="dNew" hidden>+ Register person</button></div></header>
+        <div class="filters"><button class="btn" id="dMsg" hidden>✉ Message</button><div class="dlwrap"><button class="btn" id="dDl" hidden aria-haspopup="true" aria-expanded="false">⬇ Download</button><div class="dlmenu" id="dDlMenu" hidden></div></div><button class="btn primary" id="dNew" hidden>+ Register person</button></div></header>
       <div class="grid">
         <section class="panel c4">
           <div class="tools"><input type="search" id="dQ" placeholder="Search name, ID or Peace House" aria-label="Search disciples" style="flex:1">
@@ -762,38 +784,56 @@ body.noscroll{overflow:hidden}
 
     <!-- ================= FOLLOW-UPS ================= -->
     <div class="view" id="v-sms" hidden>
-      <header class="topbar"><div><h1>Messages</h1><p>Send an SMS to a class, outreach, meeting, decision group or chosen people — from your own phone.</p></div></header>
+      <header class="topbar"><div><h1>Messages</h1><p>Send an SMS from your own phone to the people you choose.</p></div></header>
+      <nav class="ssteps" id="sSteps" aria-label="Steps"><button type="button" data-step="1">① Choose people</button><button type="button" data-step="2">② Write</button><button type="button" data-step="3">③ Send</button></nav>
       <div class="grid">
-        <section class="panel c6" id="sWho">
-          <div class="hd"><h2>1 · Who will receive it</h2></div>
-          <div class="sadd">
-            <select id="sType" aria-label="Add people from">
-              <option value="class">A discipleship class</option><option value="prog">An outreach or program</option><option value="meet">Who came to a meeting or class date</option>
-              <option value="dec">People who made a decision</option><option value="people">The list on the People screen (with its filters)</option><option value="person">One person</option></select>
-            <div id="sPick"></div>
+        <section class="panel c12 sstep" id="sStep1">
+          <div id="sFrom"></div>
+          <div class="hd"><h2>Quick picks</h2><span class="note">Tap to tick everyone in it — tap again to untick</span></div>
+          <div class="chips" id="sQuick"></div>
+          <div class="hd" style="margin-top:12px"><h2>Find people</h2></div>
+          <div class="sfilt">
+            <label class="field"><span>Class or program</span><select id="sfProg"></select></label>
+            <label class="field"><span>Date</span><select id="sfDate"></select></label>
+            <label class="field"><span>Who</span><select id="sfAtt"></select></label>
           </div>
-          <div class="chips" id="sGroups"></div>
-          <div class="sopts">
-            <label><input type="checkbox" id="sActive" checked> Active people only</label>
-            <label><input type="checkbox" id="sConsent" checked> Only people who gave consent</label>
-            <label class="sline">Phone line <select id="sLine"><option value="orange">Orange first, else Lonestar</option><option value="lonestar">Lonestar first, else Orange</option><option value="both">Both numbers</option></select></label>
-          </div>
-          <div id="sSummary"></div>
+          <details class="sdet smore" id="sMore"><summary>More filters — gender, area, age, decision</summary><div class="sfilt">
+            <label class="field"><span>Gender</span><select id="sfGender"></select></label>
+            <label class="field"><span>Area / Community</span><select id="sfArea"></select></label>
+            <label class="field"><span>Age group</span><select id="sfAge"></select></label>
+            <label class="field"><span>Decision</span><select id="sfDec"></select></label>
+            <label class="field"><span>Status</span><select id="sfStatus"><option value="Active">Active only</option><option value="">Active and inactive</option></select></label>
+          </div></details>
+          <div class="slisttools"><input type="search" id="sQ" placeholder="Search a name or phone" aria-label="Search" autocomplete="off">
+            <button type="button" class="btn small" id="sTickAll">Tick all shown</button><button type="button" class="btn small" id="sUntickAll">Untick all shown</button>
+            <label class="scheck"><input type="checkbox" id="sOnlySel"> Show only ticked</label><button type="button" class="btn small" id="sReset">Reset filters</button></div>
+          <div class="note" id="sShown"></div>
+          <div class="sppl" id="msList"></div>
+          <details class="sdet"><summary>Paste phone numbers</summary>
+            <p class="note">Paste numbers from WhatsApp, Excel or a notebook — one per line, or separated by commas. They are changed to +231 and matched to people where possible.</p>
+            <textarea id="sPaste" rows="4" aria-label="Phone numbers to add"></textarea><div class="actions"><button type="button" class="btn small" id="sPasteAdd">Add these numbers</button></div><div id="sPasteRes" class="note"></div></details>
+          <div class="actions"><button type="button" class="btn small" id="sSaveList">★ Save ticked people as a list</button><button type="button" class="btn small" id="sClearSel">Untick everyone</button></div>
         </section>
-        <section class="panel c6" id="sMsg">
-          <div class="hd"><h2>2 · The message</h2><select id="sTpl" aria-label="Start from a template"></select></div>
-          <textarea id="sText" rows="6" placeholder="Type your message…" aria-label="Message"></textarea>
-          <div class="scount" id="sCount"></div>
+        <section class="panel c12 sstep" id="sStep2" hidden>
+          <div class="hd"><h2>Write the message</h2><select id="sTpl" aria-label="Start from a template"></select></div>
+          <textarea id="sText" rows="7" placeholder="Type your message…" aria-label="Message"></textarea>
+          <div class="scount" id="msCount"></div>
           <div class="actions sins"><span class="note">Insert:</span><button type="button" class="chip" data-ins="{first name}">{first name}</button><button type="button" class="chip" data-ins="{class}">{class}</button><button type="button" class="chip" id="sSaveTpl">Save as template</button></div>
-          <div class="hd" style="margin-top:14px"><h2>3 · Send from your phone</h2></div>
+        </section>
+        <section class="panel c12 sstep" id="sStep3" hidden>
+          <div class="hd"><h2>Send from your phone</h2></div>
+          <div id="sSummary"></div>
+          <label class="sline">Phone line <select id="sLine"><option value="orange">Orange first, else Lonestar</option><option value="lonestar">Lonestar first, else Orange</option><option value="both">Both numbers</option></select></label>
+          <label class="scheck"><input type="checkbox" id="sConsent" checked> Only people who gave consent</label>
           <div class="seg" role="group" aria-label="How to send" id="sMode"><button type="button" data-v="batch" aria-pressed="true">Group batches</button><button type="button" data-v="one" aria-pressed="false">One by one</button></div>
           <div id="sModeNote"></div>
-          <div class="err-box" id="sErr"></div>
+          <div class="err-box" id="msErr"></div>
           <div class="actions"><button type="button" class="btn primary" id="sStart">Prepare to send</button></div>
           <div id="sRun"></div>
         </section>
-        <section class="panel c12"><div class="hd"><h2>Sent messages</h2><span class="note">Kept for your records</span></div><div id="sLog"></div></section>
+        <section class="panel c12"><details class="sdet" id="sLogBox"><summary>Sent messages</summary><div id="sLog"></div></details></section>
       </div>
+      <div class="sbarfoot" id="sFoot"><span id="sSelN"></span><span class="actions"><button type="button" class="btn small" id="sBack">← Back</button><button type="button" class="btn small primary" id="sNext">Next →</button></span></div>
     </div>
     <div class="view" id="v-fu" hidden>
       <header class="topbar"><div><h1>Follow-ups</h1><p>Decisions from meetings, absent disciples and new participants — each in its own group, so you know who to contact first and what to do.</p></div></header>
@@ -812,7 +852,7 @@ body.noscroll{overflow:hidden}
               <input type="search" id="fWhoQ" placeholder="Type a name, phone or ID" autocomplete="off"><input type="hidden" id="fWho">
               <div class="plist" id="fWhoList" style="max-height:260px"></div><div id="fWhoCard"></div></div>
             <div class="field full" id="fDecBox" hidden></div>
-            <div class="field"><label for="fCat">Category</label><select id="fCat"></select></div>
+            <div class="field"><label for="fuCat">Category</label><select id="fuCat"></select></div>
             <div class="field"><label for="fType">How</label><select id="fType"></select></div>
             <div class="field"><label for="fDate">Date</label><input type="date" id="fDate"></div>
             <div class="field full"><label for="fNotes">What happened <span class="req">*</span></label><textarea id="fNotes" placeholder="e.g. Reached by phone. Prayed together; she wants to join the Friday class in Duazon."></textarea></div>
@@ -997,20 +1037,30 @@ body.noscroll{overflow:hidden}
 
 <section class="hs" id="h-sms" data-roles="cl pl cen adm">
   <h2>Sending an SMS to many people</h2>
-  <p>Open <b>Messages</b>. The message is sent <b>from your own phone</b> with your own credit; the app chooses the people, cleans the numbers and keeps a record.</p>
+  <p>Open <b>Messages</b>. The SMS goes <b>from your own phone</b> with your own credit; the app helps you choose the people, cleans the numbers to <b>+231 …</b> and keeps a record. There are three steps: <b>① Choose people → ② Write → ③ Send</b>.</p>
+  <h3>① Choose people</h3>
+  <ul>
+    <li><b>Quick picks</b> tick a whole group in one tap: a class, who came to the last meeting, decisions in the last 30 days, who missed 3+ classes, new people, or your own saved lists. Tap again to untick.</li>
+    <li><b>Find people</b>: choose a <b>class or program</b>, then <b>All dates</b> or one <b>date</b>, then <b>Who</b> — everyone on it, who <b>came</b>, or who <b>did not come</b>. Narrow further by gender, area, age group or decision. Then tap <b>Tick all shown</b>, or tick people one by one.</li>
+    <li>Ticks are kept while you change the filters, so you can add people from several programs. <b>Show only ticked</b> lets you check your list.</li>
+    <li><b>Paste phone numbers</b> from WhatsApp or Excel; they are matched to people where possible.</li>
+    <li><b>★ Save ticked people as a list</b> (for example “Choir”) to use it again with one tap.</li>
+  </ul>
+  <figure class="shot"><img data-shot="sms.jpg" alt="Choosing people for a message"></figure>
+  <div class="htip">Shortcut: on Class attendance, Meetings, People and the overview lists, tap <b>✉ Message</b> — Messages opens with those people already ticked.</div>
+  <h3>② Write</h3>
+  <p>Type the message or start from a template. Long messages are fine — they arrive as one message — but the counter shows how many SMS each costs (160 letters each; emojis and curly quotes make it 70). <b>{first name}</b> works only when sending One by one.</p>
+  <h3>③ Send</h3>
   <ol class="hsteps">
-    <li><b>Who:</b> add one or more groups — a class, an outreach or program, who came to a meeting, people who made a decision, the list on the People screen, or one person. Someone in two groups gets it once.</li>
-    <li><b>Check:</b> the app shows how many numbers will receive it. Numbers are changed to <b>+231 …</b> automatically. Open <b>No valid number</b> to see who to fix in People. Only people who gave consent are included.</li>
-    <li><b>Message:</b> type it or start from a template. Long messages are fine — they arrive as one message — but the counter shows how many SMS each one costs (160 letters each; emojis and curly quotes make it 70).</li>
-    <li><b>Send:</b> choose <b>Group batches</b> (Android: up to 100 numbers each time) or <b>One by one</b> (iPhone, or personal messages with <b>{first name}</b>). Tap <b>Prepare to send</b>, then <b>Open Messages</b>, tap <b>Send</b> in Messages, come back and tap <b>✓ Sent</b>.</li>
+    <li>Check the numbers that will receive it and who is left out (no valid number, no consent).</li>
+    <li>Choose <b>Group batches</b> (Android, up to 100 numbers at a time) or <b>One by one</b> (iPhone, or personal messages).</li>
+    <li>Tap <b>Prepare to send</b>, then <b>Open Messages</b>. Tap <b>Send</b> in Messages, come back, and tap <b>✓ Sent</b>.</li>
   </ol>
-  <figure class="shot"><img data-shot="sms.jpg" alt="Choosing who will receive a message"></figure>
   <div class="htip"><b>Group batches need one phone setting first</b> so nobody sees the other numbers. Google Messages: profile picture → Messages settings → Advanced → Group messaging → <b>Mass text</b>. Samsung Messages: ⋮ → Settings → More settings → Multimedia messages → <b>Group conversations</b> off.</div>
   <ul>
-    <li>If the app closes while Messages is open, come back to <b>Messages</b> — your sending carries on where you stopped.</li>
+    <li>If the app closes while Messages is open, open <b>Messages</b> again — sending carries on where you stopped.</li>
     <li>A batch that didn't go (no credit, no network): tap <b>✗ Didn't send</b>, then <b>Open Messages</b> again.</li>
-    <li>To see which messages arrived, turn on <b>Get SMS delivery reports</b> in your Messages settings. Failed ones show a red ❗ in Messages.</li>
-    <li><b>Sent messages</b> at the bottom keeps a record of what was sent, to whom and how far it got.</li>
+    <li>To see which messages arrived, turn on <b>Get SMS delivery reports</b> in your Messages settings.</li>
   </ul>
 </section>
 
@@ -1565,7 +1615,7 @@ function bootUser() {
   $("#avatar").textContent = $("#avatarM").textContent = ((USER.name || "").replace(/\(.*?\)/g, "").replace(/^(Pastor|Bro\.?|Sis\.?|Rev\.?|Dr\.?|Elder)\s+/i, "").match(/[A-Za-z]+/g) || ["?"]).map(w => w[0]).slice(0, 2).join("").toUpperCase();
   $("#modeBadge").textContent = "Live · " + USER.role;
   document.querySelectorAll(".nav [data-view]").forEach(b => b.hidden = !VIEW_ALLOWED(b.dataset.view));
-  $("#dNew").hidden = !PERMS.register; $("#mNew").hidden = !PERMS.createMeeting; $("#dDl").hidden = !PERMS.download;
+  $("#dNew").hidden = !PERMS.register; $("#mNew").hidden = !PERMS.createMeeting; $("#dDl").hidden = !PERMS.download; $("#dMsg").hidden = !PERMS.sms;
   const sel = $("#fProgram"); sel.innerHTML = opt("", fullDash() ? "All programs" : "All my programs") + dashView().Programs.map(p => opt(p.ProgramID, p["Program Name"])).join("");
   try { const s = JSON.parse(localStorage.getItem("rll-dash") || "{}"); if (s.period != null) state.period = s.period; if (s.cat != null) state.cat = s.cat; if (s.program && dashView().Programs.some(p => p.ProgramID === s.program)) state.program = s.program; } catch (e) {}
   sel.value = state.program; $("#fPeriod").value = String(state.period); $("#fCat").value = state.cat;
@@ -1809,7 +1859,7 @@ function drawMeeting() {
       <div class="field"><label>&nbsp;</label><button class="btn" type="button" id="mNewP">+ Register a newcomer</button></div>
     </div>
     <div id="mReg"></div>`}
-    <div class="hd"><h2 id="mCount"></h2><div class="actions">${PERMS.download ? '<button class="btn small" id="mDl">⬇ Contact list</button>' : ""}${locked ? "" : '<button class="btn small" id="mAll">Mark the rest present</button>'}</div></div>
+    <div class="hd"><h2 id="mCount"></h2><div class="actions">${PERMS.sms ? '<button class="btn small" id="mMsg">✉ Message</button>' : ""}${PERMS.download ? '<button class="btn small" id="mDl">⬇ Contact list</button>' : ""}${locked ? "" : '<button class="btn small" id="mAll">Mark the rest present</button>'}</div></div>
     <div class="markfilter"><input type="search" id="mQ" placeholder="Search this list — name, ID or phone" autocomplete="off" aria-label="Search the people on this list">
       <div class="seg" id="mF">${[["", "All"], ["in", "Present"], ["out", "Absent"], ["dec", "✝ Decision"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === ""}">${l}</button>`).join("")}</div>
       <span class="note" id="mFN"></span></div>
@@ -1817,6 +1867,8 @@ function drawMeeting() {
     <div class="err-box" id="mErr"></div>
     ${locked ? "" : '<div class="savebar"><div class="counts" id="mCounts"></div><button class="btn primary" id="mSave">Save attendance</button></div>'}`;
   drawMarks(s, locked);
+  if ($("#mMsg")) $("#mMsg").addEventListener("click", () => { if (MEET.dirty && dirtyGuard()) return; const d = String(s.Date).slice(0, 10);
+    messagePeople(cameSet(s.SessionID), `who came to ${s["Program Name"] || progLabel(s.ProgramID)} on ${dstr(d)}`, {prog: s.ProgramID, date: d, att: "came"}); });
   if ($("#mDl")) $("#mDl").addEventListener("click", () => downloadPeople("contacts", [...new Set([...enrolledIn(s.ProgramID), ...Object.keys(MEET.marks)])], (s["Program Name"] || "") + " " + String(s.Date).slice(0, 10), $("#mDl")));
   if (restored && !locked) { MEET.dirty = true; drawMeetCounts(); draftNotice($("#mDraft"), restored, draft.at, () => { DRAFT.clear("m", s.SessionID); MEET.dirty = false; drawMeeting(); }); }
   if (canManageMeeting(s)) {
@@ -2090,7 +2142,7 @@ const inAnyClass = id => DATA.Enrollments.some(e => e.DiscipleID === id && (e.St
 function ovPeople(key, title, hint, rows, more) {
   if (!rows.length) return "";
   const show = rows.slice(0, 12);
-  return `<div class="ovsec"><div class="hd"><h3>${title} <span class="pill p-mute">${rows.length}</span></h3>${PERMS.download ? `<button type="button" class="btn small" data-ovdl="${key}">⬇ Contact list</button>` : ""}</div>
+  return `<div class="ovsec"><div class="hd"><h3>${title} <span class="pill p-mute">${rows.length}</span></h3><span class="actions">${PERMS.sms ? `<button type="button" class="btn small" data-ovmsg="${key}">✉ Message</button>` : ""}${PERMS.download ? `<button type="button" class="btn small" data-ovdl="${key}">⬇ Contact list</button>` : ""}</span></div>
     ${hint ? `<p class="note">${hint}</p>` : ""}
     <div class="ovlist">${show.map(r => { const d = person(r.id) || {DiscipleID: r.id};
       return `<div class="row"><div class="r-main"><b>${esc(fullName(d))}</b><small>${esc(r.why)}${phoneLinks(d)}</small></div>${r.btn || ""}</div>`; }).join("")}</div>
@@ -2098,6 +2150,7 @@ function ovPeople(key, title, hint, rows, more) {
 }
 function wireOvDownloads(pane, lists) {
   pane.querySelectorAll("[data-ovdl]").forEach(b => b.onclick = () => { const L_ = lists[b.dataset.ovdl]; downloadPeople("contacts", L_.ids, L_.label, b); });
+  pane.querySelectorAll("[data-ovmsg]").forEach(b => b.onclick = e => { e.stopPropagation(); const L_ = lists[b.dataset.ovmsg]; messagePeople(L_.ids, L_.label); });
 }
 
 function classOverview(list) {
@@ -2238,7 +2291,7 @@ function drawClass() {
       ${PERMS.register ? '<div class="field"><label>&nbsp;</label><button class="btn" type="button" id="cNewP">+ New person</button></div>' : ""}
     </div>
     <div id="cReg"></div>`}
-    <div class="hd"><h2 id="cCount"></h2><div class="actions">${PERMS.download ? '<button class="btn small" id="cDl">⬇ Contact list</button>' : ""}${locked ? "" : '<button class="btn small" id="cAll">Mark the rest present</button>'}</div></div>
+    <div class="hd"><h2 id="cCount"></h2><div class="actions">${PERMS.sms ? '<button class="btn small" id="cMsg">✉ Message</button>' : ""}${PERMS.download ? '<button class="btn small" id="cDl">⬇ Contact list</button>' : ""}${locked ? "" : '<button class="btn small" id="cAll">Mark the rest present</button>'}</div></div>
     <div class="markfilter"><input type="search" id="cQ" placeholder="Search this list — name, ID or phone" autocomplete="off" aria-label="Search the people on this list">
       <div class="seg" id="cF">${[["", "All"], ["in", "Present"], ["out", "Absent"], ["none", "Not marked"], ["dec", "✝ Decision"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === ""}">${l}</button>`).join("")}</div>
       <span class="note" id="cFN"></span></div>
@@ -2258,6 +2311,8 @@ function drawClass() {
   const rb = $("#cRecent"); if (rb) rb.addEventListener("click", e => { const b = e.target.closest("[data-d]"); if (!b || b.dataset.d === CLS.date) return;
     if (CLS.dirty && !confirm(`You have marks for ${dstr(CLS.date)} that are not saved yet.\n\nOK = leave them (they stay on this phone for ${dstr(CLS.date)}) and open ${dstr(b.dataset.d)}.\nCancel = stay so you can save first.`)) return;
     CLS.dirty = false; CLS.date = b.dataset.d; drawClass(); });
+  if ($("#cMsg")) $("#cMsg").addEventListener("click", () => { if (CLS.dirty && dirtyGuard()) return;
+    messagePeople(enrolledIn(p.ProgramID), `the ${p["Program Name"]} class list`, {prog: p.ProgramID}); });
   if ($("#cDl")) $("#cDl").addEventListener("click", () => downloadPeople("contacts", [...new Set([...enrolledIn(p.ProgramID), ...Object.keys(CLS.marks)])], p["Program Name"] + " class list", $("#cDl")));
   if ($("#cNoCls")) $("#cNoCls").addEventListener("click", () => {
     const box = $("#cNoPanel"); if (box.innerHTML) { box.innerHTML = ""; return; }
@@ -2618,6 +2673,7 @@ const DL_FULL = ["First Name", "Last Name", "Gender", "Year of Birth", "Age", "A
 const DL_PICK_DEFAULT = ["Name", "Orange #", "Lonestar #", "Classes & programs"];
 const dlPicked = () => { try { const v = JSON.parse(localStorage.getItem("rll-dl-cols") || "null"); if (Array.isArray(v) && v.length) return v; } catch (e) {} return DL_PICK_DEFAULT; };
 const dfLabelText = () => [DIS.cat === "Disciple" ? "Disciples" : DIS.cat ? "Meeting participants" : "", DIS.status, ...dfLabels().map(x => x[1]), DIS.q ? `matching “${DIS.q}”` : ""].filter(Boolean).join(" · ") || "Everyone";
+$("#dMsg").addEventListener("click", () => messagePeople(DIS.shown || [], "the People list (" + dfLabelText() + ")"));
 $("#dDl").addEventListener("click", e => {
   e.stopPropagation();
   const m = $("#dDlMenu"), ids = DIS.shown || [], open = m.hidden;
@@ -2949,7 +3005,7 @@ function decisionRow(x) {
    and keeps a record; the phone does the sending.
    ===================================================================== */
 const SMS_MAX_BATCH = 100;
-const SMS = {groups: [], mode: "", batch: 100, run: null, q: ""};
+const SMS = {sel: new Set(), extra: [], step: 1, mode: "", batch: 100, run: null, f: {status: "Active"}, from: ""};
 const UA = navigator.userAgent || "";
 const IS_IOS = /iphone|ipad|ipod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const IS_ANDROID = /android/i.test(UA);
@@ -2993,87 +3049,138 @@ const smsFill = (t, d) => t.replace(/\{first name\}/gi, (d["First Name"] || "").
 const hasPersonal = t => /\{(first name|class)\}/i.test(t);
 const cameSet = sid => DATA.Attendance.filter(a => a.SessionID === sid && cameSt(a.Status)).map(a => a.DiscipleID);
 
-/** Who a group stands for. */
-function smsGroupIds(g) {
-  if (g.type === "class") return enrolledIn(g.v);
-  if (g.type === "prog") { const sids = new Set(DATA.Sessions.filter(x => x.ProgramID === g.v).map(x => x.SessionID));
-    return [...new Set(enrolledIn(g.v).concat(DATA.Attendance.filter(a => sids.has(a.SessionID) && cameSt(a.Status)).map(a => a.DiscipleID)))]; }
-  if (g.type === "meet") return cameSet(g.v);
-  if (g.type === "dec") { const days = Number(g.days) || 0;
-    return [...new Set((DATA.Decisions || []).filter(x => (g.v === "-any" || String(x.Decision || "").split(/\s*,\s*/).includes(g.v)) && (!days || daysAgoOf(x.Date) <= days)).map(x => x.DiscipleID))]; }
-  if (g.type === "people") return g.ids || [];
-  if (g.type === "person") return [g.v];
-  return [];
+/* ----- step 1: choose people ----- */
+const progSessions = pid => DATA.Sessions.filter(x => x.ProgramID === pid && !isNoClass(x)).sort((a, b) => String(b.Date).localeCompare(String(a.Date)));
+const cameToProg = pid => { const sids = new Set(progSessions(pid).map(x => x.SessionID)); return new Set(DATA.Attendance.filter(a => sids.has(a.SessionID) && cameSt(a.Status)).map(a => a.DiscipleID)); };
+const firstCame = () => { const sd = {}; DATA.Sessions.forEach(x => { sd[x.SessionID] = String(x.Date).slice(0, 10); }); const f = {};
+  DATA.Attendance.forEach(a => { if (!cameSt(a.Status) || !sd[a.SessionID]) return; if (!f[a.DiscipleID] || sd[a.SessionID] < f[a.DiscipleID]) f[a.DiscipleID] = sd[a.SessionID]; }); return f; };
+/** Class members who missed their last 3 classes or more. */
+function missedThreeIds() {
+  const att = attMap(), out = new Set();
+  DATA.Programs.filter(p => isClassProg(p) && (p.Active || "Yes") !== "No").forEach(p => { const ss = progSessions(p.ProgramID);
+    enrolledIn(p.ProgramID).forEach(id => { let n = 0; for (const x of ss) { const st = (att[x.SessionID] || {})[id]; if (cameSt(st)) break; if (st !== "Excused") n++; } if (n >= 3) out.add(id); }); });
+  return [...out];
+}
+const smsListsKey = () => "rll-sms-lists-" + (USER ? USER.id : "");
+const smsLists = () => { try { return JSON.parse(localStorage.getItem(smsListsKey()) || "[]"); } catch (e) { return []; } };
+const seenIds = () => new Set(DATA.Disciples.map(d => d.DiscipleID));
+/** The ready-made sets of people for the quick-pick buttons. */
+function smsQuick() {
+  const have = seenIds(), keep = a => [...new Set(a)].filter(id => have.has(id)), q = [];
+  DATA.Programs.filter(p => isClassProg(p) && (p.Active || "Yes") !== "No").forEach(p => q.push({k: "c" + p.ProgramID, label: p["Program Name"], ids: keep(enrolledIn(p.ProgramID))}));
+  const lastMeet = DATA.Sessions.filter(x => !isClassProg(progOf(x.ProgramID)) && cameSet(x.SessionID).length).sort((a, b) => String(b.Date).localeCompare(String(a.Date)))[0];
+  if (lastMeet) q.push({k: "m", label: "Came to " + sessLabel(lastMeet), ids: keep(cameSet(lastMeet.SessionID))});
+  q.push({k: "d30", label: "Decisions · last 30 days", ids: keep((DATA.Decisions || []).filter(x => daysAgoOf(x.Date) <= 30).map(x => x.DiscipleID))});
+  q.push({k: "miss", label: "Missed 3+ classes", ids: keep(missedThreeIds())});
+  const fc = firstCame(); q.push({k: "new", label: "New · first came in the last 30 days", ids: keep(Object.keys(fc).filter(id => daysAgoOf(fc[id]) <= 30))});
+  smsLists().forEach((l, i) => q.push({k: "s" + i, label: "★ " + l.name, ids: keep(l.ids || []), saved: i, extra: l.extra || []}));
+  return q.filter(x => x.ids.length || (x.extra && x.extra.length) || x.saved != null);
+}
+function smsFilterOpts() {
+  const f = SMS.f, progs = DATA.Programs.slice().sort((a, b) => (isClassProg(b) - isClassProg(a)) || a["Program Name"].localeCompare(b["Program Name"]));
+  $("#sfProg").innerHTML = opt("", "Everyone (all programs)", !f.prog) + progs.map(p => opt(p.ProgramID, p["Program Name"] + (isClassProg(p) ? " (class)" : ""), f.prog === p.ProgramID)).join("");
+  const ss = f.prog ? progSessions(f.prog) : [];
+  if (f.date && !ss.some(x => String(x.Date).slice(0, 10) === f.date)) f.date = "";
+  $("#sfDate").innerHTML = opt("", f.prog ? "All dates" : "—", !f.date) + ss.map(x => { const d = String(x.Date).slice(0, 10); return opt(d, `${dstr(d)} · ${cameSet(x.SessionID).length} came`, f.date === d); }).join("");
+  $("#sfDate").disabled = !f.prog;
+  const atts = !f.prog ? [["", "Everyone"]] : f.date ? [["", "Everyone on it"], ["came", "Came that day"], ["not", "Did not come that day"]] : [["", "Everyone on it"], ["came", "Came at least once"], ["not", "On the list but never came"]];
+  if (!atts.some(a => a[0] === (f.att || ""))) f.att = "";
+  $("#sfAtt").innerHTML = atts.map(([v, t]) => opt(v, t, (f.att || "") === v)).join(""); $("#sfAtt").disabled = !f.prog;
+  const vals = (field, cur) => opt("", "Any", !cur) + dfValues(field).map(x => opt(x.v, `${x.v} (${x.n})`, cur === x.v)).join("");
+  $("#sfGender").innerHTML = vals("Gender", f.gender); $("#sfArea").innerHTML = vals("Address / Community", f.area); $("#sfAge").innerHTML = vals("Age Group", f.age);
+  $("#sfDec").innerHTML = opt("", "Any", !f.dec) + opt("-any", "Made any decision", f.dec === "-any") + Object.keys(DEC_LABEL).map(k => opt(k, DEC_LABEL[k], f.dec === k)).join("");
+  $("#sfStatus").value = f.status || "";
+}
+/** The people the filters show (before ticking). */
+function smsShownIds() {
+  const f = SMS.f; let ids;
+  if (!f.prog) ids = DATA.Disciples.map(d => d.DiscipleID);
+  else {
+    const members = new Set(enrolledIn(f.prog)), came = cameToProg(f.prog), linked = new Set([...members, ...came]);
+    if (f.date) { const x = progSessions(f.prog).find(y => String(y.Date).slice(0, 10) === f.date), c = new Set(x ? cameSet(x.SessionID) : []);
+      ids = f.att === "came" ? [...c] : f.att === "not" ? [...linked].filter(id => !c.has(id)) : [...new Set([...linked, ...c])]; }
+    else ids = f.att === "came" ? [...came] : f.att === "not" ? [...members].filter(id => !came.has(id)) : [...linked];
+  }
+  const decs = {}; (DATA.Decisions || []).forEach(x => { (decs[x.DiscipleID] = decs[x.DiscipleID] || []).push(x); });
+  const q = (f.q || "").toLowerCase();
+  return ids.map(person).filter(d => d && DATA.Disciples.includes(d)).filter(d =>
+    (!f.status || (d.Status || "Active") === "Active") &&
+    (!f.gender || dfKey(d.Gender) === dfKey(f.gender) || (f.gender === NOT_SET && !dfNorm(d.Gender))) &&
+    (!f.area || dfKey(d["Address / Community"]) === dfKey(f.area) || (f.area === NOT_SET && !dfNorm(d["Address / Community"]))) &&
+    (!f.age || dfKey(ageGroupOf(d)) === dfKey(f.age) || (f.age === NOT_SET && !dfNorm(ageGroupOf(d)))) &&
+    (!f.dec || (f.dec === "-any" ? (decs[d.DiscipleID] || []).length : (decs[d.DiscipleID] || []).some(x => String(x.Decision || "").split(/\s*,\s*/).includes(f.dec)))) &&
+    (!q || (fullName(d) + " " + (d["Orange #"] || "") + " " + (d["Lonestar #"] || "") + " " + d.DiscipleID).toLowerCase().includes(q)) &&
+    (!SMS.onlySel || SMS.sel.has(d.DiscipleID))
+  ).sort(byName);
+}
+const smsNumOf = d => { const o = lrPhone(d["Orange #"]), l = lrPhone(d["Lonestar #"]); return o || l; };
+function drawSmsPeople() {
+  const shown = smsShownIds();
+  SMS.shownIds = shown.map(d => d.DiscipleID);
+  $("#sShown").innerHTML = `${shown.length} shown · <b>${SMS.sel.size}</b> ticked${SMS.extra.length ? ` · ${SMS.extra.length} pasted number${SMS.extra.length === 1 ? "" : "s"}` : ""}`;
+  const show = shown.slice(0, 600);
+  $("#msList").innerHTML = (show.length ? show.map(d => { const n = smsNumOf(d), cons = String(d["Consent Given"] || "") === "Yes";
+    const why = !n ? "no valid number" : !cons ? "no consent" : (d.Status || "Active") !== "Active" ? "inactive" : "";
+    return `<label class="sp${why ? " off" : ""}"><input type="checkbox" data-id="${esc(d.DiscipleID)}"${SMS.sel.has(d.DiscipleID) ? " checked" : ""}>
+      <span class="r-main"><b>${esc(fullName(d))}</b><small>${n ? esc(prettyPhone(n)) : esc([d["Orange #"], d["Lonestar #"]].filter(Boolean).join(" / ") || "no number")}${why ? ` · <span class="warnt">${why}</span>` : ""}${(() => { const c = DATA.Enrollments.find(e => e.DiscipleID === d.DiscipleID && (e.Status || "Enrolled") === "Enrolled" && isClassProg(progOf(e.ProgramID))); return c ? " · " + esc(progLabel(c.ProgramID)) : ""; })()}</small></span></label>`; }).join("")
+    : '<div class="empty">Nobody matches. Change the filters or search.</div>') + (shown.length > show.length ? `<p class="note">Showing the first ${show.length}. “Tick all shown” still ticks all ${shown.length}.</p>` : "");
+  drawSmsQuick(); drawSmsFoot();
+}
+function drawSmsQuick() {
+  SMS.quick = smsQuick();
+  $("#sQuick").innerHTML = SMS.quick.map((x, i) => { const all = x.ids.length && x.ids.every(id => SMS.sel.has(id)) && (x.extra || []).every(n => SMS.extra.includes(n));
+    return `<button type="button" class="chip${all ? " on" : ""}" data-q="${i}" aria-pressed="${all}">${esc(x.label)} · ${x.ids.length + (x.extra || []).length}${x.saved != null ? ` <span class="sdel" data-del="${x.saved}" title="Delete this list">✕</span>` : ""}</button>`; }).join("") || '<span class="note">No quick picks yet.</span>';
+}
+function drawSmsFoot() {
+  const r = smsRecipients();
+  $("#sSelN").innerHTML = `<b>${SMS.sel.size + SMS.extra.length}</b> chosen · <b>${r.list.length}</b> number${r.list.length === 1 ? "" : "s"} will receive it`;
+  $("#sBack").hidden = SMS.step === 1; $("#sNext").hidden = SMS.step === 3;
+  $("#sSteps").querySelectorAll("button").forEach(b => b.setAttribute("aria-current", String(+b.dataset.step === SMS.step)));
+}
+function smsGo(step) {
+  if (step > 1 && !smsRecipients().list.length) { toast("Tick at least one person with a valid number first.", true); step = 1; }
+  if (step === 3 && !$("#sText").value.trim()) { toast("Write the message first.", true); step = 2; }
+  SMS.step = step; [1, 2, 3].forEach(n => { $("#sStep" + n).hidden = n !== step; });
+  if (step === 3) drawSmsSummary();
+  if (step === 2) drawSmsCount();
+  drawSmsFoot(); $("#v-sms").scrollIntoView({block: "start"});
 }
 function smsRecipients() {
-  const ids = new Set(); SMS.groups.forEach(g => smsGroupIds(g).forEach(i => ids.add(i)));
   const list = [], noNum = [], noConsent = [], inactive = [], seen = {}; let shared = 0;
-  const line = $("#sLine").value, act = $("#sActive").checked, cons = $("#sConsent").checked;
-  [...ids].map(person).filter(Boolean).sort(byName).forEach(d => {
-    if (act && (d.Status || "Active") !== "Active") return inactive.push(d);
+  const line = $("#sLine").value, cons = $("#sConsent").checked;
+  [...SMS.sel].map(person).filter(Boolean).sort(byName).forEach(d => {
     if (cons && String(d["Consent Given"] || "") !== "Yes") return noConsent.push(d);
     const o = lrPhone(d["Orange #"]), l = lrPhone(d["Lonestar #"]);
     const nums = [...new Set((line === "both" ? [o, l] : line === "lonestar" ? [l || o] : [o || l]).filter(Boolean))];
     if (!nums.length) return noNum.push(d);
+    if ((d.Status || "Active") !== "Active") inactive.push(d);
     nums.forEach(n => { if (seen[n]) { shared++; return; } seen[n] = 1; list.push({id: d.DiscipleID, d, num: n}); });
   });
-  return {list, people: new Set(list.map(x => x.id)).size, noNum, noConsent, inactive, shared, all: ids.size};
+  SMS.extra.forEach(n => { if (seen[n]) { shared++; return; } seen[n] = 1; list.push({id: "", d: {DiscipleID: "", "First Name": ""}, num: n}); });
+  return {list, people: new Set(list.filter(x => x.id).map(x => x.id)).size, noNum, noConsent, inactive, shared};
 }
-const groupLabel = g => g.type === "class" ? "Class: " + progLabel(g.v) : g.type === "prog" ? "Program: " + progLabel(g.v)
-  : g.type === "meet" ? "Came to " + (DATA.Sessions.find(x => x.SessionID === g.v) ? sessLabel(DATA.Sessions.find(x => x.SessionID === g.v)) : g.v)
-  : g.type === "dec" ? "Decision: " + (g.v === "-any" ? "any" : DEC_LABEL[g.v] || g.v) + (Number(g.days) ? ` · last ${g.days} days` : "")
-  : g.type === "people" ? "People screen: " + g.label : fullName(person(g.v) || {DiscipleID: g.v});
-
-function drawSmsPick() {
-  const t = $("#sType").value, box = $("#sPick");
-  const progs = DATA.Programs.filter(p => (p.Active || "Yes") !== "No");
-  const add = '<button type="button" class="btn small primary" id="sAdd">+ Add</button>';
-  if (t === "class" || t === "prog") {
-    const ps = progs.filter(p => t === "class" ? isClassProg(p) : !isClassProg(p));
-    box.innerHTML = ps.length ? `<div class="srow"><select id="sV">${ps.map(p => opt(p.ProgramID, p["Program Name"])).join("")}</select>${add}</div>` : '<p class="note">None you can message.</p>';
-  } else if (t === "meet") {
-    const ss = DATA.Sessions.filter(x => !isNoClass(x) && cameSet(x.SessionID).length).sort((a, b) => String(b.Date).localeCompare(String(a.Date))).slice(0, 150);
-    box.innerHTML = ss.length ? `<div class="srow"><select id="sV">${ss.map(x => opt(x.SessionID, sessLabel(x) + " · " + cameSet(x.SessionID).length + " came")).join("")}</select>${add}</div>` : '<p class="note">No marked meetings yet.</p>';
-  } else if (t === "dec") {
-    box.innerHTML = `<div class="srow"><select id="sV">${opt("-any", "Any decision")}${Object.keys(DEC_LABEL).map(k => opt(k, DEC_LABEL[k])).join("")}</select>
-      <select id="sDays">${opt("30", "Last 30 days")}${opt("90", "Last 3 months", true)}${opt("365", "Last 12 months")}${opt("0", "Any time")}</select>${add}</div>`;
-  } else if (t === "people") {
-    const n = (DIS.shown || DATA.Disciples.map(d => d.DiscipleID)).length;
-    box.innerHTML = `<div class="srow"><span class="note">${n} people · ${esc(typeof dfLabelText === "function" ? dfLabelText() : "Everyone")}</span>${add}</div>
-      <p class="note">Change the list with search and ⚙ Filters on the People screen, then come back here.</p>`;
-  } else {
-    box.innerHTML = `<input type="search" id="sFind" placeholder="Type a name or phone" autocomplete="off" aria-label="Find a person"><div class="plist sfound" id="sFound"></div>`;
-    $("#sFind").oninput = () => { const q = $("#sFind").value.trim().toLowerCase();
-      const hits = q.length < 2 ? [] : DATA.Disciples.filter(d => (fullName(d) + " " + (d["Orange #"] || "") + " " + (d["Lonestar #"] || "") + " " + d.DiscipleID).toLowerCase().includes(q)).slice(0, 8);
-      $("#sFound").innerHTML = hits.map(d => `<button type="button" class="prow" data-id="${esc(d.DiscipleID)}"><span class="r-main"><b>${esc(fullName(d))}</b><small>${esc(prettyPhone(lrPhone(d["Orange #"]) || lrPhone(d["Lonestar #"])) || "no valid number")}</small></span><span class="pill p-good">+ Add</span></button>`).join("") || (q.length >= 2 ? '<div class="empty">No match.</div>' : ""); };
-    $("#sFound").onclick = e => { const b = e.target.closest(".prow"); if (!b) return; if (!SMS.groups.some(g => g.type === "person" && g.v === b.dataset.id)) SMS.groups.push({type: "person", v: b.dataset.id}); $("#sFind").value = ""; $("#sFound").innerHTML = ""; drawSmsWho(); };
-    return;
-  }
-  const a = $("#sAdd"); if (!a) return;
-  a.onclick = () => {
-    const g = t === "people" ? {type: "people", ids: (DIS.shown || DATA.Disciples.map(d => d.DiscipleID)).slice(), label: typeof dfLabelText === "function" ? dfLabelText() : "Everyone"}
-      : {type: t, v: $("#sV").value, days: $("#sDays") ? $("#sDays").value : ""};
-    if (!SMS.groups.some(x => x.type === g.type && x.v === g.v && x.days === g.days && x.type !== "people")) SMS.groups.push(g);
-    drawSmsWho();
-  };
+function drawSmsSummary() {
+  const r = smsRecipients(), t = $("#sText").value, c = smsParts(t);
+  const det = (title, arr, show) => arr.length ? `<details class="sdet"><summary>${title}</summary><div class="slist">${arr.slice(0, 400).map(show).join("")}</div></details>` : "";
+  $("#sSummary").innerHTML = `<div class="stats sstats">${ovTile("Will receive", r.list.length, `number${r.list.length === 1 ? "" : "s"}`)}${ovTile("SMS used", c.parts * r.list.length, c.parts > 1 ? `${c.parts} per person` : "1 per person")}
+      ${ovTile("Left out", r.noNum.length + r.noConsent.length, `${r.noNum.length} no valid number · ${r.noConsent.length} no consent`, r.noNum.length + r.noConsent.length ? "stat-warn" : "")}</div>
+    ${det(`Show who will receive it (${r.list.length})`, r.list, x => `<div class="row"><span>${esc(x.id ? fullName(x.d) : "Pasted number")}</span><span class="num">${esc(prettyPhone(x.num))}</span></div>`)}
+    ${det(`Left out — no valid number (${r.noNum.length})`, r.noNum, d => `<div class="row"><span>${esc(fullName(d))}</span><span class="num warnt">${esc([d["Orange #"], d["Lonestar #"]].filter(Boolean).join(" / ") || "no number")}</span></div>`)}
+    ${det(`Left out — no consent (${r.noConsent.length})`, r.noConsent, d => `<div class="row"><span>${esc(fullName(d))}</span></div>`)}
+    ${r.shared ? `<p class="note">${r.shared} number${r.shared === 1 ? " is" : "s are"} shared by more than one person — sent once.</p>` : ""}
+    <div class="spreview">${esc(t)}</div>`;
 }
-function drawSmsWho() {
-  $("#sGroups").innerHTML = SMS.groups.map((g, i) => `<button type="button" class="chip on" data-i="${i}" title="Remove">${esc(groupLabel(g))} · ${smsGroupIds(g).length} ✕</button>`).join("")
-    + (SMS.groups.length > 1 ? '<button type="button" class="chip" data-i="*">Clear all</button>' : "");
-  const r = smsRecipients(), box = $("#sSummary");
-  if (!SMS.groups.length) { box.innerHTML = '<p class="note">Add one or more groups. Someone in two groups gets the message once.</p>'; drawSmsCount(); return; }
-  const det = (title, arr, show) => arr.length ? `<details class="sdet"><summary>${title}</summary><div class="slist">${arr.slice(0, 300).map(show).join("")}</div></details>` : "";
-  box.innerHTML = `<div class="stats sstats">${ovTile("Will receive", r.list.length, `number${r.list.length === 1 ? "" : "s"} · ${r.people} ${r.people === 1 ? "person" : "people"}`)}
-      ${ovTile("No valid number", r.noNum.length, "left out", r.noNum.length ? "stat-warn" : "")}${$("#sConsent").checked ? ovTile("No consent", r.noConsent.length, "left out") : ""}</div>
-    ${det(`Show who will receive it (${r.list.length})`, r.list, x => `<div class="row"><span>${esc(fullName(x.d))}</span><span class="num">${esc(prettyPhone(x.num))}</span></div>`)}
-    ${det(`No valid number — fix these in People (${r.noNum.length})`, r.noNum, d => `<div class="row"><span>${esc(fullName(d))}</span><span class="num warnt">${esc([d["Orange #"], d["Lonestar #"]].filter(Boolean).join(" / ") || "no number")}</span></div>`)}
-    ${r.inactive.length ? `<p class="note">${r.inactive.length} inactive ${r.inactive.length === 1 ? "person" : "people"} left out.</p>` : ""}
-    ${r.shared ? `<p class="note">${r.shared} number${r.shared === 1 ? " is" : "s are"} shared by more than one person — sent once.</p>` : ""}`;
-  drawSmsCount();
+/** Opens Messages with these people already ticked (from a list on another screen). */
+function messagePeople(ids, label, filters) {
+  if (!PERMS.sms) return;
+  if (SMS.run && !confirm("You are in the middle of sending a message. Leave it and start choosing new people? (The unfinished one stays in Sent messages.)")) return;
+  if (SMS.run) { SMS.run = null; smsSaveRun(); }
+  const have = seenIds(); SMS.sel = new Set((ids || []).filter(id => have.has(id))); SMS.extra = []; SMS.from = label || "";
+  SMS.f = Object.assign({status: ""}, filters || {}); SMS.onlySel = !filters; SMS.step = 1; showView("sms");
 }
 function drawSmsCount() {
-  const t = $("#sText").value, c = smsParts(t), r = SMS.groups.length ? smsRecipients().list.length : 0;
-  $("#sCount").innerHTML = t ? `${c.len} characters · <b>${c.parts} SMS</b> per person${r ? ` · about <b>${c.parts * r} SMS</b> in all` : ""}`
+  const t = $("#sText").value, c = smsParts(t), r = smsRecipients().list.length;
+  $("#msCount").innerHTML = t ? `${c.len} characters · <b>${c.parts} SMS</b> per person${r ? ` · about <b>${c.parts * r} SMS</b> in all` : ""}`
     + (c.parts > 1 ? `<div class="note">Longer than ${c.per} characters is fine: it arrives as one message, but your network charges it as ${c.parts} SMS for each person.</div>` : "")
     + (c.odd.length ? `<div class="htip">Contains ${esc(c.odd.slice(0, 8).join(" "))} — with these each SMS holds only 70 characters, so it may cost more. <button type="button" class="btn small" id="sFix">Use plain quotes and dashes</button></div>` : "")
     + (hasPersonal(t) && SMS.mode === "batch" ? '<div class="htip">{first name} and {class} only work when sending <b>One by one</b>.</div>' : "") : "";
@@ -3132,11 +3239,47 @@ function smsMark(i, st) {
   if (st === "sent") api("updateSms", TOKEN, R_.id, sent, false).catch(() => {});
 }
 function renderSms() {
-  if (!$("#sType").dataset.wired) {
-    $("#sType").dataset.wired = 1;
-    $("#sType").onchange = drawSmsPick;
-    $("#sGroups").onclick = e => { const b = e.target.closest("[data-i]"); if (!b) return; if (b.dataset.i === "*") SMS.groups = []; else SMS.groups.splice(Number(b.dataset.i), 1); drawSmsWho(); };
-    ["sActive", "sConsent", "sLine"].forEach(id => $("#" + id).onchange = drawSmsWho);
+  if (!$("#sStep1").dataset.wired) {
+    $("#sStep1").dataset.wired = 1;
+    const f = SMS.f;
+    const fmap = {sfProg: "prog", sfDate: "date", sfAtt: "att", sfGender: "gender", sfArea: "area", sfAge: "age", sfDec: "dec", sfStatus: "status"};
+    Object.entries(fmap).forEach(([id, k]) => $("#" + id).onchange = () => { SMS.f[k] = $("#" + id).value; if (k === "prog") { SMS.f.date = ""; SMS.f.att = ""; } SMS.onlySel = false; $("#sOnlySel").checked = false; smsFilterOpts(); drawSmsPeople(); });
+    $("#sQ").oninput = () => { SMS.f.q = $("#sQ").value; drawSmsPeople(); };
+    $("#sOnlySel").onchange = () => { SMS.onlySel = $("#sOnlySel").checked; drawSmsPeople(); };
+    $("#sReset").onclick = () => { SMS.f = {status: "Active"}; SMS.onlySel = false; $("#sOnlySel").checked = false; $("#sQ").value = ""; SMS.from = ""; $("#sFrom").innerHTML = ""; smsFilterOpts(); drawSmsPeople(); };
+    $("#msList").onchange = e => { const c = e.target.closest("input[data-id]"); if (!c) return; if (c.checked) SMS.sel.add(c.dataset.id); else SMS.sel.delete(c.dataset.id);
+      $("#sShown").innerHTML = $("#sShown").innerHTML.replace(/<b>\d+<\/b> ticked/, `<b>${SMS.sel.size}</b> ticked`); drawSmsQuick(); drawSmsFoot(); };
+    $("#sTickAll").onclick = () => { (SMS.shownIds || []).forEach(id => SMS.sel.add(id)); drawSmsPeople(); };
+    $("#sUntickAll").onclick = () => { (SMS.shownIds || []).forEach(id => SMS.sel.delete(id)); drawSmsPeople(); };
+    $("#sClearSel").onclick = () => { SMS.sel.clear(); SMS.extra = []; drawSmsPeople(); };
+    $("#sQuick").onclick = e => {
+      const del = e.target.closest("[data-del]");
+      if (del) { e.stopPropagation(); const L_ = smsLists(), k = +del.dataset.del; if (!confirm(`Delete the list “${L_[k].name}”? (Nobody is untick­ed or deleted from the tracker.)`)) return;
+        L_.splice(k, 1); try { localStorage.setItem(smsListsKey(), JSON.stringify(L_)); } catch (e2) {} drawSmsQuick(); return; }
+      const b = e.target.closest("[data-q]"); if (!b) return; const x = SMS.quick[+b.dataset.q];
+      const all = x.ids.every(id => SMS.sel.has(id)) && (x.extra || []).every(n => SMS.extra.includes(n));
+      x.ids.forEach(id => all ? SMS.sel.delete(id) : SMS.sel.add(id));
+      (x.extra || []).forEach(n => { const i = SMS.extra.indexOf(n); if (all && i >= 0) SMS.extra.splice(i, 1); else if (!all && i < 0) SMS.extra.push(n); });
+      toast(`${all ? "Unticked" : "Ticked"} ${x.ids.length + (x.extra || []).length}: ${x.label.replace(/^★ /, "")}`);
+      drawSmsPeople();
+    };
+    $("#sSaveList").onclick = () => { if (!SMS.sel.size && !SMS.extra.length) return toast("Tick some people first.", true);
+      const name = prompt(`Name this list of ${SMS.sel.size + SMS.extra.length} (for example “Choir” or “Ushers”):`); if (!name) return;
+      const L_ = smsLists(); L_.push({name: name.trim().slice(0, 40), ids: [...SMS.sel], extra: SMS.extra.slice()});
+      try { localStorage.setItem(smsListsKey(), JSON.stringify(L_)); } catch (e) {} drawSmsQuick(); toast("List saved on this phone."); };
+    $("#sPasteAdd").onclick = () => {
+      const parts = $("#sPaste").value.split(/[\n,;/]+|\s{2,}|\t/).map(x => x.trim()).filter(Boolean);
+      const byNum = {}; DATA.Disciples.forEach(d => [lrPhone(d["Orange #"]), lrPhone(d["Lonestar #"])].filter(Boolean).forEach(n => { byNum[n] = byNum[n] || d.DiscipleID; }));
+      let matched = 0, added = 0, bad = [];
+      parts.forEach(raw => { const n = lrPhone(raw); if (!n) return bad.push(raw);
+        if (byNum[n]) { SMS.sel.add(byNum[n]); matched++; } else if (!SMS.extra.includes(n)) { SMS.extra.push(n); added++; } });
+      $("#sPasteRes").innerHTML = `${matched} matched to people and ticked · ${added} other number${added === 1 ? "" : "s"} added${bad.length ? ` · <span class="warnt">${bad.length} not valid: ${esc(bad.slice(0, 6).join(", "))}${bad.length > 6 ? "…" : ""}</span>` : ""}`;
+      $("#sPaste").value = ""; drawSmsPeople();
+    };
+    $("#sSteps").onclick = e => { const b = e.target.closest("[data-step]"); if (b) smsGo(+b.dataset.step); };
+    $("#sNext").onclick = () => smsGo(SMS.step + 1);
+    $("#sBack").onclick = () => smsGo(SMS.step - 1);
+    ["sConsent", "sLine"].forEach(id => $("#" + id).onchange = () => { drawSmsSummary(); drawSmsFoot(); });
     $("#sText").oninput = drawSmsCount;
     $("#sTpl").onchange = () => { const v = $("#sTpl").value, u = smsUserTpls(); $("#sTpl").value = "";
       if (v === "del") { const n = prompt("Which of your templates should be deleted? Type its number:\n" + u.map((x, i) => (i + 1) + ". " + x[0]).join("\n")); const k = Number(n) - 1;
@@ -3150,18 +3293,18 @@ function renderSms() {
       ta.value = ta.value.slice(0, p) + b.dataset.ins + ta.value.slice(ta.selectionEnd || p); ta.focus(); drawSmsCount(); });
     $("#sMode").onclick = e => { const b = e.target.closest("button"); if (!b || b.disabled) return; SMS.mode = b.dataset.v; drawSmsMode(); };
     $("#sStart").onclick = () => {
-      const err = $("#sErr"); err.textContent = "";
+      const err = $("#msErr"); err.textContent = "";
       const r = smsRecipients(), text = $("#sText").value.trim();
-      if (!r.list.length) return err.textContent = "Nobody to send to — add a group with valid numbers.";
+      if (!r.list.length) return err.textContent = "Nobody to send to — tick people with valid numbers.";
       if (!text) return err.textContent = "Write the message.";
       if (SMS.mode === "batch" && hasPersonal(text)) return err.textContent = "{first name} and {class} only work One by one. Choose One by one, or remove them.";
       if (SMS.mode === "batch" && !$("#sMass").checked) return err.textContent = "First set your phone to send separate messages (Mass text), then tick the box — otherwise everyone would see each other's numbers.";
       const items = SMS.mode === "batch"
         ? Array.from({length: Math.ceil(r.list.length / SMS.batch)}, (_, i) => ({nums: r.list.slice(i * SMS.batch, (i + 1) * SMS.batch).map(x => x.num), st: ""}))
         : r.list.map(x => ({id: x.id, num: x.num, st: ""}));
-      const aud = SMS.groups.map(groupLabel).join(" + ");
+      const f = SMS.f, aud = SMS.from || [f.prog ? progLabel(f.prog) + (f.date ? " · " + dstr(f.date) : "") : "", r.people + " people", SMS.extra.length ? SMS.extra.length + " pasted numbers" : ""].filter(Boolean).join(" · ");
       if (!confirm(`Send to ${r.list.length} number${r.list.length === 1 ? "" : "s"} (${SMS.mode === "batch" ? items.length + " batch" + (items.length === 1 ? "" : "es") : "one by one"})?\nAbout ${smsParts(text).parts * r.list.length} SMS from your phone's credit.`)) return;
-      act($("#sStart"), () => api("logSms", TOKEN, {personIds: [...new Set(r.list.map(x => x.id))], message: text, audience: aud, mode: SMS.mode, numbers: r.list.length, batches: items.length}),
+      act($("#sStart"), () => api("logSms", TOKEN, {personIds: [...new Set(r.list.filter(x => x.id).map(x => x.id))], message: text, audience: aud, mode: SMS.mode, numbers: r.list.length, batches: items.length}),
         "Ready — open Messages for each " + (SMS.mode === "batch" ? "batch." : "person."), err)
         .then(res => { SMS.run = {id: res.smsId, mode: SMS.mode, text, items}; smsSaveRun(); drawSmsRun(); $("#sRun").scrollIntoView({behavior: "smooth", block: "start"}); }).catch(() => {});
     };
@@ -3181,9 +3324,11 @@ function renderSms() {
       }
     };
   }
-  if (!SMS.run) { try { const x = JSON.parse(localStorage.getItem(smsRunKey()) || "null"); if (x && x.items) SMS.run = x; } catch (e) {} }   // carry on after the phone closed the app
+  if (!SMS.run) { try { const x = JSON.parse(localStorage.getItem(smsRunKey()) || "null"); if (x && x.items) { SMS.run = x; SMS.step = 3; } } catch (e) {} }   // carry on after the phone closed the app
   $("#sConsent").disabled = !PERMS.smsNoConsent; if (!PERMS.smsNoConsent) $("#sConsent").checked = true;
-  drawSmsTpls(); drawSmsPick(); drawSmsWho(); drawSmsMode(); drawSmsRun();
+  $("#sFrom").innerHTML = SMS.from ? `<div class="notice">Ticked from <b>${esc(SMS.from)}</b>: ${SMS.sel.size} ${SMS.sel.size === 1 ? "person" : "people"}. Untick anyone you want to leave out, or add more below.</div>` : "";
+  $("#sQ").value = SMS.f.q || ""; $("#sOnlySel").checked = !!SMS.onlySel;
+  smsFilterOpts(); drawSmsTpls(); drawSmsPeople(); drawSmsMode(); drawSmsRun(); smsGo(SMS.step);
   const L_ = DATA.SmsLog || [];
   $("#sLog").innerHTML = L_.length ? `<div class="tbl-wrap"><table class="ovtbl"><thead><tr><th>Date</th><th>Sent to</th><th class="num">Numbers</th><th>Done</th><th>By</th></tr></thead><tbody>${L_.map(x =>
     `<tr><td>${dstr(x.Started)}</td><td><details><summary>${esc(x.Audience || "")}</summary><div class="spreview">${esc(x.Message || "")}</div><small class="note">${esc(x.Mode || "")}</small></details></td><td class="num">${esc(x.Numbers)}</td><td>${esc(x["Batches Sent"])} of ${esc(x.Batches)} ${x.Mode === "One by one" ? "people" : "batches"}${x.Status === "Sending" ? " · in progress" : x.Status === "Stopped part-way" ? " · stopped" : ""}</td><td>${esc(x["By Name"] || "")}</td></tr>`).join("")}</tbody></table></div>`
@@ -3217,7 +3362,7 @@ function renderFu() {
   }
   const fm = $("#fMore"); if (fm) fm.onclick = () => { FU.showN += 40; renderFu(); };
   // form
-  $("#fCat").innerHTML = options(L("Follow-up Category"), $("#fCat").value || "Pastoral care", null);
+  $("#fuCat").innerHTML = options(L("Follow-up Category"), $("#fuCat").value || "Pastoral care", null);
   $("#fType").innerHTML = options(L("Follow-up Type"), $("#fType").value || "Phone call", null);
   if (!$("#fDate").value) $("#fDate").value = todayStr();
   $("#fDate").max = todayStr();
@@ -3248,8 +3393,8 @@ function fuChoose(id, keep) {
   if (keep) return;
   const st = allStats()[FU.who] || {};
   const cat = open.length ? "Decision follow-up" : d && isDisciple(d) && ["crit", "warn", "none"].includes(st.flag) ? "Absence follow-up" : d && !isDisciple(d) ? "New participant" : "Pastoral care";
-  $("#fCat").innerHTML = options(L("Follow-up Category"), cat, null); $("#fCat").value = cat;
-  const fd = $("#fDec"); if (fd) fd.onchange = () => { $("#fDecSt").disabled = !fd.value; if (fd.value) $("#fCat").value = "Decision follow-up"; };
+  $("#fuCat").innerHTML = options(L("Follow-up Category"), cat, null); $("#fuCat").value = cat;
+  const fd = $("#fDec"); if (fd) fd.onchange = () => { $("#fDecSt").disabled = !fd.value; if (fd.value) $("#fuCat").value = "Decision follow-up"; };
 }
 $("#fQ").addEventListener("input", e => { FU.q = e.target.value; renderFu(); });
 $("#fCats").addEventListener("click", e => { const b = e.target.closest("[data-c]"); if (!b) return; FU.cat = b.dataset.c; FU.q = ""; $("#fQ").value = ""; FU.showN = 40; renderFu(); });
@@ -3262,7 +3407,7 @@ $("#fList").addEventListener("click", e => {
   const r = e.target.closest("[data-id]"); if (!r) return;
   if (!PERMS.followups) return;
   fuChoose(r.dataset.id);
-  if (r.dataset.dec && $("#fDec")) { $("#fDec").value = r.dataset.dec; $("#fCat").value = "Decision follow-up"; }
+  if (r.dataset.dec && $("#fDec")) { $("#fDec").value = r.dataset.dec; $("#fuCat").value = "Decision follow-up"; }
   if (innerWidth < 1180) $("#fFormPanel").scrollIntoView({behavior: "smooth"}); else $("#fNotes").focus();
 });
 $("#fWhoQ").addEventListener("input", e => {
@@ -3284,7 +3429,7 @@ $("#fForm").addEventListener("submit", e => {
   if (!$("#fNotes").value.trim()) { $("#fErr").textContent = "Write a short note about what happened."; return; }
   const fd = $("#fDec");
   act($("#fSave"), () => api("saveFollowUp", TOKEN, {discipleId: $("#fWho").value, date: $("#fDate").value, type: $("#fType").value, notes: $("#fNotes").value, nextAction: $("#fNext").value, nextDate: $("#fNextD").value,
-    category: $("#fCat").value, decisionId: fd ? fd.value : "", decisionStatus: fd && fd.value ? $("#fDecSt").value : ""}),
+    category: $("#fuCat").value, decisionId: fd ? fd.value : "", decisionStatus: fd && fd.value ? $("#fDecSt").value : ""}),
     "Follow-up saved.", $("#fErr")).then(() => { ["#fNotes", "#fNext", "#fNextD"].forEach(s => $(s).value = ""); fuChoose(""); renderFu(); }).catch(() => {});
 });
 
