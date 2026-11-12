@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to use the RLL Discipleship app</title>
+<meta name="theme-color" content="#0f2e0c">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#f4f7f0;--panel:#fff;--line:#dfe8d6;--ink:#16230f;--ink-2:#4b5a42;--ink-3:#77876d;--brand:#2f6b1d;--brand-soft:#e7f2cf;--rail:#0f2e0c;--accent:#d9ea5e;--warn-soft:#fff4dc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c140a;--panel:#132011;--line:#24361f;--ink:#eaf3e0;--ink-2:#b8c9aa;--ink-3:#869a78;--brand:#8cc152;--brand-soft:#22351a;--rail:#07120a;--warn-soft:#3a2e10}}
+:root[data-theme="dark"]{--bg:#0c140a;--panel:#132011;--line:#24361f;--ink:#eaf3e0;--ink-2:#b8c9aa;--ink-3:#869a78;--brand:#8cc152;--brand-soft:#22351a;--rail:#07120a;--warn-soft:#3a2e10}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif}
+header{background:var(--rail);color:#f0f7e4;padding:22px 16px 26px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;gap:14px;align-items:center;padding:0}
+header img{width:64px;height:64px;border-radius:16px;background:#fff;flex:none}
+h1{font:800 26px/1.15 "Baloo 2",system-ui,sans-serif;margin:0}
+header p{margin:4px 0 0;color:#cfe0bd}
+h2{font:800 21px/1.2 "Baloo 2",system-ui,sans-serif;margin:0 0 10px}
+main{padding:18px 0 40px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+.lead{font-size:17px}
+.btn{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:12px;margin:6px 0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#0f2e0c}}
+nav.jump{display:flex;gap:8px;flex-wrap:wrap}
+nav.jump a{background:var(--brand-soft);color:var(--ink);text-decoration:none;font-weight:700;padding:8px 14px;border-radius:999px}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+ol.steps li{counter-increment:s;position:relative;padding:4px 0 12px 44px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;display:grid;place-items:center}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) ol.steps li::before{color:#0f2e0c}}
+.tip{background:var(--warn-soft);border-radius:12px;padding:12px 14px;margin-top:8px}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;font-weight:700;background:var(--bg)}
+dl{margin:0}dt{font-weight:700;margin-top:12px}dd{margin:2px 0 0;color:var(--ink-2)}
+small,.note{color:var(--ink-3)}
+footer{text-align:center;color:var(--ink-3);font-size:13px;padding:10px 16px 30px}
+</style>
+<style>
+.roles{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.roles button{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer}
+.roles button[aria-pressed="true"]{background:var(--brand);color:#fff;border-color:var(--brand)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .roles button[aria-pressed="true"]{color:#0f2e0c}}
+.hs{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;scroll-margin-top:12px}
+.hs h3{margin:16px 0 6px;font-size:16px}
+.hs ul{padding-left:20px}.hs li{margin:4px 0}
+.hsteps{counter-reset:s;list-style:none;padding:0;margin:6px 0}
+.hsteps li{counter-increment:s;position:relative;padding:3px 0 10px 42px}
+.hsteps li::before{content:counter(s);position:absolute;left:0;top:2px;width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;display:grid;place-items:center;font-size:14px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hsteps li::before{color:#0f2e0c}}
+.htip{background:var(--warn-soft);border-radius:12px;padding:12px 14px;margin:10px 0}
+.hrole{font-weight:700;color:var(--brand)}
+.shot{margin:12px auto;max-width:330px}
+.shot img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);display:block}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <img src="icons/icon-192.png" alt="">
+  <div><h1>How to use the RLL Discipleship app</h1><p>LivingSeed · Revival Labors Liberia — Duazon/Boystown Field</p></div>
+</div></header>
+<main class="wrap">
+<div class="card">
+  <p class="lead">Short, step-by-step help for each part of the app. Choose your role to see only what you need.</p>
+  <div class="roles" id="roles" role="group" aria-label="Choose your role">
+    <button type="button" data-r="" aria-pressed="true">Everything</button><button type="button" data-r="reg" aria-pressed="false">Meeting registrar</button><button type="button" data-r="cl" aria-pressed="false">Class leader</button><button type="button" data-r="pl" aria-pressed="false">Program leader</button><button type="button" data-r="co" aria-pressed="false">Counselor</button><button type="button" data-r="cen" aria-pressed="false">Center leader / Admin</button><button type="button" data-r="vw" aria-pressed="false">Viewer</button>
+  </div>
+  <p class="note" style="margin-top:12px">Not installed yet? See <a href="install.html">how to install the app</a>. Inside the app, tap <b>Help</b> in the menu.</p>
+  <nav class="jump" id="jump" aria-label="Topics" style="margin-top:8px"></nav>
+</div>
+<section class="hs" id="h-start" data-roles="all">
+  <h2>Getting started</h2>
+  <ol class="hsteps">
+    <li><b>Sign in</b> with the access PIN your administrator gave you. Never share your PIN.</li>
+    <li><b>Find your way.</b> On a phone the screens are in the green bar at the top: slide it left or right to see them all. On a computer they are on the left.</li>
+    <li><b>You only see what you are responsible for.</b> A class leader sees their class, a registrar sees the meetings given to them, and so on. Your name and role are shown at the top.</li>
+    <li><b>Sign out</b> when you use someone else's phone: tap <b>Sign out</b> next to your name.</li>
+  </ol>
+  <div class="htip"><b>No network?</b> Marks you make are kept on your phone. When the network comes back, open the same screen and tap <b>Save</b>.</div>
+  <div class="htip"><b>“A new version of the app is ready”</b> — save your work, then tap <b>Update now</b>. You stay signed in.</div>
+</section>
+
+<section class="hs" id="h-dash" data-roles="cen adm cl pl vw">
+  <h2>Dashboard and statistics</h2>
+  <figure class="shot"><img loading="lazy" src="help/dash.jpg" alt="The dashboard on a phone"></figure>
+  <ul>
+    <li><b>Dashboard</b> shows attendance, new people, decisions and who needs follow-up. Leaders see only the classes and programs they lead.</li>
+    <li>Use the choices at the top (period, program, disciples or everyone) to change what the numbers cover.</li>
+    <li><b>Statistics</b> breaks the numbers down by area, church, age, gender, program and counselor. Every table has <b>Download</b> and <b>Copy</b>.</li>
+  </ul>
+</section>
+
+<section class="hs" id="h-meet" data-roles="reg pl cen adm">
+  <h2>Meetings and outreaches</h2>
+  <p>Open <b>Meetings</b>. First you see <b>Meetings at a glance</b>: today's meetings, the last 90 days, new faces, decisions waiting, newcomers to invite to a class and regulars who stopped coming.</p>
+  <figure class="shot"><img loading="lazy" src="help/meet_overview.jpg" alt="Meetings at a glance"></figure>
+  <h3>Mark who came</h3>
+  <ol class="hsteps">
+    <li>Tap <b>Mark now</b> on today's meeting, or tap a meeting in the list. <span class="hrole">Program leaders and center leaders:</span> tap <b>+ New meeting</b> to create one first.</li>
+    <li><b>Someone who came before:</b> type part of their name or phone number in <b>Find a returning person</b> and tap their name.</li>
+    <li><b>Someone new:</b> tap <b>+ Register a newcomer</b>, fill in what you can (first and last name are needed) and save. They are marked present.</li>
+    <li>For people on the list, tap <b>Present</b>, <b>Late</b> or <b>Excused</b>. Tapped by mistake? Tap the same button again to undo.</li>
+    <li>Tap <b>Save attendance</b>.</li>
+  </ol>
+  <figure class="shot"><img loading="lazy" src="help/meet_mark.jpg" alt="Marking a meeting"></figure>
+  <div class="htip"><b>Not marked = absent.</b> There is no Absent button for meetings: anyone not marked Present, Late or Excused counts as absent.</div>
+  <ul>
+    <li><b>Search this list</b> and the <b>All / Present / Absent / ✝ Decision</b> buttons help you find people in a long list.</li>
+    <li>The boxes at the top count who registered, who came and the decisions — for this meeting only.</li>
+    <li><b>⬇ Contact list</b> downloads everyone on this meeting's list.</li>
+    <li><b>Women only / Men only</b> meetings only accept people of that gender.</li>
+  </ul>
+</section>
+
+<section class="hs" id="h-dec" data-roles="reg pl cen adm co">
+  <h2>Recording a decision</h2>
+  <ol class="hsteps">
+    <li>At the meeting, find the person (mark them present first).</li>
+    <li>Tap <b>✝ Decision</b> on their row.</li>
+    <li>Tick what they decided: <b>To be born again</b>, <b>To rededicate my life to Christ</b>, <b>To follow Jesus in discipleship</b>, <b>Responded to the Word of God</b>, or <b>Other</b> (type what).</li>
+    <li>Add a short note if you like, and save.</li>
+  </ol>
+  <figure class="shot"><img loading="lazy" src="help/decision.jpg" alt="Recording a decision"></figure>
+  <p>The decision goes to <b>Follow-ups</b>, where a center leader gives the person a counselor.</p>
+</section>
+
+<section class="hs" id="h-cls" data-roles="cl reg cen adm">
+  <h2>Discipleship class attendance</h2>
+  <p>Open <b>Class attendance</b>. First you see <b>Your classes at a glance</b>: classes not marked yet, attendance, who missed 3 classes or more, and visitors you can invite.</p>
+  <figure class="shot"><img loading="lazy" src="help/cls_overview.jpg" alt="Your classes at a glance"></figure>
+  <h3>Mark a class</h3>
+  <ol class="hsteps">
+    <li>Tap <b>Mark now</b>, or tap the class. Check the <b>date</b> (it chooses the last class day for you).</li>
+    <li>Tap <b>Present</b>, <b>Late</b>, <b>Absent</b> or <b>Excused</b> for each person. <b>Mark the rest present</b> does everyone not yet marked.</li>
+    <li>Tap <b>Save attendance</b>. Anyone on the class list who is <b>not marked</b> is saved as <b>Absent</b>.</li>
+  </ol>
+  <figure class="shot"><img loading="lazy" src="help/cls_mark.jpg" alt="Marking class attendance"></figure>
+  <h3>New people and visitors</h3>
+  <ul>
+    <li>Type a name in <b>Add someone to this class</b>. Tap <b>+ Add to class</b> to put them on the class list, or <b>Visitor today</b> if they are only visiting.</li>
+    <li>Someone not in the tracker yet: tap <b>+ New person</b>. Tick <b>Just visiting today</b> if they are not joining the class.</li>
+    <li>Visitors are marked <b>Visitor</b> for that day only and are never counted absent. If a visitor decides to join, tap <b>+ Join class</b> on their row.</li>
+  </ul>
+  <figure class="shot"><img loading="lazy" src="help/cls_add.jpg" alt="Adding someone or marking a visitor"></figure>
+  <h3>When there was no class</h3>
+  <p>Tap <b>No class this day</b>, choose <b>Venue not available</b>, <b>Leader not available</b> or <b>Other reason</b>, and save. Nobody is marked absent for that day. If the class did meet after all, just mark attendance and save.</p>
+  <figure class="shot"><img loading="lazy" src="help/noclass.jpg" alt="Recording that there was no class"></figure>
+  <h3>See all the marks</h3>
+  <p>Switch to <b>Attendance register</b> at the top: everyone against every date, with P, L, A, E, V (visitor) and — (no class). Tap a date to open and change it. <b>⬇ Download register</b> saves it for Excel.</p>
+  <figure class="shot"><img loading="lazy" src="help/register.jpg" alt="The attendance register"></figure>
+</section>
+
+<section class="hs" id="h-asg" data-roles="cl co adm">
+  <h2>Assignments</h2>
+  <ol class="hsteps">
+    <li>Open <b>Assignments</b> and choose the class.</li>
+    <li>Tap <b>+ New</b>, give the assignment a title and due date, and save.</li>
+    <li>Open the assignment and tick who completed it. Save.</li>
+  </ol>
+</section>
+
+<section class="hs" id="h-fu" data-roles="co cen adm">
+  <h2>Follow-ups</h2>
+  <p>Open <b>Follow-ups</b>. People are grouped so you know who to contact first: <b>Decision follow-up</b>, <b>Absence follow-up</b>, <b>New participant</b>, <b>Pastoral care</b> and <b>Other</b>. Counselors see the people given to them.</p>
+  <figure class="shot"><img loading="lazy" src="help/followups.jpg" alt="Follow-ups"></figure>
+  <ol class="hsteps">
+    <li>Tap a person (or search a name or phone).</li>
+    <li>Under <b>Log a follow-up</b>, choose how you reached them, write <b>what happened</b>, and the next step if there is one.</li>
+    <li>For a decision, set its progress: <b>Contacted</b>, <b>Joined a class</b>, <b>Not reachable</b> or <b>Closed</b>. Save.</li>
+  </ol>
+  <div class="htip hrole-only" data-roles="cen adm"><b>Center leaders:</b> give each decision a counselor. Women counsel women and men counsel men — the app only offers counselors of the right gender.</div>
+</section>
+
+<section class="hs" id="h-people" data-roles="cl pl co cen adm">
+  <h2>People</h2>
+  <p>Open <b>People</b>. The right side first shows a summary of the list (gender, age, area, class). <b>Tap a name</b> to see that person's details; <b>← Back to the list</b> returns.</p>
+  <figure class="shot"><img loading="lazy" src="help/people.jpg" alt="People with filters"></figure>
+  <ul>
+    <li><b>Search</b> by name, ID, phone or Peace House code. Choose <b>Everyone / Disciples / Participants</b> and <b>All / Active / Inactive</b>.</li>
+    <li><b>⚙ Filters</b> narrows the list further: class or program, area, gender, age group, counselor, date joined, attendance, last attended, decision, or a meeting they came to. Each filter shows as a chip; tap it to remove.</li>
+    <li><b>⬇ Download</b> saves exactly the people showing: <b>Contact list</b>, <b>Full details</b> (only if allowed), or <b>Choose columns</b>. Phone numbers are only included for people who gave consent.</li>
+    <li><span class="hrole">Center leaders and counselors:</span> open a person and tap <b>Edit</b> to correct their details. On the People form you can only put someone in a <b>discipleship class</b>; outreaches are recorded by marking meetings.</li>
+  </ul>
+</section>
+
+<section class="hs" id="h-admin" data-roles="cen adm">
+  <h2>Running the tracker</h2>
+  <ul>
+    <li><b>Users &amp; programs</b> — add users with their role, PIN and <b>gender</b> (needed for counselors). Tick <b>Can download full details</b> only for people who need it. For each program set who leads it, who marks it, and <b>Who can attend</b> (Everyone, Women only, Men only).</li>
+    <li><b>Import list</b> — bring in an Excel or CSV list. The app shows who already exists, who might be the same person and who is new before anything is saved. You can undo an import.</li>
+    <li><b>Import review</b> — check possible duplicates and <b>merge</b> them, or fix missing details in one tap.</li>
+    <li><b>Activity log</b> — every change, with who made it. Deleted records can be <b>restored</b> from here.</li>
+    <li>In People, <b>⚙ Filters → Counselor → Counselor of the other gender</b> finds old assignments to correct.</li>
+  </ul>
+</section>
+
+<section class="hs" id="h-rules" data-roles="all">
+  <h2>Good to know</h2>
+  <ul>
+    <li><b>Classes:</b> not marked on a class day = absent. <b>Meetings:</b> not marked present = absent.</li>
+    <li><b>Visitors</b> are never counted absent and are not added to the class list unless they join.</li>
+    <li><b>No class this day</b> keeps everyone's attendance fair when a class could not meet.</li>
+    <li><b>Women only / Men only</b> meetings accept only that gender. <b>Women counsel women, men counsel men.</b></li>
+    <li><b>Phone numbers</b> are shared in downloads only when the person gave consent.</li>
+    <li>Registering or marking someone does <b>not</b> make you their counselor — a center leader assigns counselors.</li>
+  </ul>
+</section>
+
+<section class="hs" id="h-help" data-roles="all">
+  <h2>If something is not working</h2>
+  <dl>
+    <dt>“Could not reach the tracker”</dt><dd>Check your data or Wi-Fi and try again. Your marks are kept on the phone until saved.</dd>
+    <dt>“Your session has ended”</dt><dd>For safety you are signed out after a while. Sign in again with your PIN.</dd>
+    <dt>I can't see a class, meeting or screen</dt><dd>You only see what you are assigned to. Ask your center leader to add you as leader, marker or registrar.</dd>
+    <dt>“… is for women only / men only”</dt><dd>That person's gender doesn't match the meeting. Check their gender is recorded correctly.</dd>
+    <dt>I made a mistake</dt><dd>Open the date or person again, correct it and save. A center leader can restore deleted records from the Activity log.</dd>
+    <dt>Wrong PIN or forgot my PIN</dt><dd>Ask your center leader or administrator. After many wrong tries everyone must wait 10 minutes.</dd>
+  </dl>
+</section>
+
+<a class="btn" href="./">Open the app</a>
+</main>
+<footer>LivingSeed · Revival Labors Liberia · The pictures use made-up names.</footer>
+<script>
+(function () {
+  var secs = [].slice.call(document.querySelectorAll(".hs")), btns = [].slice.call(document.querySelectorAll("#roles button"));
+  function fits(el, r) { var x = (el.getAttribute("data-roles") || "all").split(/\s+/); return !r || x.indexOf("all") >= 0 || x.indexOf(r) >= 0; }
+  function show(r) {
+    btns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-r") === r)); });
+    secs.forEach(function (s) { s.hidden = !fits(s, r); });
+    [].forEach.call(document.querySelectorAll(".hrole-only"), function (e) { e.hidden = !fits(e, r); });
+    document.getElementById("jump").innerHTML = secs.filter(function (s) { return !s.hidden; }).map(function (s) { return '<a href="#' + s.id + '">' + s.querySelector("h2").textContent + "</a>"; }).join("");
+    try { history.replaceState(null, "", r ? "?role=" + r + location.hash : location.pathname + location.hash); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.onclick = function () { show(b.getAttribute("data-r")); }; });
+  var m = /[?&]role=(\w+)/.exec(location.search); show(m ? m[1] : "");
+})();
+</script>
+</body>
+</html>
