@@ -549,6 +549,34 @@ body.noscroll{overflow:hidden}
 .wbox p{font-size:16px;line-height:1.5;margin:0 0 16px}
 .wdots{display:flex;gap:6px;margin-bottom:16px}.wdots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.wdots i.on{background:var(--brand);width:22px;border-radius:99px}
 .wact{display:flex;justify-content:space-between;gap:10px}.wact .btn{min-width:96px}
+
+/* Messages (bulk SMS from the phone) */
+.sadd{display:flex;flex-direction:column;gap:8px}
+.srow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.srow select{flex:1;min-width:150px}
+.sfound{max-height:260px;overflow:auto}
+#sGroups{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.sopts{display:flex;flex-direction:column;gap:8px;margin:6px 0 10px;font-size:14px}
+.sopts label,.scheck{display:flex;gap:8px;align-items:center;font-weight:600}
+.sopts input[type=checkbox],.scheck input{width:18px;height:18px;accent-color:var(--brand)}
+.sline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:600;font-size:14px}
+.sstats{margin:6px 0}
+.sdet{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0;background:var(--panel)}
+.sdet summary{cursor:pointer;font-weight:700}
+.slist{max-height:280px;overflow:auto;margin-top:6px}
+.slist .row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:14px}
+.slist .num{font-variant-numeric:tabular-nums;white-space:nowrap}.warnt{color:var(--warn)}
+#sText{width:100%;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--panel);color:var(--ink);resize:vertical}
+.scount{font-size:13px;color:var(--ink-2);margin:6px 0}
+.sins{gap:6px;align-items:center}
+#sMode{margin:6px 0}
+.srunhd{display:flex;flex-direction:column;gap:6px;margin:12px 0 8px}
+.sbar{display:block;height:8px;border-radius:99px;background:var(--line);overflow:hidden}.sbar i{display:block;height:100%;background:var(--brand)}
+.sbatch{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin:6px 0;background:var(--panel)}
+.sbatch .r-main{display:flex;flex-direction:column}.sbatch small{color:var(--ink-3)}
+.sbatch.sent{background:var(--good-soft);border-color:transparent}.sbatch.failed{background:var(--crit-soft);border-color:transparent}.sbatch.opened{border-color:var(--brand)}
+.sone{border:1px solid var(--brand);border-radius:14px;padding:14px;background:var(--panel)}
+.sone .r-main{display:flex;flex-direction:column;margin-bottom:8px}
+.spreview{white-space:pre-wrap;background:var(--panel-2);border-radius:12px;padding:10px;margin:6px 0 10px;font-size:14px}
 </style>
 </head>
 <body>
@@ -563,6 +591,7 @@ body.noscroll{overflow:hidden}
       <button data-view="meet" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3M5.5 10l1.8 1.8L11 8.5"/></svg>Meetings</button>
       <button data-view="dis" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="5" r="2.5"/><path d="M1.5 14c.5-3 2.2-4.5 4.5-4.5s4 1.5 4.5 4.5"/><circle cx="11.5" cy="5.5" r="2"/><path d="M11 9.6c2 .1 3.2 1.5 3.5 4.4"/></svg>People</button>
       <button data-view="asg" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.5h6l3 3v10H4z"/><path d="M10 1.5v3h3M6.5 8.5h4.5M6.5 11h4.5"/></svg>Assignments</button>
+      <button data-view="sms" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="1.5" width="8" height="13" rx="1.6"/><path d="M6.5 4.5h3M6.3 7.5h3.4M6.3 10h2"/></svg>Messages</button>
       <button data-view="fu" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 2.5h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7l-3 2.5v-2.5H3a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"/></svg>Follow-ups</button>
       <button data-view="setup" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4"/></svg>Users &amp; programs</button>
       <button data-view="me" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.5" r="3"/><path d="M2.5 14.5c.7-3 2.8-4.6 5.5-4.6s4.8 1.6 5.5 4.6"/></svg>My profile</button>
@@ -732,6 +761,40 @@ body.noscroll{overflow:hidden}
     </div>
 
     <!-- ================= FOLLOW-UPS ================= -->
+    <div class="view" id="v-sms" hidden>
+      <header class="topbar"><div><h1>Messages</h1><p>Send an SMS to a class, outreach, meeting, decision group or chosen people — from your own phone.</p></div></header>
+      <div class="grid">
+        <section class="panel c6" id="sWho">
+          <div class="hd"><h2>1 · Who will receive it</h2></div>
+          <div class="sadd">
+            <select id="sType" aria-label="Add people from">
+              <option value="class">A discipleship class</option><option value="prog">An outreach or program</option><option value="meet">Who came to a meeting or class date</option>
+              <option value="dec">People who made a decision</option><option value="people">The list on the People screen (with its filters)</option><option value="person">One person</option></select>
+            <div id="sPick"></div>
+          </div>
+          <div class="chips" id="sGroups"></div>
+          <div class="sopts">
+            <label><input type="checkbox" id="sActive" checked> Active people only</label>
+            <label><input type="checkbox" id="sConsent" checked> Only people who gave consent</label>
+            <label class="sline">Phone line <select id="sLine"><option value="orange">Orange first, else Lonestar</option><option value="lonestar">Lonestar first, else Orange</option><option value="both">Both numbers</option></select></label>
+          </div>
+          <div id="sSummary"></div>
+        </section>
+        <section class="panel c6" id="sMsg">
+          <div class="hd"><h2>2 · The message</h2><select id="sTpl" aria-label="Start from a template"></select></div>
+          <textarea id="sText" rows="6" placeholder="Type your message…" aria-label="Message"></textarea>
+          <div class="scount" id="sCount"></div>
+          <div class="actions sins"><span class="note">Insert:</span><button type="button" class="chip" data-ins="{first name}">{first name}</button><button type="button" class="chip" data-ins="{class}">{class}</button><button type="button" class="chip" id="sSaveTpl">Save as template</button></div>
+          <div class="hd" style="margin-top:14px"><h2>3 · Send from your phone</h2></div>
+          <div class="seg" role="group" aria-label="How to send" id="sMode"><button type="button" data-v="batch" aria-pressed="true">Group batches</button><button type="button" data-v="one" aria-pressed="false">One by one</button></div>
+          <div id="sModeNote"></div>
+          <div class="err-box" id="sErr"></div>
+          <div class="actions"><button type="button" class="btn primary" id="sStart">Prepare to send</button></div>
+          <div id="sRun"></div>
+        </section>
+        <section class="panel c12"><div class="hd"><h2>Sent messages</h2><span class="note">Kept for your records</span></div><div id="sLog"></div></section>
+      </div>
+    </div>
     <div class="view" id="v-fu" hidden>
       <header class="topbar"><div><h1>Follow-ups</h1><p>Decisions from meetings, absent disciples and new participants — each in its own group, so you know who to contact first and what to do.</p></div></header>
       <div class="grid">
@@ -930,6 +993,25 @@ body.noscroll{overflow:hidden}
     <li>Tap <b>+ New</b>, give the assignment a title and due date, and save.</li>
     <li>Open the assignment and tick who completed it. Save.</li>
   </ol>
+</section>
+
+<section class="hs" id="h-sms" data-roles="cl pl cen adm">
+  <h2>Sending an SMS to many people</h2>
+  <p>Open <b>Messages</b>. The message is sent <b>from your own phone</b> with your own credit; the app chooses the people, cleans the numbers and keeps a record.</p>
+  <ol class="hsteps">
+    <li><b>Who:</b> add one or more groups — a class, an outreach or program, who came to a meeting, people who made a decision, the list on the People screen, or one person. Someone in two groups gets it once.</li>
+    <li><b>Check:</b> the app shows how many numbers will receive it. Numbers are changed to <b>+231 …</b> automatically. Open <b>No valid number</b> to see who to fix in People. Only people who gave consent are included.</li>
+    <li><b>Message:</b> type it or start from a template. Long messages are fine — they arrive as one message — but the counter shows how many SMS each one costs (160 letters each; emojis and curly quotes make it 70).</li>
+    <li><b>Send:</b> choose <b>Group batches</b> (Android: up to 100 numbers each time) or <b>One by one</b> (iPhone, or personal messages with <b>{first name}</b>). Tap <b>Prepare to send</b>, then <b>Open Messages</b>, tap <b>Send</b> in Messages, come back and tap <b>✓ Sent</b>.</li>
+  </ol>
+  <figure class="shot"><img data-shot="sms.jpg" alt="Choosing who will receive a message"></figure>
+  <div class="htip"><b>Group batches need one phone setting first</b> so nobody sees the other numbers. Google Messages: profile picture → Messages settings → Advanced → Group messaging → <b>Mass text</b>. Samsung Messages: ⋮ → Settings → More settings → Multimedia messages → <b>Group conversations</b> off.</div>
+  <ul>
+    <li>If the app closes while Messages is open, come back to <b>Messages</b> — your sending carries on where you stopped.</li>
+    <li>A batch that didn't go (no credit, no network): tap <b>✗ Didn't send</b>, then <b>Open Messages</b> again.</li>
+    <li>To see which messages arrived, turn on <b>Get SMS delivery reports</b> in your Messages settings. Failed ones show a red ❗ in Messages.</li>
+    <li><b>Sent messages</b> at the bottom keeps a record of what was sent, to whom and how far it got.</li>
+  </ul>
 </section>
 
 <section class="hs" id="h-fu" data-roles="co cen adm">
@@ -1339,10 +1421,20 @@ function api(fn, ...args) {
   return new Promise((resolve, reject) => {
     if (!API_URL || /PASTE/.test(API_URL)) { busy(false); return reject(new Error("The app is not connected yet: put the Apps Script web app address in config.js.")); }
     if (navigator.onLine === false) { busy(false); return reject(new Error("You are offline. " + NET_ERR)); }
+    const ADMIN = " Administrator: open the app's Apps Script, go to Deploy → Manage deployments → ✏️ Edit, choose New version, make sure “Who has access” is Anyone, and Deploy. Test by opening the /exec address with ?check=1 at the end.";
     fetch(API_URL, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify({fn, args}), redirect: "follow", cache: "no-store"})
-      .then(r => { if (!r.ok) throw new Error("server answered " + r.status); return r.text(); })
-      .then(t => { let r; try { r = JSON.parse(t); } catch (e) { throw new Error("unexpected answer — is the web app deployed for “Anyone”?"); } done(resolve, reject)(r); })
-      .catch(e => { busy(false); reject(new Error(NET_ERR + " (" + (e && e.message || e) + ")")); });
+      .then(r => r.text().then(t => ({status: r.status, t})), e => { throw Object.assign(new Error(e && e.message || String(e)), {kind: "net"}); })
+      .then(({status, t}) => {
+        let r; try { r = JSON.parse(t); } catch (e) {
+          const why = /doPost|Script function not found/i.test(t) ? "the tracker has not been updated for the installed app yet." : /sign ?in|accounts\.google|ServiceLogin/i.test(t) ? "the tracker asks for a Google sign-in — it must be shared with “Anyone”." : "the tracker gave an unexpected answer (" + status + ").";
+          throw Object.assign(new Error("Connected, but " + why + ADMIN), {kind: "setup"});
+        }
+        done(resolve, reject)(r);
+      })
+      .catch(e => { busy(false);
+        if (e && e.kind === "setup") return reject(new Error(e.message));
+        if (navigator.onLine === false) return reject(new Error("You are offline. " + NET_ERR));
+        reject(new Error("Could not connect to the tracker. If other websites open on this phone, the problem is the tracker's sharing, not your internet." + ADMIN + " (" + (e && e.message || e) + ")")); });
   });
 }
 /** Runs a save/delete, shows the result, reloads data. */
@@ -1391,7 +1483,7 @@ const firstView = () => PERMS.dashboard ? "dash" : PERMS.classes ? "cls" : PERMS
    HELP (opens over the current screen, so nothing unsaved is lost) and the first-time welcome
    ===================================================================== */
 const ROLE_KEY = {"Admin": "adm", "Center Leader": "cen", "Class Leader": "cl", "Program Leader": "pl", "Counselor": "co", "Meeting Registrar": "reg", "Viewer": "vw"};
-const HELP_FOR_VIEW = {dash: "h-dash", stats: "h-dash", cls: "h-cls", meet: "h-meet", dis: "h-people", asg: "h-asg", fu: "h-fu", setup: "h-admin", imp: "h-admin", rev: "h-admin", log: "h-admin", me: "h-start"};
+const HELP_FOR_VIEW = {sms: "h-sms", dash: "h-dash", stats: "h-dash", cls: "h-cls", meet: "h-meet", dis: "h-people", asg: "h-asg", fu: "h-fu", setup: "h-admin", imp: "h-admin", rev: "h-admin", log: "h-admin", me: "h-start"};
 const HELP = {all: false, shots: false};
 const roleKey = () => ROLE_KEY[(USER && USER.role) || ""] || "";
 function helpFits(el) { const r = (el.dataset.roles || "all").split(/\s+/); return HELP.all || r.includes("all") || r.includes(roleKey()) || (roleKey() === "adm" && r.includes("cen")); }
@@ -1484,8 +1576,8 @@ function bootUser() {
 }
 
 const VIEW_ALLOWED = v => !!PERMS && ({dash: PERMS.dashboard, cls: PERMS.classes, meet: PERMS.meetings, dis: PERMS.disciples, asg: PERMS.assignments,
-  fu: PERMS.followups, setup: PERMS.users || PERMS.programs, rev: PERMS.review && DATA.reviewRows > 0, imp: PERMS.importLists, log: PERMS.activity, stats: PERMS.dashboard, me: true})[v];
-const RENDER = {dash: () => render(), cls: () => renderCls(), meet: () => renderMeet(), dis: () => renderDis(), asg: () => renderAsg(), fu: () => renderFu(), setup: () => renderSetup(), rev: () => renderRev(), imp: () => renderImp(), log: () => renderLog(), stats: () => renderStats(), me: () => renderMe()};
+  fu: PERMS.followups, sms: PERMS.sms, setup: PERMS.users || PERMS.programs, rev: PERMS.review && DATA.reviewRows > 0, imp: PERMS.importLists, log: PERMS.activity, stats: PERMS.dashboard, me: true})[v];
+const RENDER = {sms: () => renderSms(), dash: () => render(), cls: () => renderCls(), meet: () => renderMeet(), dis: () => renderDis(), asg: () => renderAsg(), fu: () => renderFu(), setup: () => renderSetup(), rev: () => renderRev(), imp: () => renderImp(), log: () => renderLog(), stats: () => renderStats(), me: () => renderMe()};
 const anyDirty = () => MEET.dirty || CLS.dirty || ASG.dirty || DIS.dirty || SET.dirty;
 
 function dirtyGuard() {
@@ -2851,6 +2943,253 @@ function decisionRow(x) {
     ${top && (x.Status || "New") !== "Closed" ? `<div class="fu-assign"><select data-assign="${esc(x.DecisionID)}" aria-label="Assign counselor">${opt("", x.CounselorID ? "Change counselor…" : "Assign a counselor…")}${counselorsFor(d).map(l => opt(l.LeaderID, l["Full Name"])).join("") || '<option value="" disabled>No ' + (genderOf(d.Gender) === "Male" ? "male" : "female") + ' counselor yet — set genders on Users &amp; programs</option>'}</select></div>` : ""}</div>
     <div class="actions">${decPill(x)}${PERMS.followups ? '<span class="pill p-good">Log</span>' : ""}</div></div>`;
 }
+/* =====================================================================
+   MESSAGES — bulk SMS sent from the user's own phone through its Messages app.
+   The tracker chooses the people, cleans the numbers, splits them into batches (at most 100)
+   and keeps a record; the phone does the sending.
+   ===================================================================== */
+const SMS_MAX_BATCH = 100;
+const SMS = {groups: [], mode: "", batch: 100, run: null, q: ""};
+const UA = navigator.userAgent || "";
+const IS_IOS = /iphone|ipad|ipod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const IS_ANDROID = /android/i.test(UA);
+/** Any way a Liberian mobile number is written → "+231" and 9 digits; "" when it is not a valid mobile number. */
+function lrPhone(raw) {
+  let d = String(raw || "").replace(/[^\d+]/g, "");
+  if (d.startsWith("+")) d = d.slice(1); else if (d.startsWith("00")) d = d.slice(2);
+  let n = "";
+  if (d.length === 12 && d.startsWith("231")) n = d.slice(3);
+  else if (d.length === 10 && d.startsWith("0")) n = d.slice(1);
+  else if (d.length === 9) n = d;
+  return /^(77|88|55|22)\d{7}$/.test(n) ? "+231" + n : "";
+}
+const prettyPhone = n => n ? n.replace(/^\+231(\d{3})(\d{3})(\d{3})$/, "+231 $1 $2 $3") : "";
+const GSM7 = "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà";
+const GSM7X = "^{}\\[~]|€";
+/** How many SMS one message uses (160 letters each, 70 when it has emojis or special characters). */
+function smsParts(t) {
+  const odd = [...new Set([...t].filter(c => !GSM7.includes(c) && !GSM7X.includes(c)))];
+  if (odd.length) { const n = [...t].length; return {parts: n <= 70 ? 1 : Math.ceil(n / 67), len: n, odd, per: 70}; }
+  const n = [...t].reduce((k, c) => k + (GSM7X.includes(c) ? 2 : 1), 0);
+  return {parts: n <= 160 ? 1 : Math.ceil(n / 153), len: n, odd, per: 160};
+}
+const SMS_TEMPLATES = [
+  ["Class reminder", "Shalom! A reminder that our discipleship class meets this week. We look forward to seeing you. God bless you. - LivingSeed, Duazon/Boystown"],
+  ["Outreach invitation", "You are invited to our outreach on ___ at ___. Come and bring a friend! - LivingSeed, Duazon/Boystown. Call 0777959077"],
+  ["After a decision", "We rejoice with you on your decision for Christ! A counselor will call you soon. You can call us any time on 0777959077. - LivingSeed"],
+  ["We missed you", "We missed you at class. We hope you are well, and we are praying for you. See you this week! - LivingSeed"],
+  ["Personal greeting (one by one)", "Hello {first name}, thank you for being part of {class}. God bless you! - LivingSeed"]];
+const smsUserTpls = () => { try { return JSON.parse(localStorage.getItem("rll-sms-tpl") || "[]"); } catch (e) { return []; } };
+const smsRunKey = () => "rll-sms-run-" + (USER ? USER.id : "");
+const smsSaveRun = () => { try { if (SMS.run) localStorage.setItem(smsRunKey(), JSON.stringify(SMS.run)); else localStorage.removeItem(smsRunKey()); } catch (e) {} };
+function copyText(t, okMsg) {
+  const done = () => toast(okMsg || "Copied.");
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, () => fallback());
+  else fallback();
+  function fallback() { const x = document.createElement("textarea"); x.value = t; document.body.appendChild(x); x.select(); try { document.execCommand("copy"); done(); } catch (e) { toast("Could not copy.", true); } x.remove(); }
+}
+const firstClassOf = id => { const e = DATA.Enrollments.find(x => x.DiscipleID === id && (x.Status || "Enrolled") === "Enrolled" && isClassProg(progOf(x.ProgramID))); return e ? progLabel(e.ProgramID) : "our class"; };
+const smsFill = (t, d) => t.replace(/\{first name\}/gi, (d["First Name"] || "").trim() || "friend").replace(/\{class\}/gi, firstClassOf(d.DiscipleID));
+const hasPersonal = t => /\{(first name|class)\}/i.test(t);
+const cameSet = sid => DATA.Attendance.filter(a => a.SessionID === sid && cameSt(a.Status)).map(a => a.DiscipleID);
+
+/** Who a group stands for. */
+function smsGroupIds(g) {
+  if (g.type === "class") return enrolledIn(g.v);
+  if (g.type === "prog") { const sids = new Set(DATA.Sessions.filter(x => x.ProgramID === g.v).map(x => x.SessionID));
+    return [...new Set(enrolledIn(g.v).concat(DATA.Attendance.filter(a => sids.has(a.SessionID) && cameSt(a.Status)).map(a => a.DiscipleID)))]; }
+  if (g.type === "meet") return cameSet(g.v);
+  if (g.type === "dec") { const days = Number(g.days) || 0;
+    return [...new Set((DATA.Decisions || []).filter(x => (g.v === "-any" || String(x.Decision || "").split(/\s*,\s*/).includes(g.v)) && (!days || daysAgoOf(x.Date) <= days)).map(x => x.DiscipleID))]; }
+  if (g.type === "people") return g.ids || [];
+  if (g.type === "person") return [g.v];
+  return [];
+}
+function smsRecipients() {
+  const ids = new Set(); SMS.groups.forEach(g => smsGroupIds(g).forEach(i => ids.add(i)));
+  const list = [], noNum = [], noConsent = [], inactive = [], seen = {}; let shared = 0;
+  const line = $("#sLine").value, act = $("#sActive").checked, cons = $("#sConsent").checked;
+  [...ids].map(person).filter(Boolean).sort(byName).forEach(d => {
+    if (act && (d.Status || "Active") !== "Active") return inactive.push(d);
+    if (cons && String(d["Consent Given"] || "") !== "Yes") return noConsent.push(d);
+    const o = lrPhone(d["Orange #"]), l = lrPhone(d["Lonestar #"]);
+    const nums = [...new Set((line === "both" ? [o, l] : line === "lonestar" ? [l || o] : [o || l]).filter(Boolean))];
+    if (!nums.length) return noNum.push(d);
+    nums.forEach(n => { if (seen[n]) { shared++; return; } seen[n] = 1; list.push({id: d.DiscipleID, d, num: n}); });
+  });
+  return {list, people: new Set(list.map(x => x.id)).size, noNum, noConsent, inactive, shared, all: ids.size};
+}
+const groupLabel = g => g.type === "class" ? "Class: " + progLabel(g.v) : g.type === "prog" ? "Program: " + progLabel(g.v)
+  : g.type === "meet" ? "Came to " + (DATA.Sessions.find(x => x.SessionID === g.v) ? sessLabel(DATA.Sessions.find(x => x.SessionID === g.v)) : g.v)
+  : g.type === "dec" ? "Decision: " + (g.v === "-any" ? "any" : DEC_LABEL[g.v] || g.v) + (Number(g.days) ? ` · last ${g.days} days` : "")
+  : g.type === "people" ? "People screen: " + g.label : fullName(person(g.v) || {DiscipleID: g.v});
+
+function drawSmsPick() {
+  const t = $("#sType").value, box = $("#sPick");
+  const progs = DATA.Programs.filter(p => (p.Active || "Yes") !== "No");
+  const add = '<button type="button" class="btn small primary" id="sAdd">+ Add</button>';
+  if (t === "class" || t === "prog") {
+    const ps = progs.filter(p => t === "class" ? isClassProg(p) : !isClassProg(p));
+    box.innerHTML = ps.length ? `<div class="srow"><select id="sV">${ps.map(p => opt(p.ProgramID, p["Program Name"])).join("")}</select>${add}</div>` : '<p class="note">None you can message.</p>';
+  } else if (t === "meet") {
+    const ss = DATA.Sessions.filter(x => !isNoClass(x) && cameSet(x.SessionID).length).sort((a, b) => String(b.Date).localeCompare(String(a.Date))).slice(0, 150);
+    box.innerHTML = ss.length ? `<div class="srow"><select id="sV">${ss.map(x => opt(x.SessionID, sessLabel(x) + " · " + cameSet(x.SessionID).length + " came")).join("")}</select>${add}</div>` : '<p class="note">No marked meetings yet.</p>';
+  } else if (t === "dec") {
+    box.innerHTML = `<div class="srow"><select id="sV">${opt("-any", "Any decision")}${Object.keys(DEC_LABEL).map(k => opt(k, DEC_LABEL[k])).join("")}</select>
+      <select id="sDays">${opt("30", "Last 30 days")}${opt("90", "Last 3 months", true)}${opt("365", "Last 12 months")}${opt("0", "Any time")}</select>${add}</div>`;
+  } else if (t === "people") {
+    const n = (DIS.shown || DATA.Disciples.map(d => d.DiscipleID)).length;
+    box.innerHTML = `<div class="srow"><span class="note">${n} people · ${esc(typeof dfLabelText === "function" ? dfLabelText() : "Everyone")}</span>${add}</div>
+      <p class="note">Change the list with search and ⚙ Filters on the People screen, then come back here.</p>`;
+  } else {
+    box.innerHTML = `<input type="search" id="sFind" placeholder="Type a name or phone" autocomplete="off" aria-label="Find a person"><div class="plist sfound" id="sFound"></div>`;
+    $("#sFind").oninput = () => { const q = $("#sFind").value.trim().toLowerCase();
+      const hits = q.length < 2 ? [] : DATA.Disciples.filter(d => (fullName(d) + " " + (d["Orange #"] || "") + " " + (d["Lonestar #"] || "") + " " + d.DiscipleID).toLowerCase().includes(q)).slice(0, 8);
+      $("#sFound").innerHTML = hits.map(d => `<button type="button" class="prow" data-id="${esc(d.DiscipleID)}"><span class="r-main"><b>${esc(fullName(d))}</b><small>${esc(prettyPhone(lrPhone(d["Orange #"]) || lrPhone(d["Lonestar #"])) || "no valid number")}</small></span><span class="pill p-good">+ Add</span></button>`).join("") || (q.length >= 2 ? '<div class="empty">No match.</div>' : ""); };
+    $("#sFound").onclick = e => { const b = e.target.closest(".prow"); if (!b) return; if (!SMS.groups.some(g => g.type === "person" && g.v === b.dataset.id)) SMS.groups.push({type: "person", v: b.dataset.id}); $("#sFind").value = ""; $("#sFound").innerHTML = ""; drawSmsWho(); };
+    return;
+  }
+  const a = $("#sAdd"); if (!a) return;
+  a.onclick = () => {
+    const g = t === "people" ? {type: "people", ids: (DIS.shown || DATA.Disciples.map(d => d.DiscipleID)).slice(), label: typeof dfLabelText === "function" ? dfLabelText() : "Everyone"}
+      : {type: t, v: $("#sV").value, days: $("#sDays") ? $("#sDays").value : ""};
+    if (!SMS.groups.some(x => x.type === g.type && x.v === g.v && x.days === g.days && x.type !== "people")) SMS.groups.push(g);
+    drawSmsWho();
+  };
+}
+function drawSmsWho() {
+  $("#sGroups").innerHTML = SMS.groups.map((g, i) => `<button type="button" class="chip on" data-i="${i}" title="Remove">${esc(groupLabel(g))} · ${smsGroupIds(g).length} ✕</button>`).join("")
+    + (SMS.groups.length > 1 ? '<button type="button" class="chip" data-i="*">Clear all</button>' : "");
+  const r = smsRecipients(), box = $("#sSummary");
+  if (!SMS.groups.length) { box.innerHTML = '<p class="note">Add one or more groups. Someone in two groups gets the message once.</p>'; drawSmsCount(); return; }
+  const det = (title, arr, show) => arr.length ? `<details class="sdet"><summary>${title}</summary><div class="slist">${arr.slice(0, 300).map(show).join("")}</div></details>` : "";
+  box.innerHTML = `<div class="stats sstats">${ovTile("Will receive", r.list.length, `number${r.list.length === 1 ? "" : "s"} · ${r.people} ${r.people === 1 ? "person" : "people"}`)}
+      ${ovTile("No valid number", r.noNum.length, "left out", r.noNum.length ? "stat-warn" : "")}${$("#sConsent").checked ? ovTile("No consent", r.noConsent.length, "left out") : ""}</div>
+    ${det(`Show who will receive it (${r.list.length})`, r.list, x => `<div class="row"><span>${esc(fullName(x.d))}</span><span class="num">${esc(prettyPhone(x.num))}</span></div>`)}
+    ${det(`No valid number — fix these in People (${r.noNum.length})`, r.noNum, d => `<div class="row"><span>${esc(fullName(d))}</span><span class="num warnt">${esc([d["Orange #"], d["Lonestar #"]].filter(Boolean).join(" / ") || "no number")}</span></div>`)}
+    ${r.inactive.length ? `<p class="note">${r.inactive.length} inactive ${r.inactive.length === 1 ? "person" : "people"} left out.</p>` : ""}
+    ${r.shared ? `<p class="note">${r.shared} number${r.shared === 1 ? " is" : "s are"} shared by more than one person — sent once.</p>` : ""}`;
+  drawSmsCount();
+}
+function drawSmsCount() {
+  const t = $("#sText").value, c = smsParts(t), r = SMS.groups.length ? smsRecipients().list.length : 0;
+  $("#sCount").innerHTML = t ? `${c.len} characters · <b>${c.parts} SMS</b> per person${r ? ` · about <b>${c.parts * r} SMS</b> in all` : ""}`
+    + (c.parts > 1 ? `<div class="note">Longer than ${c.per} characters is fine: it arrives as one message, but your network charges it as ${c.parts} SMS for each person.</div>` : "")
+    + (c.odd.length ? `<div class="htip">Contains ${esc(c.odd.slice(0, 8).join(" "))} — with these each SMS holds only 70 characters, so it may cost more. <button type="button" class="btn small" id="sFix">Use plain quotes and dashes</button></div>` : "")
+    + (hasPersonal(t) && SMS.mode === "batch" ? '<div class="htip">{first name} and {class} only work when sending <b>One by one</b>.</div>' : "") : "";
+  const f = $("#sFix"); if (f) f.onclick = () => { $("#sText").value = $("#sText").value.replace(/[‘’‛′]/g, "'").replace(/[“”„″]/g, '"').replace(/[–—]/g, "-").replace(/…/g, "...").replace(/ /g, " "); drawSmsCount(); };
+}
+function drawSmsTpls() {
+  const u = smsUserTpls();
+  $("#sTpl").innerHTML = opt("", "Start from a template…") + SMS_TEMPLATES.map((x, i) => opt("b" + i, x[0])).join("") + u.map((x, i) => opt("u" + i, "★ " + x[0])).join("") + (u.length ? opt("del", "Delete one of my templates…") : "");
+}
+function drawSmsMode() {
+  if (!SMS.mode) SMS.mode = IS_IOS ? "one" : "batch";
+  $("#sMode").querySelectorAll("button").forEach(b => { b.setAttribute("aria-pressed", b.dataset.v === SMS.mode); b.disabled = IS_IOS && b.dataset.v === "batch"; });
+  let mass = false; try { mass = localStorage.getItem("rll-sms-mass") === "1"; } catch (e) {}
+  const where = !IS_ANDROID && !IS_IOS ? '<div class="htip">Open the app <b>on your phone</b> to send. On a computer you can still copy the numbers and the message.</div>' : "";
+  $("#sModeNote").innerHTML = where + (SMS.mode === "batch" ? `
+    <p class="note">Messages opens with up to <b>${SMS.batch}</b> numbers at a time. Everyone gets the same text as a <b>separate SMS</b>.</p>
+    <label class="sline">Numbers per batch <select id="sBatch">${[25, 50, 100].map(n => opt(String(n), String(n), n === SMS.batch)).join("")}</select></label>
+    <details class="sdet"${mass ? "" : " open"}><summary>One-time phone setting (so nobody sees the other numbers)</summary>
+      <ol class="hsteps"><li><b>Google Messages:</b> tap your profile picture → <b>Messages settings</b> → <b>Advanced</b> → <b>Group messaging</b> → choose <b>Mass text</b> (“Send an SMS reply to all recipients and get individual replies”).</li>
+      <li><b>Samsung Messages:</b> ⋮ → <b>Settings</b> → <b>More settings</b> → <b>Multimedia messages</b> → turn <b>Group conversations</b> off.</li>
+      <li>Optional: turn on <b>Get SMS delivery reports</b> in the same settings to see which arrived.</li></ol></details>
+    <label class="scheck"><input type="checkbox" id="sMass"${mass ? " checked" : ""}> My phone is set to send separate messages (Mass text)</label>`
+    : `<p class="note">Messages opens for one person at a time, with their name filled in. Tap Send, come back, and tap <b>Next</b>.${IS_IOS ? " On iPhone this is the only safe way: several numbers at once would make a group chat." : ""}</p>`);
+  const b = $("#sBatch"); if (b) b.onchange = () => { SMS.batch = Math.min(SMS_MAX_BATCH, Number(b.value) || SMS_MAX_BATCH); drawSmsMode(); };
+  const m = $("#sMass"); if (m) m.onchange = () => { try { localStorage.setItem("rll-sms-mass", m.checked ? "1" : "0"); } catch (e) {} };
+  drawSmsCount();
+}
+const smsLink = (nums, body) => "sms:" + nums.join(",") + (IS_IOS ? "&" : "?") + "body=" + encodeURIComponent(body);
+function drawSmsRun() {
+  const R_ = SMS.run, box = $("#sRun");
+  if (!R_) { box.innerHTML = ""; $("#sStart").hidden = false; return; }
+  $("#sStart").hidden = true;
+  const done = R_.items.filter(x => x.st === "sent").length, total = R_.items.length;
+  const head = `<div class="srunhd"><b>${done} of ${total} ${R_.mode === "batch" ? "batches" : "people"} sent</b><span class="sbar"><i style="width:${Math.round(100 * done / Math.max(1, total))}%"></i></span></div>`;
+  let body;
+  if (R_.mode === "batch") {
+    body = R_.items.map((b, i) => `<div class="sbatch ${b.st}" data-i="${i}"><div class="r-main"><b>Batch ${i + 1}</b><small>${b.nums.length} numbers${b.st === "sent" ? " · sent ✓" : b.st === "failed" ? " · not sent — open again" : b.st === "opened" ? " · did it send?" : ""}</small></div>
+      <div class="actions">${b.st === "sent" ? "" : `<a class="btn small primary" href="${esc(smsLink(b.nums, R_.text))}" data-open="${i}">Open Messages</a>`}
+      ${b.st === "opened" ? `<button type="button" class="btn small" data-ok="${i}">✓ Sent</button><button type="button" class="btn small" data-bad="${i}">✗ Didn't send</button>` : ""}
+      <button type="button" class="btn small" data-copy="${i}" title="Copy these numbers">Copy numbers</button></div></div>`).join("");
+  } else {
+    const i = R_.items.findIndex(x => x.st !== "sent" && x.st !== "skipped");
+    if (i < 0) body = '<div class="notice">Everyone has been done.</div>';
+    else { const x = R_.items[i], d = person(x.id) || {DiscipleID: x.id}, txt = smsFill(R_.text, d);
+      body = `<div class="sone"><div class="r-main"><b>${esc(fullName(d))}</b><small>${esc(prettyPhone(x.num))} · ${i + 1} of ${total}</small></div>
+        <div class="spreview">${esc(txt)}</div>
+        <div class="actions"><a class="btn primary" href="${esc(smsLink([x.num], txt))}" data-open="${i}">Open Messages</a>
+        ${x.st === "opened" ? `<button type="button" class="btn" data-ok="${i}">✓ Sent — next</button>` : ""}<button type="button" class="btn" data-skip="${i}">Skip</button></div></div>`; }
+  }
+  box.innerHTML = head + body + `<div class="actions" style="margin-top:10px"><button type="button" class="btn small" id="sCopyMsg">Copy message</button><button type="button" class="btn small" id="sFinish">${done >= total ? "Finish" : "Stop here"}</button></div>`;
+}
+function smsMark(i, st) {
+  const R_ = SMS.run; if (!R_) return;
+  R_.items[i].st = st; smsSaveRun(); drawSmsRun();
+  const sent = R_.items.filter(x => x.st === "sent").length;
+  if (st === "sent") api("updateSms", TOKEN, R_.id, sent, false).catch(() => {});
+}
+function renderSms() {
+  if (!$("#sType").dataset.wired) {
+    $("#sType").dataset.wired = 1;
+    $("#sType").onchange = drawSmsPick;
+    $("#sGroups").onclick = e => { const b = e.target.closest("[data-i]"); if (!b) return; if (b.dataset.i === "*") SMS.groups = []; else SMS.groups.splice(Number(b.dataset.i), 1); drawSmsWho(); };
+    ["sActive", "sConsent", "sLine"].forEach(id => $("#" + id).onchange = drawSmsWho);
+    $("#sText").oninput = drawSmsCount;
+    $("#sTpl").onchange = () => { const v = $("#sTpl").value, u = smsUserTpls(); $("#sTpl").value = "";
+      if (v === "del") { const n = prompt("Which of your templates should be deleted? Type its number:\n" + u.map((x, i) => (i + 1) + ". " + x[0]).join("\n")); const k = Number(n) - 1;
+        if (u[k]) { u.splice(k, 1); try { localStorage.setItem("rll-sms-tpl", JSON.stringify(u)); } catch (e) {} drawSmsTpls(); } return; }
+      const t = v[0] === "b" ? SMS_TEMPLATES[+v.slice(1)] : v[0] === "u" ? u[+v.slice(1)] : null;
+      if (t) { if (/\{/.test(t[1])) { SMS.mode = "one"; drawSmsMode(); } $("#sText").value = t[1]; drawSmsCount(); } };
+    $("#sSaveTpl").onclick = () => { const t = $("#sText").value.trim(); if (!t) return toast("Write the message first.", true);
+      const name = prompt("A short name for this template:"); if (!name) return; const u = smsUserTpls(); u.push([name.slice(0, 40), t]);
+      try { localStorage.setItem("rll-sms-tpl", JSON.stringify(u)); } catch (e) {} drawSmsTpls(); toast("Template saved on this phone."); };
+    document.querySelectorAll(".sins [data-ins]").forEach(b => b.onclick = () => { const ta = $("#sText"), p = ta.selectionStart || ta.value.length;
+      ta.value = ta.value.slice(0, p) + b.dataset.ins + ta.value.slice(ta.selectionEnd || p); ta.focus(); drawSmsCount(); });
+    $("#sMode").onclick = e => { const b = e.target.closest("button"); if (!b || b.disabled) return; SMS.mode = b.dataset.v; drawSmsMode(); };
+    $("#sStart").onclick = () => {
+      const err = $("#sErr"); err.textContent = "";
+      const r = smsRecipients(), text = $("#sText").value.trim();
+      if (!r.list.length) return err.textContent = "Nobody to send to — add a group with valid numbers.";
+      if (!text) return err.textContent = "Write the message.";
+      if (SMS.mode === "batch" && hasPersonal(text)) return err.textContent = "{first name} and {class} only work One by one. Choose One by one, or remove them.";
+      if (SMS.mode === "batch" && !$("#sMass").checked) return err.textContent = "First set your phone to send separate messages (Mass text), then tick the box — otherwise everyone would see each other's numbers.";
+      const items = SMS.mode === "batch"
+        ? Array.from({length: Math.ceil(r.list.length / SMS.batch)}, (_, i) => ({nums: r.list.slice(i * SMS.batch, (i + 1) * SMS.batch).map(x => x.num), st: ""}))
+        : r.list.map(x => ({id: x.id, num: x.num, st: ""}));
+      const aud = SMS.groups.map(groupLabel).join(" + ");
+      if (!confirm(`Send to ${r.list.length} number${r.list.length === 1 ? "" : "s"} (${SMS.mode === "batch" ? items.length + " batch" + (items.length === 1 ? "" : "es") : "one by one"})?\nAbout ${smsParts(text).parts * r.list.length} SMS from your phone's credit.`)) return;
+      act($("#sStart"), () => api("logSms", TOKEN, {personIds: [...new Set(r.list.map(x => x.id))], message: text, audience: aud, mode: SMS.mode, numbers: r.list.length, batches: items.length}),
+        "Ready — open Messages for each " + (SMS.mode === "batch" ? "batch." : "person."), err)
+        .then(res => { SMS.run = {id: res.smsId, mode: SMS.mode, text, items}; smsSaveRun(); drawSmsRun(); $("#sRun").scrollIntoView({behavior: "smooth", block: "start"}); }).catch(() => {});
+    };
+    $("#sRun").onclick = e => {
+      const R_ = SMS.run; if (!R_) return;
+      const o = e.target.closest("[data-open]"); if (o) { const i = +o.dataset.open; if (R_.items[i].st !== "sent") { R_.items[i].st = "opened"; smsSaveRun(); setTimeout(drawSmsRun, 400); } return; }
+      const ok = e.target.closest("[data-ok]"); if (ok) return smsMark(+ok.dataset.ok, "sent");
+      const bad = e.target.closest("[data-bad]"); if (bad) return smsMark(+bad.dataset.bad, "failed");
+      const sk = e.target.closest("[data-skip]"); if (sk) return smsMark(+sk.dataset.skip, "skipped");
+      const cp = e.target.closest("[data-copy]"); if (cp) return copyText(R_.items[+cp.dataset.copy].nums.join(", "), "Numbers copied — paste them into Messages.");
+      if (e.target.closest("#sCopyMsg")) return copyText(R_.text, "Message copied.");
+      if (e.target.closest("#sFinish")) {
+        const sent = R_.items.filter(x => x.st === "sent").length;
+        if (sent < R_.items.length && !confirm("Not everything is marked sent. Stop here anyway?")) return;
+        const id = R_.id; SMS.run = null; smsSaveRun(); drawSmsRun();
+        api("updateSms", TOKEN, id, sent, true).then(() => reload()).then(() => toast(`Recorded: ${sent} of ${R_.items.length} ${R_.mode === "batch" ? "batches" : "people"} sent.`)).catch(e2 => toast(e2.message, true));
+      }
+    };
+  }
+  if (!SMS.run) { try { const x = JSON.parse(localStorage.getItem(smsRunKey()) || "null"); if (x && x.items) SMS.run = x; } catch (e) {} }   // carry on after the phone closed the app
+  $("#sConsent").disabled = !PERMS.smsNoConsent; if (!PERMS.smsNoConsent) $("#sConsent").checked = true;
+  drawSmsTpls(); drawSmsPick(); drawSmsWho(); drawSmsMode(); drawSmsRun();
+  const L_ = DATA.SmsLog || [];
+  $("#sLog").innerHTML = L_.length ? `<div class="tbl-wrap"><table class="ovtbl"><thead><tr><th>Date</th><th>Sent to</th><th class="num">Numbers</th><th>Done</th><th>By</th></tr></thead><tbody>${L_.map(x =>
+    `<tr><td>${dstr(x.Started)}</td><td><details><summary>${esc(x.Audience || "")}</summary><div class="spreview">${esc(x.Message || "")}</div><small class="note">${esc(x.Mode || "")}</small></details></td><td class="num">${esc(x.Numbers)}</td><td>${esc(x["Batches Sent"])} of ${esc(x.Batches)} ${x.Mode === "One by one" ? "people" : "batches"}${x.Status === "Sending" ? " · in progress" : x.Status === "Stopped part-way" ? " · stopped" : ""}</td><td>${esc(x["By Name"] || "")}</td></tr>`).join("")}</tbody></table></div>`
+    : '<div class="empty">No messages sent yet.</div>';
+}
+
 function renderFu() {
   const G = fuGroups(), st = G.st;
   if (!FU.cat) FU.cat = G.dnew.length ? "dnew" : G.dfol.length ? "dfol" : G.absent.length ? "absent" : "parts";

@@ -36,7 +36,7 @@ The LivingSeed · Revival Labors Liberia discipleship tracker as an app people i
    1. Go to **Settings → Pages**.
    2. Under **Source**, choose **Deploy from a branch**, then select `main` and `/ (root)`.
    3. Click **Save**.
-5. **Open the app.** The address is `https://OWNER.github.io/REPOSITORY/rll-app/`. Pages can take 1–2 minutes after each upload. Sign in, then install it from the sign-in screen.
+5. **Open the app.** The address is `https://OWNER.github.io/REPOSITORY/rll-app/` (if you uploaded the folder) or `https://OWNER.github.io/REPOSITORY/` (if you uploaded the files at the top of the repository). Pages can take 1–2 minutes after each upload. Sign in, then install it from the sign-in screen.
 6. **Share** the app address and `…/rll-app/install.html` (the guide) with your users.
 
 ## Updating later
@@ -60,3 +60,10 @@ Every build has a new version number inside `sw.js`. Phones with the app see **"
 ## The old link still works
 
 The Apps Script link (`…/exec`) still opens the tracker in the browser, exactly as before.
+
+## Live address
+
+- **App:** https://duazonboystownlabors.github.io/duazonapp/. The files are at the top of the `duazonapp` repository.
+- **Install guide:** https://duazonboystownlabors.github.io/duazonapp/install.html
+- **How to use:** https://duazonboystownlabors.github.io/duazonapp/help.html. Add `?role=reg`, `cl`, `pl`, `co` or `cen` to open on one role.
+- **Public homepage:** stays on Google Sites. Its **Team sign-in** and **Team: install the app** links point to the addresses above.
