@@ -599,6 +599,67 @@ body.noscroll{overflow:hidden}
 #sPaste{width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--panel);color:var(--ink)}
 .sbarfoot{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:20;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
   background:var(--panel);border:1px solid var(--brand);border-radius:14px;padding:10px 14px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+
+/* counselor hand-off */
+.hoff{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;background:var(--panel)}
+.hoffhd{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}.hoffhd small{color:var(--ink-2)}
+.hrow{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.hrow .sp{border:0;flex:1;min-width:220px}
+.hrow .actions{gap:6px;align-items:center;padding:4px 0}
+.hoffbtns{margin-top:10px;align-items:center}
+.hoffask{margin-top:10px}
+
+/* Dashboard: needs your attention + four numbers */
+.attn{margin:4px 0 14px}
+.attn .hd h2{margin:0 0 8px}
+.acards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.acard{display:flex;flex-direction:column;justify-content:space-between;gap:10px;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--ink-3);border-radius:14px;padding:12px 14px}
+.acard.crit{border-left-color:var(--crit)}.acard.warn{border-left-color:var(--warn)}.acard.info{border-left-color:var(--brand)}
+.acard .atxt{display:flex;flex-direction:column;gap:3px}.acard .atxt b{font-size:16px}.acard .atxt span{color:var(--ink-2);font-size:14px}
+.acard .actions{gap:6px}
+.kpis.kpis4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.kpis.kpis4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.chg{display:block;font-size:12px;font-weight:700;margin-top:2px}.chg.up{color:var(--good)}.chg.down{color:var(--crit)}.chg.flat{color:var(--ink-3)}
+.dashmore{margin-top:4px}
+
+/* phone menu (☰): the screens open as a full list instead of a strip that slides sideways */
+.menubtn{display:none}
+@media (max-width:900px){
+  .rail{overflow:visible}
+  .menubtn{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;margin-left:auto;cursor:pointer;color:var(--rail-ink);font-weight:700;font-size:15px;
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:9px 14px;min-height:44px;max-width:62vw}
+  .menubtn #menuCur{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .menubtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .burger{display:inline-flex;flex-direction:column;gap:4px;flex:none}.burger i{display:block;width:18px;height:2px;border-radius:2px;background:currentColor}
+  .nav{display:none}
+  body.navopen{overflow:hidden}
+  body.navopen .nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;flex-direction:column;gap:4px;background:var(--rail);
+    padding:12px max(16px,env(safe-area-inset-left)) calc(20px + env(safe-area-inset-bottom));overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+  body.navopen .nav button{padding:14px 14px;font-size:17px;white-space:normal;border-radius:12px}
+  body.navopen .nav button svg{display:block;width:20px;height:20px}
+  body.navopen .nav button[hidden]{display:none}
+  body.navopen .nav .only-m{display:flex!important;margin-top:8px;border-top:1px solid rgba(255,255,255,.15);border-radius:0;padding-top:16px}
+}
+
+/* phone: bottom bar with the role's main screens + More (replaces the ☰ button on phones) */
+.tabbar{display:none}
+@media (max-width:900px){
+  .menubtn{display:none}
+  .tabbar:not([hidden]){display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--rail);
+    padding:6px max(6px,env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-right));box-shadow:0 -6px 20px rgba(0,0,0,.18)}
+  .tabbar button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:54px;padding:4px 2px;border-radius:12px;
+    color:var(--rail-dim);font-size:12px;font-weight:700;text-align:center;line-height:1.1}
+  .tabbar button svg{width:22px;height:22px}
+  .tabbar .burger{gap:4px;padding:3px 0}.tabbar .burger i{width:20px}
+  .tabbar button[aria-current="page"]{color:var(--rail-ink);background:var(--rail-on)}
+  .tabbar button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .tabbar button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  body:has(.tabbar:not([hidden])) .main{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  body.navopen .nav{bottom:calc(66px + env(safe-area-inset-bottom))}
+  #toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+  .updbar{bottom:calc(80px + env(safe-area-inset-bottom))}
+  .sbarfoot{bottom:calc(76px + env(safe-area-inset-bottom))}
+}
 </style>
 </head>
 <body>
@@ -607,7 +668,8 @@ body.noscroll{overflow:hidden}
   <aside class="rail">
     <div class="brand"><img class="logo" src="data:image/jpeg;base64,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" alt="LivingSeed — Duazon/Boystown Field">
       <div class="cap"><b>Revival Labors Liberia</b><span id="fieldName">Duazon/Boystown Field</span></div></div>
-    <nav class="nav" aria-label="Screens">
+    <button type="button" class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="navMenu"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span><span id="menuCur">Menu</span></button>
+    <nav class="nav" id="navMenu" aria-label="Screens">
       <button data-view="dash" aria-current="page"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Dashboard</button>
       <button data-view="cls" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3.5h5a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 0 7 12H2z"/><path d="M14 3.5H9.5A1.5 1.5 0 0 0 8 5v8.5A1.5 1.5 0 0 1 9.5 12H14z"/></svg>Class attendance</button>
       <button data-view="meet" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3M5.5 10l1.8 1.8L11 8.5"/></svg>Meetings</button>
@@ -648,7 +710,9 @@ body.noscroll{overflow:hidden}
       </div>
     </header>
 
-    <section class="kpis" id="kpis"></section>
+    <section class="attn" id="attnBox" aria-label="Needs your attention"></section>
+
+    <section class="kpis kpis4" id="kpis"></section>
 
     <div class="grid">
       <section class="panel c8">
@@ -656,18 +720,12 @@ body.noscroll{overflow:hidden}
         <div class="chart-wrap" id="trend"></div>
       </section>
       <section class="panel c4">
-        <div class="hd"><h2>Spiritual journey</h2><span class="note">Active disciples</span></div>
-        <div class="journey" id="journey"></div>
-        <div class="hd"><h2>Becoming disciples</h2><span class="note" id="growNote"></span></div>
-        <div id="growBars" style="display:flex;flex-direction:column;gap:7px"></div>
-        <div class="hd"><h2>Newcomers</h2><span class="note" id="newNote"></span></div>
-        <div id="newBars" style="display:flex;flex-direction:column;gap:9px"></div>
+        <div class="hd"><h2>Each class and program</h2><span class="note">Present + late ÷ expected</span></div>
+        <div id="progBars" style="display:flex;flex-direction:column;gap:10px"></div>
       </section>
-
-      <p class="section-title c12" id="attention">Needs attention</p>
-      <section class="panel c8">
+      <section class="panel c12" id="fuPanel" hidden>
         <div class="hd">
-          <h2>Disciples to follow up</h2>
+          <h2>People to follow up now</h2>
           <div class="tools">
             <button class="chip" data-flag="attn" aria-pressed="true" id="chipAttn">Needs attention</button>
             <button class="chip" data-flag="all" aria-pressed="false" id="chipAll">Everyone</button>
@@ -679,48 +737,7 @@ body.noscroll{overflow:hidden}
           <tbody id="tbody"></tbody>
         </table></div>
       </section>
-      <section class="panel c4">
-        <div class="hd"><h2>Discipler load</h2><span class="note">Disciples · flagged</span></div>
-        <div class="list" id="load"></div>
-        <div class="hd"><h2>Upcoming follow-ups</h2></div>
-        <div class="list" id="upcoming"></div>
-      </section>
-
-      <p class="section-title c12" id="programs">Programs</p>
-      <section class="panel c7">
-        <div class="hd"><h2>Attendance rate by program</h2><span class="note">Present + late ÷ expected</span></div>
-        <div id="progBars" style="display:flex;flex-direction:column;gap:10px"></div>
-      </section>
-      <section class="panel c5">
-        <div class="hd"><h2>Assignment completion</h2><span class="note">Done + late ÷ recorded</span></div>
-        <div id="asgBars" style="display:flex;flex-direction:column;gap:10px"></div>
-      </section>
-
-      <section class="panel c12">
-        <div class="hd"><h2>Attendance by meeting type</h2><span class="note">Meetings held in this period</span></div>
-        <div class="tbl-wrap"><table id="typeTbl">
-          <thead><tr><th>Meeting type</th><th class="num">Meetings</th><th class="num">Total attendance</th><th class="num">Average per meeting</th><th class="num">First-timers</th><th>Last held</th></tr></thead>
-          <tbody id="typeBody"></tbody></table></div>
-      </section>
-
-      <p class="section-title c12" id="people">Who we are discipling</p>
-      <section class="panel c4">
-        <div class="hd"><h2>Gender</h2></div>
-        <div class="split" id="genderSplit"></div>
-        <div class="legend" id="genderLegend"></div>
-        <div class="hd"><h2>Age groups</h2></div>
-        <div id="ageChart"></div>
-      </section>
-      <section class="panel c4">
-        <div class="hd"><h2>Work &amp; school</h2></div>
-        <div id="occBars" style="display:flex;flex-direction:column;gap:9px"></div>
-      </section>
-      <section class="panel c4">
-        <div class="hd"><h2>Marital status</h2></div>
-        <div id="marBars" style="display:flex;flex-direction:column;gap:9px"></div>
-        <div class="hd"><h2>Peace Houses</h2></div>
-        <div id="phBars" style="display:flex;flex-direction:column;gap:9px"></div>
-      </section>
+      <p class="note c12 dashmore">More charts — spiritual journey, newcomers, discipler load, assignments, meeting types, gender, age, work, marital status and Peace Houses — are on <a href="#" id="toStats">Statistics</a>.</p>
     </div>
 
     </div>
@@ -891,6 +908,52 @@ body.noscroll{overflow:hidden}
         </div></header>
       <section class="kpis" id="stKpis"></section>
       <div class="grid" id="stGrid"></div>
+    <div class="grid" id="stCharts">
+      <p class="section-title c12">Charts <span class="note" id="stChartNote"></span></p>
+      <section class="panel c4">
+        <div class="hd"><h2>Spiritual journey</h2><span class="note">Active disciples</span></div>
+        <div class="journey" id="journey"></div>
+        <div class="hd"><h2>Becoming disciples</h2><span class="note" id="growNote"></span></div>
+        <div id="growBars" style="display:flex;flex-direction:column;gap:7px"></div>
+        <div class="hd"><h2>Newcomers</h2><span class="note" id="newNote"></span></div>
+        <div id="newBars" style="display:flex;flex-direction:column;gap:9px"></div>
+      </section>
+      <section class="panel c4">
+        <div class="hd"><h2>Discipler load</h2><span class="note">Disciples · flagged</span></div>
+        <div class="list" id="load"></div>
+        <div class="hd"><h2>Upcoming follow-ups</h2></div>
+        <div class="list" id="upcoming"></div>
+      </section>
+      <section class="panel c5">
+        <div class="hd"><h2>Assignment completion</h2><span class="note">Done + late ÷ recorded</span></div>
+        <div id="asgBars" style="display:flex;flex-direction:column;gap:10px"></div>
+      </section>
+      <section class="panel c12">
+        <div class="hd"><h2>Attendance by meeting type</h2><span class="note">Meetings held in this period</span></div>
+        <div class="tbl-wrap"><table id="typeTbl">
+          <thead><tr><th>Meeting type</th><th class="num">Meetings</th><th class="num">Total attendance</th><th class="num">Average per meeting</th><th class="num">First-timers</th><th>Last held</th></tr></thead>
+          <tbody id="typeBody"></tbody></table></div>
+      </section>
+      <p class="section-title c12" id="people">Who we are discipling</p>
+      <section class="panel c4">
+        <div class="hd"><h2>Gender</h2></div>
+        <div class="split" id="genderSplit"></div>
+        <div class="legend" id="genderLegend"></div>
+        <div class="hd"><h2>Age groups</h2></div>
+        <div id="ageChart"></div>
+      </section>
+      <section class="panel c4">
+        <div class="hd"><h2>Work &amp; school</h2></div>
+        <div id="occBars" style="display:flex;flex-direction:column;gap:9px"></div>
+      </section>
+      <section class="panel c4">
+        <div class="hd"><h2>Marital status</h2></div>
+        <div id="marBars" style="display:flex;flex-direction:column;gap:9px"></div>
+        <div class="hd"><h2>Peace Houses</h2></div>
+        <div id="phBars" style="display:flex;flex-direction:column;gap:9px"></div>
+      </section>
+    </div>
+
     </div>
 
     <!-- ================= IMPORT REVIEW ================= -->
@@ -939,6 +1002,7 @@ body.noscroll{overflow:hidden}
     <span class="appver note" id="appVer"></span>
   </form>
 </div>
+<nav class="tabbar" id="tabbar" aria-label="Main screens" hidden></nav>
 <div class="helpov" id="helpOv" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
   <div class="helpbox">
     <div class="helphd"><h2 id="helpTitle">Help — how to use the app</h2><button type="button" class="btn small" id="helpClose">✕ Close</button></div>
@@ -948,7 +1012,7 @@ body.noscroll{overflow:hidden}
   <h2>Getting started</h2>
   <ol class="hsteps">
     <li><b>Sign in</b> with the access PIN your administrator gave you. Never share your PIN.</li>
-    <li><b>Find your way.</b> On a phone the screens are in the green bar at the top: slide it left or right to see them all. On a computer they are on the left.</li>
+    <li><b>Find your way.</b> On a phone, your main screens are the big buttons at the <b>bottom</b> of the screen. Tap <b>More</b> (bottom right) for every other screen, Help and Sign out. On a computer the screens are listed on the left.</li>
     <li><b>You only see what you are responsible for.</b> A class leader sees their class, a registrar sees the meetings given to them, and so on. Your name and role are shown at the top.</li>
     <li><b>Sign out</b> when you use someone else's phone: tap <b>Sign out</b> next to your name.</li>
   </ol>
@@ -960,9 +1024,11 @@ body.noscroll{overflow:hidden}
   <h2>Dashboard and statistics</h2>
   <figure class="shot"><img data-shot="dash.jpg" alt="The dashboard on a phone"></figure>
   <ul>
-    <li><b>Dashboard</b> shows attendance, new people, decisions and who needs follow-up. Leaders see only the classes and programs they lead.</li>
-    <li>Use the choices at the top (period, program, disciples or everyone) to change what the numbers cover.</li>
-    <li><b>Statistics</b> breaks the numbers down by area, church, age, gender, program and counselor. Every table has <b>Download</b> and <b>Copy</b>.</li>
+    <li><b>Needs your attention</b> lists only what someone should act on now — decisions waiting, counselor hand-offs, people to follow up, classes not marked, newcomers to invite, follow-ups due — each with a button that takes you there. When there is nothing, it says <b>All caught up</b>.</li>
+    <li><b>Four numbers</b> — attendance rate, people who came, new people and decisions — each with ▲ or ▼ compared with the period before.</li>
+    <li>The <b>attendance by week</b> chart and <b>each class and program</b> show where attendance is slipping. Leaders see only what they lead.</li>
+    <li>Use the choices at the top (program, people, period) to change what is counted.</li>
+    <li><b>Statistics</b> has the rest: spiritual journey, newcomers, discipler load, assignments, meeting types, gender, age, work, marital status, Peace Houses, and tables by area, church and counselor — every table can be downloaded.</li>
   </ul>
 </section>
 
@@ -1074,6 +1140,13 @@ body.noscroll{overflow:hidden}
     <li>For a decision, set its progress: <b>Contacted</b>, <b>Joined a class</b>, <b>Not reachable</b> or <b>Closed</b>. Save.</li>
   </ol>
   <div class="htip hrole-only" data-roles="cen adm"><b>Center leaders:</b> give each decision a counselor. Women counsel women and men counsel men — the app only offers counselors of the right gender.</div>
+  <h3 class="hrole-only" data-roles="cen adm">Counselor hand-off (center leaders)</h3>
+  <ol class="hsteps hrole-only" data-roles="cen adm">
+    <li>Open <b>Follow-ups → Counselor hand-off</b>. Each counselor is listed with the people given to them: <b>Not sent yet</b>, <b>Sent — waiting</b>, or <b>Reached ✓</b>.</li>
+    <li>Tick the people and tap <b>WhatsApp (full details)</b> — decision, phone, where they live, gender, age, marital status, work and church — or <b>SMS (short)</b> for counselors without a smartphone. Check the text, tap <b>Open WhatsApp</b> / <b>Open SMS</b>, send it, come back and tap <b>✓ Yes, record it</b>. Told them by phone or in person? Use those buttons instead.</li>
+    <li>When the counselor tells you they spoke with someone, tap <b>✓ Reached</b> (add a short note if you like) — or <b>✗ Not reachable</b>. The decision moves on and the history is kept in Follow-ups.</li>
+  </ol>
+  <p class="note hrole-only" data-roles="cen adm">Counselors do not need the app. If you change someone's counselor, the hand-off starts again for the new counselor.</p>
 </section>
 
 <section class="hs" id="h-people" data-roles="cl pl co cen adm">
@@ -1298,25 +1371,69 @@ function sparkline(vals) {
     <circle cx="${xs(vals.length-1)}" cy="${ys(vals.at(-1))}" r="3" fill="var(--brand)"/></svg>`;
 }
 
+/** Four numbers, each compared with the period before. */
 function renderKpis(M) {
-  const P = M.people, rated = P.filter(p => p.rate != null);
-  const avg = rated.length ? rated.reduce((s,p) => s + p.rate, 0) / rated.length : null;
-  const crit = P.filter(p => p.flag === "crit").length;
-  const newc = P.filter(p => parseD(p.d["Date Joined"]) >= new Date(TODAY - 90 * DAY)).length;
-  const meet = dashView().Sessions.filter(s => parseD(s.Date) >= M.from && (!state.program || s.ProgramID === state.program));
-  const comp = P.filter(p => p.comp != null), avgC = comp.length ? comp.reduce((s,p) => s + p.comp, 0) / comp.length : null;
-  const all = dashView().Disciples.filter(d => (d.Status || "Active") === "Active");
-  const nD = all.filter(isDisciple).length, nP = all.length - nD;
-  const became = all.filter(d => isDisciple(d) && parseD(d["Became Disciple"]) >= M.from).length;
-  const lab = state.cat === "Disciple" ? "Active disciples" : state.cat ? "Meeting participants" : "Everyone (active)";
+  const V = dashView(), days = Number(state.period) || 0, end = new Date(TODAY.getTime() + DAY), from = M.from;
+  const sess = {}; V.Sessions.forEach(s => { if (s.Status !== "No class" && (!state.program || s.ProgramID === state.program)) sess[s.SessionID] = parseD(s.Date); });
+  const catOk = id => { if (!state.cat) return true; const d = person(id); return d && catOf(d) === state.cat; };
+  const calc = (a, b) => {
+    let came = 0, abs = 0; const ppl = new Set();
+    V.Attendance.forEach(x => { const d = sess[x.SessionID]; if (!d || d < a || d >= b || !catOk(x.DiscipleID)) return;
+      if (x.Status === "Present" || x.Status === "Late" || x.Status === "Visitor") { came++; ppl.add(x.DiscipleID); } else if (x.Status === "Absent") abs++; });
+    const newp = V.Disciples.filter(d => { const j = parseD(d["Date Joined"]); return j && j >= a && j < b && (!state.cat || catOf(d) === state.cat); }).length;
+    const dec = (V.Decisions || []).filter(x => { const d = parseD(x.Date); return d && d >= a && d < b && (!state.program || x.ProgramID === state.program); }).length;
+    return {rate: came + abs ? came / (came + abs) : null, ppl: ppl.size, newp, dec};
+  };
+  const now = calc(from, end), before = days ? calc(new Date(from.getTime() - days * DAY), from) : null;
+  const chg = (a, b, isPct) => { if (!before || a == null || b == null) return "";
+    const d = isPct ? Math.round((a - b) * 100) : a - b; if (!d) return '<span class="chg flat">same as before</span>';
+    return `<span class="chg ${d > 0 ? "up" : "down"}">${d > 0 ? "▲" : "▼"} ${Math.abs(d)}${isPct ? " points" : ""} vs previous ${days} days</span>`; };
+  const per = days ? `last ${days} days` : "all time";
   const tiles = [
-    [lab, P.length, state.cat === "Disciple" ? `${nP} meeting participants · ${became} became disciples ${state.period ? "in this period" : "so far"}` : `${nD} disciples · ${nP} participants · ${newc} joined in last 90 days`],
-    ["Average attendance", pct(avg), "", sparkline(M.weeks.map(w => w.inn / w.exp))],
-    ["Need follow-up now", crit, crit ? "Absent too long or attending rarely" : "Everyone is on track", "", crit ? "alert" : ""],
-    ["Assignment completion", pct(avgC), `${P.filter(p => p.flag === "warn").length} behind on assignments`],
-    ["Meetings held", meet.length, `${M.typeStats.reduce((s, t) => s + t.total, 0)} attendances · ${M.typeStats.reduce((s, t) => s + t.firsts, 0)} first-timers · ${(dashView().Decisions || []).filter(x => parseD(x.Date) >= M.from && (!state.program || x.ProgramID === state.program)).length} decisions`],
-    ["Follow-ups (30 days)", M.fu30, "Calls, visits and prayer logged"]];
+    ["Attendance rate", pct(now.rate), `came ÷ expected · ${per}`, chg(now.rate, before && before.rate, true) + sparkline(M.weeks.map(w => w.inn / w.exp)), now.rate != null && now.rate < (M.set.minAttendance ?? .6) ? "alert" : ""],
+    ["People who came", now.ppl, per, chg(now.ppl, before && before.ppl)],
+    ["New people", now.newp, `joined · ${per}`, chg(now.newp, before && before.newp)],
+    ["Decisions", now.dec, per, chg(now.dec, before && before.dec)]];
   $("#kpis").innerHTML = tiles.map(([l, v, s, extra, cls]) => `<div class="kpi ${cls || ""}"><span class="lab">${l}</span><span class="val">${v}</span>${extra || ""}${s ? `<span class="sub">${s}</span>` : ""}</div>`).join("");
+}
+
+/** "Needs your attention": only what someone should act on now, each with its button. */
+function renderAttention(M) {
+  const V = dashView(), cards = [];
+  const card = (tone, title, text, btns) => cards.push(`<div class="acard ${tone}"><div class="atxt"><b>${title}</b><span>${text}</span></div><div class="actions">${btns}</div></div>`);
+  const dnew = (V.Decisions || []).filter(x => (x.Status || "New") === "New"), noC = dnew.filter(x => !x.CounselorID);
+  if (dnew.length && PERMS.followups) card("crit", `${dnew.length} decision${dnew.length === 1 ? "" : "s"} waiting`, noC.length ? `${noC.length} still need${noC.length === 1 ? "s" : ""} a counselor` : "All have a counselor — make sure they were reached", '<button type="button" class="btn small primary" data-go="fu:dnew">Open Follow-ups</button>');
+  if (typeof isTop === "function" && isTop()) {
+    const withC = DATA.Disciples.filter(d => d.CounselorID && (d.Status || "Active") === "Active");
+    const toSend = withC.filter(d => !d["Counselor Sent"] && !d["Counselor Reached"]).length, waiting = withC.filter(d => d["Counselor Sent"] && !d["Counselor Reached"]).length;
+    if (toSend || waiting) card(toSend ? "crit" : "warn", "Counselor hand-off", `${toSend} to send to their counselor · ${waiting} waiting to hear back`, '<button type="button" class="btn small primary" data-go="fu:hand">Open hand-off</button>');
+  }
+  const crit = M.people.filter(p => p.flag === "crit");
+  if (crit.length) card("crit", `${crit.length} ${crit.length === 1 ? "person needs" : "people need"} follow-up now`, "Absent too long or rarely coming",
+    `<button type="button" class="btn small" data-go="list">See the list</button>${PERMS.sms ? '<button type="button" class="btn small" data-go="msg:crit">✉ Message</button>' : ""}`);
+  if (PERMS.markClasses && PERMS.markClasses.length) {
+    const due = DATA.Programs.filter(p => isClassProg(p) && (p.Active || "Yes") !== "No" && PERMS.markClasses.includes(p.ProgramID) && classDay(p) >= 0)
+      .map(p => ({p, d: lastClassDate(p)})).filter(x => !classSess(x.p.ProgramID, x.d));
+    due.slice(0, 3).forEach(x => card("warn", `${esc(x.p["Program Name"])} not marked`, `Met ${dstr(x.d)} — mark attendance, or record “no class”`, `<button type="button" class="btn small primary" data-go="cls:${esc(x.p.ProgramID)}:${x.d}">Mark now</button>`));
+  }
+  const fc = {}; DATA.Attendance.forEach(a => { if (!(a.Status === "Present" || a.Status === "Late" || a.Status === "Visitor")) return; const s = DATA.Sessions.find(x => x.SessionID === a.SessionID); if (!s) return;
+    const d = String(s.Date).slice(0, 10); if (!fc[a.DiscipleID] || d < fc[a.DiscipleID]) fc[a.DiscipleID] = d; });
+  const newc = V.Disciples.filter(d => fc[d.DiscipleID] && daysAgoOf(fc[d.DiscipleID]) <= 60 && !inAnyClass(d.DiscipleID)).map(d => d.DiscipleID);
+  if (newc.length) card("info", `${newc.length} newcomer${newc.length === 1 ? "" : "s"} not in a class`, "First came in the last 60 days — invite them to a discipleship class",
+    PERMS.sms ? '<button type="button" class="btn small" data-go="msg:new">✉ Invite</button>' : PERMS.disciples ? '<button type="button" class="btn small" data-go="dis">Open People</button>' : "");
+  const due = M.fu.filter(f => parseD(f["Next Action Date"]) <= new Date(TODAY.getTime() + 2 * DAY));
+  if (due.length && PERMS.followups) card("warn", `${due.length} follow-up${due.length === 1 ? "" : "s"} due`, `${due.filter(f => parseD(f["Next Action Date"]) < TODAY).length} overdue`, '<button type="button" class="btn small" data-go="fu:">Open Follow-ups</button>');
+  if (PERMS.review && typeof REV !== "undefined" && REV.items) { const n = REV.items.filter(revOpen).length;
+    if (n) card("info", "Records to check", `${n} possible duplicate${n === 1 ? "" : "s"} or missing details from imports`, '<button type="button" class="btn small" data-go="rev">Import review</button>'); }
+  const box = $("#attnBox");
+  box.innerHTML = `<div class="hd"><h2>Needs your attention</h2></div>` + (cards.length ? `<div class="acards">${cards.join("")}</div>` : '<div class="notice">✓ All caught up — nothing needs action right now.</div>');
+  box.onclick = e => { const b = e.target.closest("[data-go]"); if (!b) return; const [k, a, c] = b.dataset.go.split(":");
+    if (k === "fu") { if (a) { FU.cat = a; FU.q = ""; } showView("fu"); }
+    else if (k === "list") { $("#fuPanel").hidden = false; $("#fuPanel").scrollIntoView({behavior: "smooth", block: "start"}); }
+    else if (k === "msg") messagePeople(a === "crit" ? crit.map(p => p.d.DiscipleID) : newc, a === "crit" ? "people who need follow-up now" : "newcomers not in a class");
+    else if (k === "cls") { CLS.prog = a; CLS.date = c; CLS.mode = "mark"; showView("cls"); }
+    else showView(k);
+  };
 }
 
 function renderTrend(M) {
@@ -1427,7 +1544,7 @@ function render() {
   const mine = dashView().Programs;
   const pn = state.program ? M.progName[state.program] : fullDash() ? "All programs" : `Your ${mine.length === 1 ? "program" : mine.length + " programs"}: ${mine.map(p => p["Program Name"]).join(", ")}`;
   $("#subtitle").textContent = `${pn} · ${state.period ? `since ${fmtD(M.from)}` : "all time"} · ${M.people.length} ${state.cat === "Disciple" ? "active disciples" : state.cat ? "meeting participants" : "people"}`;
-  renderKpis(M); renderTrend(M); renderJourney(M); renderTable(M); renderSide(M); renderPrograms(M); renderTypes(M); renderPeople(M);
+  renderAttention(M); renderKpis(M); renderTrend(M); renderTable(M); renderPrograms(M);
 }
 
 /* =====================================================================
@@ -1496,6 +1613,7 @@ function act(btn, call, okMsg, errEl) {
 }
 
 function showLogin(msg) {
+  const tb = document.getElementById("tabbar"); if (tb) tb.hidden = true; document.body.classList.remove("navopen");
   TOKEN = ""; VIEW = "";   // the next person to sign in starts on their own home screen
   try { sessionStorage.removeItem("rll-token"); } catch (e) {}
   $("#login").hidden = false; $("#loginErr").textContent = msg || ""; $("#pin").value = ""; setTimeout(() => $("#pin").focus(), 50);
@@ -1597,7 +1715,7 @@ function showWelcome(force) {
   const cards = WELCOME[roleKey()]; if (!cards || (!force && window.__NO_WELCOME__)) return;   // __NO_WELCOME__: automated tests only
   if (!force) { try { if (localStorage.getItem(welcomeKey())) return; } catch (e) { return; } }
   let i = 0;
-  const all = cards.concat([["Help is always here", "Tap <b>Help</b> in the menu any time for step-by-step guidance on the screen you are on."]]);
+  const all = cards.concat([["Help is always here", "Your main screens are at the bottom of the phone. Tap <b>More</b> for everything else, including <b>Help</b> — step-by-step guidance for the screen you are on."]]);
   const draw = () => { const [t, x] = all[i];
     $("#wStep").textContent = `${i + 1} of ${all.length}`; $("#wTitle").textContent = t; $("#wText").innerHTML = x;
     $("#wDots").innerHTML = all.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("");
@@ -1615,6 +1733,7 @@ function bootUser() {
   $("#avatar").textContent = $("#avatarM").textContent = ((USER.name || "").replace(/\(.*?\)/g, "").replace(/^(Pastor|Bro\.?|Sis\.?|Rev\.?|Dr\.?|Elder)\s+/i, "").match(/[A-Za-z]+/g) || ["?"]).map(w => w[0]).slice(0, 2).join("").toUpperCase();
   $("#modeBadge").textContent = "Live · " + USER.role;
   document.querySelectorAll(".nav [data-view]").forEach(b => b.hidden = !VIEW_ALLOWED(b.dataset.view));
+  buildTabbar();
   $("#dNew").hidden = !PERMS.register; $("#mNew").hidden = !PERMS.createMeeting; $("#dDl").hidden = !PERMS.download; $("#dMsg").hidden = !PERMS.sms;
   const sel = $("#fProgram"); sel.innerHTML = opt("", fullDash() ? "All programs" : "All my programs") + dashView().Programs.map(p => opt(p.ProgramID, p["Program Name"])).join("");
   try { const s = JSON.parse(localStorage.getItem("rll-dash") || "{}"); if (s.period != null) state.period = s.period; if (s.cat != null) state.cat = s.cat; if (s.program && dashView().Programs.some(p => p.ProgramID === s.program)) state.program = s.program; } catch (e) {}
@@ -1634,12 +1753,49 @@ function dirtyGuard() {
   if (anyDirty() && !confirm("You have changes that are not saved. Leave without saving?")) return true;
   MEET.dirty = CLS.dirty = ASG.dirty = DIS.dirty = SET.dirty = false; return false;
 }
+/* phone: the main screens for the role sit in a bar at the bottom; "More" opens the full list */
+const TAB_LABEL = {dash: "Home", cls: "Class", meet: "Meetings", dis: "People", sms: "Messages", fu: "Follow-ups", stats: "Stats", asg: "Assignments", me: "Profile", setup: "Users", rev: "Review", imp: "Import", log: "Log"};
+const TABS_FOR = {"Admin": ["dash", "dis", "meet", "fu"], "Center Leader": ["dash", "dis", "meet", "fu"], "Class Leader": ["dash", "cls", "dis", "sms"],
+  "Program Leader": ["dash", "meet", "dis", "sms"], "Meeting Registrar": ["meet", "cls", "help"], "Counselor": ["fu", "dis", "help"], "Viewer": ["dash", "stats", "help"]};
+const HELP_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.5"/><circle cx="8" cy="11.6" r=".5" fill="currentColor"/></svg>';
+function buildTabbar() {
+  const want = (TABS_FOR[USER.role] || ["dash", "dis", "meet", "fu"]).filter(v => v === "help" || VIEW_ALLOWED(v));
+  const others = [...document.querySelectorAll(".nav [data-view]")].map(b => b.dataset.view).filter(v => VIEW_ALLOWED(v) && !want.includes(v));
+  while (want.length < 4 && others.length) want.splice(want.includes("help") ? want.length - 1 : want.length, 0, others.shift());
+  const icon = v => v === "help" ? HELP_ICON : ((document.querySelector(`.nav [data-view="${v}"] svg`) || {}).outerHTML || "");
+  $("#tabbar").innerHTML = want.slice(0, 4).map(v => `<button type="button" ${v === "help" ? 'data-tab="help"' : `data-tab="${v}"`}>${icon(v)}<span>${v === "help" ? "Help" : TAB_LABEL[v] || v}</span></button>`).join("")
+    + '<button type="button" data-tab="more" id="tabMore" aria-expanded="false" aria-controls="navMenu"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span><span>More</span></button>';
+  $("#tabbar").hidden = false; markTab();
+}
+function markTab() {
+  if (!$("#tabbar")) return;
+  const open = document.body.classList.contains("navopen");
+  $("#tabbar").querySelectorAll("[data-tab]").forEach(b => { const on = open ? b.dataset.tab === "more" : b.dataset.tab === VIEW; if (on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  $("#tabMore").setAttribute("aria-expanded", String(open));
+}
+$("#tabbar").addEventListener("click", e => {
+  const b = e.target.closest("[data-tab]"); if (!b) return; const t = b.dataset.tab;
+  if (t === "more") { const open = !document.body.classList.contains("navopen"); if (open) openMenu(); else closeMenu(); return; }
+  closeMenu();
+  if (t === "help") openHelp(HELP_FOR_VIEW[VIEW]); else showView(t);
+});
+function openMenu() {
+  const r = document.querySelector(".rail").getBoundingClientRect(); $("#navMenu").style.top = Math.max(0, r.bottom) + "px";
+  document.body.classList.add("navopen"); $("#menuBtn").setAttribute("aria-expanded", "true"); markTab();
+  const c = $("#navMenu [aria-current]") || $("#navMenu button:not([hidden])"); if (c) c.focus();
+}
+/* (computers keep the side menu; the ☰ button is only a fallback for in-between widths) */
+function closeMenu() { document.body.classList.remove("navopen"); $("#menuBtn").setAttribute("aria-expanded", "false"); markTab(); }
+$("#menuBtn").addEventListener("click", () => { if (document.body.classList.contains("navopen")) closeMenu(); else openMenu(); });
+$("#navMenu").addEventListener("click", e => { if (e.target.closest("button")) closeMenu(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && document.body.classList.contains("navopen")) { closeMenu(); $("#menuBtn").focus(); } });
 function showView(v, force) {
   if (!force && v !== VIEW && dirtyGuard()) return;
   if (!VIEW_ALLOWED(v)) v = firstView();
   VIEW = v;
   document.querySelectorAll(".view").forEach(el => el.hidden = el.id !== "v-" + v);
   document.querySelectorAll(".nav [data-view]").forEach(b => { if (b.dataset.view === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  const cur = document.querySelector(`.nav [data-view="${v}"]`); $("#menuCur").textContent = cur ? cur.textContent.trim() : "Menu"; closeMenu(); markTab();
   RENDER[v]();
   if (!force) window.scrollTo(0, 0);
 }
@@ -1650,6 +1806,7 @@ addEventListener("beforeunload", e => { if (anyDirty()) { e.preventDefault(); e.
 const saveDash = () => { try { localStorage.setItem("rll-dash", JSON.stringify({period: state.period, program: state.program, cat: state.cat})); } catch (e) {} };
 $("#fProgram").addEventListener("change", e => { state.program = e.target.value; saveDash(); render(); });
 $("#fPeriod").addEventListener("change", e => { state.period = +e.target.value; saveDash(); render(); });
+$("#toStats").addEventListener("click", e => { e.preventDefault(); showView("stats"); });
 $("#fCat").addEventListener("change", e => { state.cat = e.target.value; state.limit = 25; saveDash(); render(); });
 $("#q").addEventListener("input", e => { state.q = e.target.value; state.limit = 25; renderTable(model()); });
 document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
@@ -2968,7 +3125,82 @@ const FU_CATS = [
   ["dfol", "Decisions in follow-up", "Contacted at least once. Keep in touch until they join a class — record each contact."],
   ["absent", "Absent disciples", "Disciples who have not attended for a while or attend rarely. Find out how they are and encourage them back."],
   ["parts", "Meeting participants", "People who come to meetings but are not yet in a class — last seen first. Build a relationship and invite them."],
-  ["ddone", "Decisions completed", "Joined a class or closed — kept for information."]];
+  ["ddone", "Decisions completed", "Joined a class or closed — kept for information."],
+  ["hand", "Counselor hand-off", "Send each counselor the people they must reach — by WhatsApp (full details) or SMS (short) — then record when the counselor tells you they reached them. Counselors do not need the app."]];
+const isTop = () => !!USER && ["Admin", "Center Leader"].includes(USER.role);
+/* ----- counselor hand-off ----- */
+const localPhone = n => n ? n.replace(/^\+231(\d{3})(\d{3})(\d{3})$/, "0$1 $2 $3") : "";
+const leaderPhone = l => l ? (lrPhone(l["Orange #"]) || lrPhone(l["Lonestar #"])) : "";
+const DEC_SHORT = {"Born again": "born again", "Rededicated to Christ": "rededicated", "Follow Jesus in discipleship": "discipleship", "Responded to the Word of God": "responded to the Word"};
+const handDec = d => decisionsOf(d.DiscipleID)[0];
+const handState = d => d["Counselor Reached"] ? "reached" : d["Counselor Sent"] ? "waiting" : "tosend";
+/** Full details for WhatsApp. */
+function handoffWhatsApp(c, people) {
+  const first = String(c["Full Name"] || "").replace(/^(bro|sis|pastor|rev|deacon|deaconess|mr|mrs|ms|elder)\.?\s+/i, "").split(" ")[0];
+  const blocks = people.map((d, i) => { const x = handDec(d), nums = [lrPhone(d["Orange #"]), lrPhone(d["Lonestar #"])].filter(Boolean).map(localPhone);
+    return [`*${i + 1}. ${fullName(d)}*`,
+      x ? `✝ ${DEC_LABEL[x.Decision] || x.Decision} — ${dstr(x.Date)}${x.Meeting ? " (" + x.Meeting + ")" : ""}` : "",
+      nums.length ? "📞 " + nums.join(" / ") : "📞 no number — ask the church office",
+      [d["Address / Community"], d["Peace House Code"] ? "Peace House " + d["Peace House Code"] : ""].filter(Boolean).length ? "📍 " + [d["Address / Community"], d["Peace House Code"] ? "Peace House " + d["Peace House Code"] : ""].filter(Boolean).join(" · ") : "",
+      [d.Gender, ageGroupOf(d) ? "age " + ageGroupOf(d) : "", d["Marital Status"]].filter(Boolean).length ? "👤 " + [d.Gender, ageGroupOf(d) ? "age " + ageGroupOf(d) : "", d["Marital Status"]].filter(Boolean).join(" · ") : "",
+      [d["Occupation / Trade"] || d["Occupation Status"], d["Church Name"] ? "Church: " + d["Church Name"] : ""].filter(Boolean).length ? "💼 " + [d["Occupation / Trade"] || d["Occupation Status"], d["Church Name"] ? "Church: " + d["Church Name"] : ""].filter(Boolean).join(" · ") : ""
+    ].filter(Boolean).join("\n"); });
+  return `*LivingSeed — counseling*\nHello ${first || "counselor"}, please follow up ${people.length === 1 ? "this person" : "these " + people.length + " people"}:\n\n${blocks.join("\n\n")}\n\nPlease call or visit within 3 days, pray with them and invite them to a discipleship class. When you have reached someone, reply with their number in this list, e.g. *1 reached*.`;
+}
+/** Short details for SMS (plain letters only, so it costs less). */
+function handoffSMS(c, people) {
+  const items = people.map((d, i) => { const x = handDec(d), num = (lrPhone(d["Orange #"]) || lrPhone(d["Lonestar #"]) || "").replace("+231", "0");
+    return `${i + 1}) ${fullName(d)}${num ? " " + num : ""}${d["Address / Community"] ? ", " + d["Address / Community"] : ""}${d.Gender ? ", " + d.Gender[0] : ""}${ageGroupOf(d) ? " " + ageGroupOf(d) : ""}${x ? ", " + (DEC_SHORT[x.Decision] || x.Decision) + " " + dstr(x.Date).replace(/, \d{4}$/, "") : ""}`; });
+  return `LivingSeed: please follow up ${items.join(". ")}. Call within 3 days and tell us when reached. Thanks!`;
+}
+function handoffHTML(arr) {
+  const by = {}; arr.forEach(d => { (by[d.CounselorID] = by[d.CounselorID] || []).push(d); });
+  const noC = (DATA.Decisions || []).filter(x => (x.Status || "New") === "New" && !x.CounselorID).length;
+  const ids = Object.keys(by).sort((a, b) => leaderName(a).localeCompare(leaderName(b)));
+  return (noC ? `<div class="notice warn">${noC} new decision${noC === 1 ? " has" : "s have"} no counselor yet — give them one under <b>New decisions</b> first.</div>` : "")
+    + (ids.length ? ids.map(cid => { const c = DATA.Leaders.find(l => String(l.LeaderID) === String(cid)) || {LeaderID: cid, "Full Name": leaderName(cid)};
+      const list = by[cid].sort((a, b) => ({tosend: 0, waiting: 1, reached: 2}[handState(a)] - {tosend: 0, waiting: 1, reached: 2}[handState(b)]) || byName(a, b));
+      const n = k => list.filter(d => handState(d) === k).length, ph = leaderPhone(c);
+      return `<div class="hoff" data-c="${esc(cid)}"><div class="hoffhd"><b>${esc(c["Full Name"])}</b><small>${ph ? esc(localPhone(ph)) : '<span class="warnt">no phone number — add it on Users &amp; programs</span>'} · <b>${n("tosend")}</b> to send · <b>${n("waiting")}</b> waiting to hear back · ${n("reached")} reached</small></div>
+        ${list.map(d => { const h = handState(d), x = handDec(d);
+          const stTxt = h === "tosend" ? '<span class="pill p-crit">Not sent yet</span>' : h === "waiting" ? `<span class="pill p-warn">Sent ${dstr(d["Counselor Sent"])} by ${esc(d["Counselor Sent Via"] || "")} — waiting</span>` : `<span class="pill p-good">Reached ${dstr(d["Counselor Reached"])} ✓</span>`;
+          return `<div class="hrow"><label class="sp"><input type="checkbox" data-p="${esc(d.DiscipleID)}"${h === "tosend" ? " checked" : ""}${h === "reached" ? " disabled" : ""}>
+            <span class="r-main"><b>${esc(fullName(d))}</b><small>${x ? "✝ " + esc(DEC_LABEL[x.Decision] || x.Decision) + " · " + dstr(x.Date) : "no decision recorded"}${d["Counselor Reached Note"] ? " · " + esc(d["Counselor Reached Note"]) : ""}</small></span></label>
+            <span class="actions">${stTxt}${h !== "tosend" && h !== "reached" ? `<button type="button" class="btn small" data-reach="${esc(d.DiscipleID)}">✓ Reached</button><button type="button" class="btn small" data-noreach="${esc(d.DiscipleID)}">✗ Not reachable</button>` : ""}</span></div>`; }).join("")}
+        <div class="actions hoffbtns"><span class="note">Send the ticked people:</span>
+          <button type="button" class="btn small primary" data-via="WhatsApp"${ph ? "" : " disabled"}>WhatsApp (full details)</button>
+          <button type="button" class="btn small" data-via="SMS"${ph ? "" : " disabled"}>SMS (short)</button>
+          <button type="button" class="btn small" data-via="Phone call">Told by phone call</button><button type="button" class="btn small" data-via="In person">Given in person</button></div>
+        <div class="hoffask" hidden></div></div>`; }).join("")
+      : '<div class="empty">Nobody is waiting for a counselor hand-off. Give people counselors under <b>New decisions</b>, or on their page in People.</div>');
+}
+function wireHandoff(list) {
+  list.onclick = e => {
+    const box = e.target.closest(".hoff"); if (!box) return;
+    const cid = box.dataset.c, c = DATA.Leaders.find(l => String(l.LeaderID) === String(cid)) || {"Full Name": leaderName(cid)};
+    const rb = e.target.closest("[data-reach],[data-noreach]");
+    if (rb) { const id = rb.dataset.reach || rb.dataset.noreach, ok = !!rb.dataset.reach;
+      const note = prompt(ok ? `${c["Full Name"]} reached ${fullName(person(id))}. Add a short note (optional), e.g. "visited her on Sunday":` : `${c["Full Name"]} could not reach ${fullName(person(id))}. Add a note (optional):`, "");
+      if (note === null) return;
+      act(rb, () => api("handoffReached", TOKEN, id, ok, todayStr(), note), ok ? "Recorded: reached ✓" : "Recorded: not reachable").catch(() => {}); return; }
+    const vb = e.target.closest("[data-via]"); if (!vb || vb.disabled) return;
+    const ids = [...box.querySelectorAll("input[data-p]:checked")].map(i => i.dataset.p);
+    if (!ids.length) return toast("Tick at least one person.", true);
+    const people = ids.map(person).filter(Boolean), via = vb.dataset.via, ph = leaderPhone(c), ask = box.querySelector(".hoffask");
+    const record = () => act(vb, () => api("handoffSent", TOKEN, cid, ids, via), `Recorded: ${ids.length} sent to ${c["Full Name"]} by ${via}.`).catch(() => {});
+    if (via === "Phone call" || via === "In person") { if (confirm(`Record that ${c["Full Name"]} was given ${ids.length === 1 ? fullName(people[0]) : ids.length + " people"} ${via === "Phone call" ? "by phone call" : "in person"}?`)) record(); return; }
+    const text = via === "WhatsApp" ? handoffWhatsApp(c, people) : handoffSMS(c, people);
+    const href = via === "WhatsApp" ? `https://wa.me/${ph.replace("+", "")}?text=${encodeURIComponent(text)}` : smsLink([ph], text);
+    ask.hidden = false;
+    ask.innerHTML = `<div class="spreview">${esc(text)}</div><div class="actions"><a class="btn small primary" href="${esc(href)}" target="_blank" rel="noopener" id="hoGo">Open ${via}</a><button type="button" class="btn small" id="hoCopy">Copy the text</button></div>
+      <div class="actions" id="hoDid" hidden><span class="note">Did the message go to ${esc(c["Full Name"])}?</span><button type="button" class="btn small primary" id="hoYes">✓ Yes, record it</button><button type="button" class="btn small" id="hoNo">✗ No</button></div>`;
+    ask.querySelector("#hoGo").onclick = () => setTimeout(() => { ask.querySelector("#hoDid").hidden = false; }, 500);
+    ask.querySelector("#hoCopy").onclick = () => { copyText(text, "Copied — paste it into " + via + "."); ask.querySelector("#hoDid").hidden = false; };
+    ask.querySelector("#hoYes").onclick = () => { ask.hidden = true; record(); };
+    ask.querySelector("#hoNo").onclick = () => { ask.hidden = true; };
+    ask.scrollIntoView({behavior: "smooth", block: "nearest"});
+  };
+}
 const decOpen = x => ["New", "Contacted", "Not reachable", ""].includes(x.Status || "New") ;
 const decisionsOf = id => (DATA.Decisions || []).filter(x => x.DiscipleID === id).sort((a, b) => String(b.Date).localeCompare(String(a.Date)));
 const counselorChoices = () => DATA.Leaders.filter(l => ["Counselor", "Center Leader", "Admin"].includes(l.Role)).sort((a, b) => a["Full Name"].localeCompare(b["Full Name"]));
@@ -2986,6 +3218,7 @@ function fuGroups() {
     dnew: D.filter(x => (x.Status || "New") === "New").sort((a, b) => String(b.Date).localeCompare(String(a.Date))),
     dfol: D.filter(x => ["Contacted", "Not reachable"].includes(x.Status)).sort((a, b) => String(a["Last Follow-up"] || a.Date).localeCompare(String(b["Last Follow-up"] || b.Date))),
     ddone: D.filter(x => ["Joined a class", "Closed"].includes(x.Status)).sort((a, b) => String(b.Date).localeCompare(String(a.Date))),
+    hand: isTop() ? people.filter(d => d.CounselorID && (!d["Counselor Reached"] || daysAgoOf(d["Counselor Reached"]) <= 14)) : [],
     absent: people.filter(d => isDisciple(d) && st[d.DiscipleID] && rank[st[d.DiscipleID].flag] != null)
       .sort((a, b) => (rank[st[a.DiscipleID].flag] - rank[st[b.DiscipleID].flag]) || (st[b.DiscipleID].days ?? 999) - (st[a.DiscipleID].days ?? 999)),
     parts: people.filter(d => !isDisciple(d)).sort((x, y) => { const a = st[x.DiscipleID] || {}, b = st[y.DiscipleID] || {}; return (a.last ? a.last.getTime() : 0) - (b.last ? b.last.getTime() : 0) || byName(x, y); })};
@@ -3338,7 +3571,7 @@ function renderSms() {
 function renderFu() {
   const G = fuGroups(), st = G.st;
   if (!FU.cat) FU.cat = G.dnew.length ? "dnew" : G.dfol.length ? "dfol" : G.absent.length ? "absent" : "parts";
-  $("#fCats").innerHTML = FU_CATS.map(([k, l]) => `<button class="chip" data-c="${k}" aria-pressed="${!FU.q && FU.cat === k}">${esc(l)} <b>${G[k].length}</b></button>`).join("");
+  $("#fCats").innerHTML = FU_CATS.filter(c => c[0] !== "hand" || isTop()).map(([k, l]) => `<button class="chip" data-c="${k}" aria-pressed="${!FU.q && FU.cat === k}">${esc(l)} <b>${G[k].length}</b></button>`).join("");
   const q = FU.q.trim().toLowerCase(), list = $("#fList");
   if (q) {
     const hits = G.people.filter(d => (fullName(d) + " " + d.DiscipleID + " " + phoneOf(d) + " " + (d["Lonestar #"] || "")).toLowerCase().includes(q)).sort(byName).slice(0, 40);
@@ -3353,7 +3586,8 @@ function renderFu() {
     $("#fCatTitle").textContent = title; $("#fCatHelp").textContent = help;
     $("#fCatNote").textContent = `${arr.length}`;
     const shown = arr.slice(0, FU.showN);
-    if (FU.cat.startsWith("d")) list.innerHTML = shown.length ? shown.map(decisionRow).join("") : `<div class="empty">${FU.cat === "dnew" ? "No new decisions waiting. 🙌" : "Nothing here."}</div>`;
+    if (FU.cat === "hand") { list.innerHTML = handoffHTML(arr); wireHandoff(list); }
+    else if (FU.cat.startsWith("d")) list.innerHTML = shown.length ? shown.map(decisionRow).join("") : `<div class="empty">${FU.cat === "dnew" ? "No new decisions waiting. 🙌" : "Nothing here."}</div>`;
     else if (FU.cat === "absent") list.innerHTML = shown.length ? shown.map(d => { const p = st[d.DiscipleID];
       return `<div class="row click" data-id="${esc(d.DiscipleID)}"><div class="r-main"><b>${esc(fullName(d))}</b><small>${p.last ? `Last attended ${fmtD(p.last)} (${p.days} days)` : "Not seen at a meeting yet"}${p.rate != null ? ` · ${pct(p.rate)} attendance` : ""}${phoneOf(d) ? " · " + esc(phoneOf(d)) : ""}</small></div>${pill(p.flag)}</div>`; }).join("") : '<div class="empty">Everyone is on track. 🙌</div>';
     else list.innerHTML = shown.length ? shown.map(d => { const p = st[d.DiscipleID] || {};
@@ -4100,7 +4334,15 @@ function statTable(id, title, note, head, rows, opts = {}) {
     ${opts.search ? `<div class="lsearch"><input type="search" data-stq="${id}" value="${esc(STAT.q[id] || "")}" placeholder="${esc(opts.search)}" aria-label="${esc(opts.search)}" autocomplete="off"><span class="note">${q ? `${rows.length} of ${total} shown` : ""}</span></div>` : ""}<div class="tbl-wrap"><table class="stat-t"><thead><tr>${head.map((h, i) => `<th class="${i ? "num" : ""}">${esc(h)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>${more}</section>`;
 }
 
+/** The charts that used to be on the Dashboard; they follow the Dashboard's program, people and period. */
+function renderStatCharts() {
+  const M = model();
+  renderJourney(M); renderSide(M); renderPrograms(M); renderTypes(M); renderPeople(M);
+  $("#stChartNote").innerHTML = `${state.program ? esc(M.progName[state.program]) : "All programs"} · ${state.cat === "Disciple" ? "disciples" : state.cat ? "meeting participants" : "everyone"} · ${state.period ? "last " + state.period + " days" : "all time"} — change these on the <a href="#" data-go-dash>Dashboard</a>`;
+  const a = $("#stChartNote [data-go-dash]"); if (a) a.onclick = e => { e.preventDefault(); showView("dash"); };
+}
 function renderStats() {
+  setTimeout(renderStatCharts, 0);
   $("#stSub").textContent = fullDash() ? "Who we have — by area, church, age, gender, program and counselor. Every table can be downloaded or copied."
     : `Only the people in what you lead: ${dashView().Programs.map(p => p["Program Name"]).join(", ")}. Every table can be downloaded or copied.`;
   $("#stCat").value = STAT.cat; $("#stStatus").value = STAT.status;
