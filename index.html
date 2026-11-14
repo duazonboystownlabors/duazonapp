@@ -675,6 +675,14 @@ body.noscroll{overflow:hidden}
 .logbar{border-color:var(--warn)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cbar .cb.wa{color:#7fd6a4}}
 :root[data-theme="dark"] .cbar .cb.wa{color:#7fd6a4}
+/* hand-off: one counselor card at a time */
+.hpager{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+.hpager select{flex:1;min-width:0;max-width:340px}
+.hpager .btn{min-width:42px;font-size:20px;line-height:1}
+.hpager .note{width:100%;font-size:12px}
+.hchg{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px;margin:4px 0 6px}
+.hchg select{max-width:100%}
+.btn.warnbtn{color:var(--crit,#b42318);border-color:currentColor}
 </style>
 </head>
 <body>
@@ -1158,8 +1166,9 @@ body.noscroll{overflow:hidden}
   <div class="htip hrole-only" data-roles="cen adm"><b>Center leaders:</b> give each decision a counselor. Women counsel women and men counsel men — the app only offers counselors of the right gender.</div>
   <h3 class="hrole-only" data-roles="cen adm">Counselor hand-off (center leaders)</h3>
   <ol class="hsteps hrole-only" data-roles="cen adm">
-    <li>Open <b>Follow-ups → Counselor hand-off</b>. Each counselor is listed with the people given to them: <b>Not sent yet</b>, <b>Sent — waiting</b>, or <b>Reached ✓</b>.</li>
+    <li>Open <b>Follow-ups → Counselor hand-off</b>. You see <b>one counselor at a time</b>, with the people given to them: <b>Not sent yet</b>, <b>Sent — waiting</b>, or <b>Reached ✓</b>. Flip to the next counselor with <b>‹ ›</b>, by swiping left or right, or by choosing a name from the list (it shows how many are left to send).</li>
     <li>Tick the people and tap <b>WhatsApp (full details)</b> — decision, phone, where they live, gender, age, marital status, work and church — or <b>SMS (short)</b> for counselors without a smartphone. If the counselor has no phone number saved, type it in <b>Send to number</b> (Orange 077…/076…, Lonestar 088…/055…); the app remembers it on this phone. Better: add it on <b>Users &amp; programs</b>. Check the text, tap <b>Open WhatsApp</b> / <b>Open SMS</b>, send it, come back and tap <b>✓ Yes, record it</b>. Told them by phone or in person? Use those buttons instead.</li>
+    <li>Wrong counselor? Tap <b>Change counselor</b> next to the person. Choose another counselor (same gender only) and tap <b>Move</b>, or tap <b>✗ Remove counselor (assigned by mistake)</b>. The hand-off starts again and a note is kept in Follow-ups.</li>
     <li>When the counselor tells you they spoke with someone, tap <b>✓ Reached</b> (add a short note if you like) — or <b>✗ Not reachable</b>. The decision moves on and the history is kept in Follow-ups.</li>
   </ol>
   <p class="note hrole-only" data-roles="cen adm">Counselors do not need the app. If you change someone's counselor, the hand-off starts again for the new counselor.</p>
@@ -3205,21 +3214,29 @@ function handoffSMS(c, people) {
     return `${i + 1}) ${fullName(d)}${num ? " " + num : ""}${d["Address / Community"] ? ", " + d["Address / Community"] : ""}${d.Gender ? ", " + d.Gender[0] : ""}${ageGroupOf(d) ? " " + ageGroupOf(d) : ""}${x ? ", " + (DEC_SHORT[x.Decision] || x.Decision) + " " + dstr(x.Date).replace(/, \d{4}$/, "") : ""}`; });
   return `LivingSeed: please follow up ${items.join(". ")}. Call within 3 days and tell us when reached. Thanks!`;
 }
+let HAND_CUR = "";   // the counselor card shown in the hand-off (one at a time)
 function handoffHTML(arr) {
   const by = {}; arr.forEach(d => { (by[d.CounselorID] = by[d.CounselorID] || []).push(d); });
   const noC = (DATA.Decisions || []).filter(x => (x.Status || "New") === "New" && !x.CounselorID).length;
   const ids = Object.keys(by).sort((a, b) => leaderName(a).localeCompare(leaderName(b)));
+  const toSendOf = cid => by[cid].filter(d => handState(d) === "tosend").length;
+  if (!ids.includes(HAND_CUR)) HAND_CUR = ids.find(cid => toSendOf(cid)) || ids[0] || "";
+  const at = ids.indexOf(HAND_CUR);
+  const pager = ids.length > 1 ? `<div class="hpager"><button type="button" class="btn small" data-hpage="-1" aria-label="Previous counselor"${at <= 0 ? " disabled" : ""}>‹</button>
+    <select id="hoPick" aria-label="Choose a counselor">${ids.map(cid => `<option value="${esc(cid)}"${cid === HAND_CUR ? " selected" : ""}>${esc(leaderName(cid))} — ${toSendOf(cid) ? toSendOf(cid) + " to send" : by[cid].length + " people"}</option>`).join("")}</select>
+    <button type="button" class="btn small" data-hpage="1" aria-label="Next counselor"${at >= ids.length - 1 ? " disabled" : ""}>›</button><span class="note">${at + 1} of ${ids.length} counselors</span></div>` : "";
   return (noC ? `<div class="notice warn">${noC} new decision${noC === 1 ? " has" : "s have"} no counselor yet — give them one under <b>New decisions</b> first.</div>` : "")
-    + (ids.length ? ids.map(cid => { const c = DATA.Leaders.find(l => String(l.LeaderID) === String(cid)) || {LeaderID: cid, "Full Name": leaderName(cid)};
+    + pager + (ids.length ? ids.map(cid => { const c = DATA.Leaders.find(l => String(l.LeaderID) === String(cid)) || {LeaderID: cid, "Full Name": leaderName(cid)};
       const list = by[cid].sort((a, b) => ({tosend: 0, waiting: 1, reached: 2}[handState(a)] - {tosend: 0, waiting: 1, reached: 2}[handState(b)]) || byName(a, b));
       const n = k => list.filter(d => handState(d) === k).length, ph = handPhone(c);
-      return `<div class="hoff" data-c="${esc(cid)}"><div class="hoffhd"><b>${esc(c["Full Name"])}</b><small>${ph ? esc(localPhone(ph)) : '<span class="warnt">no valid phone number on Users &amp; programs</span>'} · <b>${n("tosend")}</b> to send · <b>${n("waiting")}</b> waiting to hear back · ${n("reached")} reached</small></div>
+      return `<div class="hoff" data-c="${esc(cid)}"${cid === HAND_CUR ? "" : " hidden"}><div class="hoffhd"><b>${esc(c["Full Name"])}</b><small>${ph ? esc(localPhone(ph)) : '<span class="warnt">no valid phone number on Users &amp; programs</span>'} · <b>${n("tosend")}</b> to send · <b>${n("waiting")}</b> waiting to hear back · ${n("reached")} reached</small></div>
         ${list.map(d => { const h = handState(d), x = handDec(d);
           const stTxt = h === "tosend" ? '<span class="pill p-crit">Not sent yet</span>' : h === "waiting" ? `<span class="pill p-warn">Sent ${dstr(d["Counselor Sent"])} by ${esc(d["Counselor Sent Via"] || "")} — waiting</span>` : `<span class="pill p-good">Reached ${dstr(d["Counselor Reached"])} ✓</span>`;
           return `<div class="hrow"><label class="sp"><input type="checkbox" data-p="${esc(d.DiscipleID)}"${h === "tosend" ? " checked" : ""}${h === "reached" ? " disabled" : ""}>
             <span class="r-main"><b>${esc(fullName(d))}</b><small>${x ? "✝ " + esc(DEC_LABEL[x.Decision] || x.Decision) + " · " + dstr(x.Date) : "no decision recorded"}${d["Counselor Reached Note"] ? " · " + esc(d["Counselor Reached Note"]) : ""}</small></span></label>
             <div class="hcontact">${contactBar(d, true)}</div>
-            <span class="actions">${stTxt}${h !== "tosend" && h !== "reached" ? `<button type="button" class="btn small" data-reach="${esc(d.DiscipleID)}">✓ Reached</button><button type="button" class="btn small" data-noreach="${esc(d.DiscipleID)}">✗ Not reachable</button>` : ""}</span></div>`; }).join("")}
+            <span class="actions">${stTxt}${h !== "tosend" && h !== "reached" ? `<button type="button" class="btn small" data-reach="${esc(d.DiscipleID)}">✓ Reached</button><button type="button" class="btn small" data-noreach="${esc(d.DiscipleID)}">✗ Not reachable</button>` : ""}<button type="button" class="btn small ghost" data-chg="${esc(d.DiscipleID)}" title="Assigned the wrong counselor? Change or remove">Change counselor</button></span>
+            <div class="hchg" data-chgbox="${esc(d.DiscipleID)}" hidden></div></div>`; }).join("")}
         <label class="sline hophone">Send to number <input type="tel" inputmode="tel" data-cphone value="${esc(ph ? localPhone(ph) : "")}" placeholder="e.g. 0776 123 456"></label>
         <div class="actions hoffbtns"><span class="note">Send the ticked people:</span>
           <button type="button" class="btn small primary" data-via="WhatsApp">WhatsApp (full details)</button>
@@ -3229,9 +3246,37 @@ function handoffHTML(arr) {
       : '<div class="empty">Nobody is waiting for a counselor hand-off. Give people counselors under <b>New decisions</b>, or on their page in People.</div>');
 }
 function wireHandoff(list) {
+  const show = cid => { HAND_CUR = cid; list.querySelectorAll(".hoff").forEach(b => { b.hidden = b.dataset.c !== cid; });
+    const ids = [...list.querySelectorAll(".hoff")].map(b => b.dataset.c), at = ids.indexOf(cid), pg = list.querySelector(".hpager");
+    if (pg) { pg.querySelector("#hoPick").value = cid; pg.querySelector('[data-hpage="-1"]').disabled = at <= 0; pg.querySelector('[data-hpage="1"]').disabled = at >= ids.length - 1; pg.querySelector(".note").textContent = `${at + 1} of ${ids.length} counselors`; } };
+  const step = k => { const ids = [...list.querySelectorAll(".hoff")].map(b => b.dataset.c), at = ids.indexOf(HAND_CUR) + k; if (at >= 0 && at < ids.length) show(ids[at]); };
+  const pick = list.querySelector("#hoPick"); if (pick) pick.onchange = () => show(pick.value);
+  let sx = null, sy = 0;   // swipe left / right to flip between counselors
+  list.ontouchstart = e => { if (e.target.closest("input,select,textarea,.spreview")) { sx = null; return; } sx = e.touches[0].clientX; sy = e.touches[0].clientY; };
+  list.ontouchend = e => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > 2 * Math.abs(dy)) step(dx < 0 ? 1 : -1); };
   list.onclick = e => {
+    const pb = e.target.closest("[data-hpage]"); if (pb) { step(+pb.dataset.hpage); list.querySelector(".hpager").scrollIntoView({block: "nearest"}); return; }
     const box = e.target.closest(".hoff"); if (!box) return;
     const cid = box.dataset.c, c = DATA.Leaders.find(l => String(l.LeaderID) === String(cid)) || {"Full Name": leaderName(cid)};
+    const cb = e.target.closest("[data-chg]");
+    if (cb) { const pid = cb.dataset.chg, d = person(pid), pane = box.querySelector(`[data-chgbox="${CSS.escape(pid)}"]`);
+      if (!pane.hidden) { pane.hidden = true; return; }
+      const opts = counselorsFor(d).filter(l => String(l.LeaderID) !== String(cid) && String(l.Active || "Yes").trim() !== "No");
+      pane.hidden = false;
+      pane.innerHTML = `${opts.length ? "" : "<!--none-->"}<div class="sline"${opts.length ? "" : " hidden"}><label>Move ${esc(fullName(d))} to <select data-newc><option value="">— choose a counselor —</option>${opts.map(l => `<option value="${esc(l.LeaderID)}">${esc(l["Full Name"])}</option>`).join("")}</select></label></div>
+        <div class="actions">${opts.length ? '<button type="button" class="btn small primary" data-chgdo="move">Move</button>' : ""}<button type="button" class="btn small warnbtn" data-chgdo="remove">✗ Remove counselor (assigned by mistake)</button><button type="button" class="btn small" data-chgdo="cancel">Cancel</button></div>
+        <p class="note">${opts.length ? "" : "No other counselor of the right gender — add one on Users &amp; programs. "}The hand-off starts again and a note is kept in Follow-ups.</p>`;
+      return; }
+    const cd = e.target.closest("[data-chgdo]");
+    if (cd) { const pane = cd.closest(".hchg"), pid = pane.dataset.chgbox, d = person(pid);
+      if (cd.dataset.chgdo === "cancel") { pane.hidden = true; return; }
+      const to = cd.dataset.chgdo === "move" ? pane.querySelector("[data-newc]").value : "";
+      if (cd.dataset.chgdo === "move" && !to) return toast("Choose the counselor to move them to.", true);
+      const why = prompt(to ? `Move ${fullName(d)} from ${c["Full Name"]} to ${leaderName(to)}? Add a reason (optional):` : `Remove ${c["Full Name"]} as ${fullName(d)}'s counselor? Add a reason (optional), e.g. "assigned by mistake":`, to ? "" : "Assigned by mistake");
+      if (why === null) return;
+      act(cd, () => api("changeCounselor", TOKEN, pid, to, why), to ? `${fullName(d)} moved to ${leaderName(to)}.` : `Counselor removed. Give ${fullName(d)} the right counselor under New decisions or on their page.`).catch(() => {});
+      return; }
     const rb = e.target.closest("[data-reach],[data-noreach]");
     if (rb) { const id = rb.dataset.reach || rb.dataset.noreach, ok = !!rb.dataset.reach;
       const note = prompt(ok ? `${c["Full Name"]} reached ${fullName(person(id))}. Add a short note (optional), e.g. "visited her on Sunday":` : `${c["Full Name"]} could not reach ${fullName(person(id))}. Add a note (optional):`, "");

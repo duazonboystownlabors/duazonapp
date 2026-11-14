@@ -4,7 +4,7 @@
      apps or sites go straight to the network untouched.
    - Its storage is named "rll-discipleship-…" and it only ever deletes its own old copies,
      so other installed apps on the same website are not affected. */
-const VERSION = "2026.11.14-2120";
+const VERSION = "1.0.1";
 const PREFIX = "rll-discipleship-";
 const CACHE = PREFIX + VERSION;
 const SHELL = ["./", "index.html", "pwa.js", "manifest.webmanifest", "install.html", "help.html",

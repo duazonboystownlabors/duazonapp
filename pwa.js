@@ -3,7 +3,7 @@
    It only looks after this app's own folder: other installed apps are never touched. */
 (function () {
   "use strict";
-  var VERSION = "2026.11.14-2120";
+  var VERSION = "1.0.1";
   var $ = function (s) { return document.querySelector(s); };
   var ver = $("#appVer"); if (ver) ver.textContent = "App version " + VERSION;
 
