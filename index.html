@@ -660,6 +660,21 @@ body.noscroll{overflow:hidden}
   .updbar{bottom:calc(80px + env(safe-area-inset-bottom))}
   .sbarfoot{bottom:calc(76px + env(safe-area-inset-bottom))}
 }
+
+/* call · SMS · WhatsApp buttons */
+.cbar{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.cbar .cb{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;text-decoration:none;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:6px 11px;min-height:34px;box-sizing:border-box}
+.cbar .cb.call{background:var(--brand-soft);border-color:transparent}
+.cbar .cb.wa{color:#0b6b3a}
+.cbar.small .cb{font-size:12px;padding:5px 9px;min-height:30px}
+.cbar.none{font-size:12px;color:var(--ink-3)}
+.cbar .cb:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hcontact{width:100%;padding:0 0 6px 32px}
+.hophone{margin:8px 0 0}.hophone input{max-width:200px}
+.btn.ghost{background:transparent}
+.logbar{border-color:var(--warn)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cbar .cb.wa{color:#7fd6a4}}
+:root[data-theme="dark"] .cbar .cb.wa{color:#7fd6a4}
 </style>
 </head>
 <body>
@@ -1024,7 +1039,7 @@ body.noscroll{overflow:hidden}
   <h2>Dashboard and statistics</h2>
   <figure class="shot"><img data-shot="dash.jpg" alt="The dashboard on a phone"></figure>
   <ul>
-    <li><b>Needs your attention</b> lists only what someone should act on now — decisions waiting, counselor hand-offs, people to follow up, classes not marked, newcomers to invite, follow-ups due — each with a button that takes you there. When there is nothing, it says <b>All caught up</b>.</li>
+    <li><b>Needs your attention</b> lists only what someone should act on now — decisions waiting, counselor hand-offs, people to follow up, classes not marked, newcomers to invite, follow-ups due — each with a button that takes you there. When there is nothing, it says <b>All caught up</b>. Dealt with a card? Tap <b>✓ Done</b>; it comes back only when someone new needs attention. People you have logged a follow-up for in the last 2 weeks leave the list by themselves. <b>Show … done</b> brings hidden cards back.</li>
     <li><b>Four numbers</b> — attendance rate, people who came, new people and decisions — each with ▲ or ▼ compared with the period before.</li>
     <li>The <b>attendance by week</b> chart and <b>each class and program</b> show where attendance is slipping. Leaders see only what they lead.</li>
     <li>Use the choices at the top (program, people, period) to change what is counted.</li>
@@ -1136,6 +1151,7 @@ body.noscroll{overflow:hidden}
   <figure class="shot"><img data-shot="followups.jpg" alt="Follow-ups"></figure>
   <ol class="hsteps">
     <li>Tap a person (or search a name or phone).</li>
+    <li>Contact them straight from the app: <b>📞</b> calls, <b>💬 SMS</b> opens a text message, <b>WhatsApp</b> opens a chat. The same buttons are on the dashboard list, decisions and class lists. When you come back, the app offers <b>Log follow-up</b> with how you contacted them already filled in.</li>
     <li>Under <b>Log a follow-up</b>, choose how you reached them, write <b>what happened</b>, and the next step if there is one.</li>
     <li>For a decision, set its progress: <b>Contacted</b>, <b>Joined a class</b>, <b>Not reachable</b> or <b>Closed</b>. Save.</li>
   </ol>
@@ -1143,7 +1159,7 @@ body.noscroll{overflow:hidden}
   <h3 class="hrole-only" data-roles="cen adm">Counselor hand-off (center leaders)</h3>
   <ol class="hsteps hrole-only" data-roles="cen adm">
     <li>Open <b>Follow-ups → Counselor hand-off</b>. Each counselor is listed with the people given to them: <b>Not sent yet</b>, <b>Sent — waiting</b>, or <b>Reached ✓</b>.</li>
-    <li>Tick the people and tap <b>WhatsApp (full details)</b> — decision, phone, where they live, gender, age, marital status, work and church — or <b>SMS (short)</b> for counselors without a smartphone. Check the text, tap <b>Open WhatsApp</b> / <b>Open SMS</b>, send it, come back and tap <b>✓ Yes, record it</b>. Told them by phone or in person? Use those buttons instead.</li>
+    <li>Tick the people and tap <b>WhatsApp (full details)</b> — decision, phone, where they live, gender, age, marital status, work and church — or <b>SMS (short)</b> for counselors without a smartphone. If the counselor has no phone number saved, type it in <b>Send to number</b> (Orange 077…/076…, Lonestar 088…/055…); the app remembers it on this phone. Better: add it on <b>Users &amp; programs</b>. Check the text, tap <b>Open WhatsApp</b> / <b>Open SMS</b>, send it, come back and tap <b>✓ Yes, record it</b>. Told them by phone or in person? Use those buttons instead.</li>
     <li>When the counselor tells you they spoke with someone, tap <b>✓ Reached</b> (add a short note if you like) — or <b>✗ Not reachable</b>. The decision moves on and the history is kept in Follow-ups.</li>
   </ol>
   <p class="note hrole-only" data-roles="cen adm">Counselors do not need the app. If you change someone's counselor, the hand-off starts again for the new counselor.</p>
@@ -1203,6 +1219,7 @@ body.noscroll{overflow:hidden}
     <div class="wdots" id="wDots"></div>
     <div class="wact"><button type="button" class="btn" id="wSkip">Skip</button><button type="button" class="btn primary" id="wNext">Next</button></div></div>
 </div>
+<div class="updbar logbar" id="logBar" role="status" hidden></div>
 <div class="updbar" id="updBar" role="status" hidden><span>A new version of the app is ready.</span><button type="button" class="btn small primary" id="updBtn">Update now</button><button type="button" class="btn small" id="updLater">Later</button></div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <div id="tip" hidden></div>
@@ -1399,35 +1416,47 @@ function renderKpis(M) {
 
 /** "Needs your attention": only what someone should act on now, each with its button. */
 function renderAttention(M) {
-  const V = dashView(), cards = [];
-  const card = (tone, title, text, btns) => cards.push(`<div class="acard ${tone}"><div class="atxt"><b>${title}</b><span>${text}</span></div><div class="actions">${btns}</div></div>`);
+  const V = dashView(), cards = [], doneKey = "rll-attn-done-" + USER.id;
+  let done = {}; try { done = JSON.parse(localStorage.getItem(doneKey) || "{}") || {}; } catch (e) {}
+  const hiddenN = {n: 0};
+  /** A card shows only while something in it is still new: "✓ Done" hides it until new people or items appear. */
+  const card = (tone, title, text, btns, key, ids) => {
+    if (key && ids && ids.length && ids.every(i => (done[key] || []).includes(i))) { hiddenN.n++; return; }
+    cards.push(`<div class="acard ${tone}"><div class="atxt"><b>${title}</b><span>${text}</span></div><div class="actions">${btns}${key && ids ? `<button type="button" class="btn small ghost" data-done="${key}" data-ids="${esc(ids.join(","))}" title="Hide this until something new comes in">✓ Done</button>` : ""}</div></div>`); };
+  const recentFU = new Set((DATA.FollowUps || []).filter(f => daysAgoOf(f.Date) <= 14).map(f => f.DiscipleID));   // contacted in the last 2 weeks
   const dnew = (V.Decisions || []).filter(x => (x.Status || "New") === "New"), noC = dnew.filter(x => !x.CounselorID);
-  if (dnew.length && PERMS.followups) card("crit", `${dnew.length} decision${dnew.length === 1 ? "" : "s"} waiting`, noC.length ? `${noC.length} still need${noC.length === 1 ? "s" : ""} a counselor` : "All have a counselor — make sure they were reached", '<button type="button" class="btn small primary" data-go="fu:dnew">Open Follow-ups</button>');
+  if (dnew.length && PERMS.followups) card("crit", `${dnew.length} decision${dnew.length === 1 ? "" : "s"} waiting`, noC.length ? `${noC.length} still need${noC.length === 1 ? "s" : ""} a counselor` : "All have a counselor — make sure they were reached", '<button type="button" class="btn small primary" data-go="fu:dnew">Open Follow-ups</button>', "dec", dnew.map(x => x.DecisionID + ":" + (x.CounselorID || "")));
   if (typeof isTop === "function" && isTop()) {
     const withC = DATA.Disciples.filter(d => d.CounselorID && (d.Status || "Active") === "Active");
     const toSend = withC.filter(d => !d["Counselor Sent"] && !d["Counselor Reached"]).length, waiting = withC.filter(d => d["Counselor Sent"] && !d["Counselor Reached"]).length;
-    if (toSend || waiting) card(toSend ? "crit" : "warn", "Counselor hand-off", `${toSend} to send to their counselor · ${waiting} waiting to hear back`, '<button type="button" class="btn small primary" data-go="fu:hand">Open hand-off</button>');
+    if (toSend || waiting) card(toSend ? "crit" : "warn", "Counselor hand-off", `${toSend} to send to their counselor · ${waiting} waiting to hear back`, '<button type="button" class="btn small primary" data-go="fu:hand">Open hand-off</button>', "hand",
+      withC.filter(d => !d["Counselor Reached"]).map(d => d.DiscipleID + ":" + (d["Counselor Sent"] ? "s" : "n")));
   }
-  const crit = M.people.filter(p => p.flag === "crit");
-  if (crit.length) card("crit", `${crit.length} ${crit.length === 1 ? "person needs" : "people need"} follow-up now`, "Absent too long or rarely coming",
-    `<button type="button" class="btn small" data-go="list">See the list</button>${PERMS.sms ? '<button type="button" class="btn small" data-go="msg:crit">✉ Message</button>' : ""}`);
+  const crit = M.people.filter(p => p.flag === "crit" && !recentFU.has(p.d.DiscipleID));   // once someone is contacted (follow-up logged) they leave this card
+  if (crit.length) card("crit", `${crit.length} ${crit.length === 1 ? "person needs" : "people need"} follow-up now`, "Absent too long or rarely coming — call or message them, then log it",
+    `<button type="button" class="btn small" data-go="list">See the list</button>${PERMS.sms ? '<button type="button" class="btn small" data-go="msg:crit">✉ Message</button>' : ""}`, "crit", crit.map(p => p.d.DiscipleID));
   if (PERMS.markClasses && PERMS.markClasses.length) {
     const due = DATA.Programs.filter(p => isClassProg(p) && (p.Active || "Yes") !== "No" && PERMS.markClasses.includes(p.ProgramID) && classDay(p) >= 0)
       .map(p => ({p, d: lastClassDate(p)})).filter(x => !classSess(x.p.ProgramID, x.d));
-    due.slice(0, 3).forEach(x => card("warn", `${esc(x.p["Program Name"])} not marked`, `Met ${dstr(x.d)} — mark attendance, or record “no class”`, `<button type="button" class="btn small primary" data-go="cls:${esc(x.p.ProgramID)}:${x.d}">Mark now</button>`));
+    due.slice(0, 3).forEach(x => card("warn", `${esc(x.p["Program Name"])} not marked`, `Met ${dstr(x.d)} — mark attendance, or record “no class”`, `<button type="button" class="btn small primary" data-go="cls:${esc(x.p.ProgramID)}:${x.d}">Mark now</button>`, "cls", [x.p.ProgramID + ":" + x.d]));
   }
   const fc = {}; DATA.Attendance.forEach(a => { if (!(a.Status === "Present" || a.Status === "Late" || a.Status === "Visitor")) return; const s = DATA.Sessions.find(x => x.SessionID === a.SessionID); if (!s) return;
     const d = String(s.Date).slice(0, 10); if (!fc[a.DiscipleID] || d < fc[a.DiscipleID]) fc[a.DiscipleID] = d; });
-  const newc = V.Disciples.filter(d => fc[d.DiscipleID] && daysAgoOf(fc[d.DiscipleID]) <= 60 && !inAnyClass(d.DiscipleID)).map(d => d.DiscipleID);
+  const newc = V.Disciples.filter(d => fc[d.DiscipleID] && daysAgoOf(fc[d.DiscipleID]) <= 60 && !inAnyClass(d.DiscipleID) && !recentFU.has(d.DiscipleID)).map(d => d.DiscipleID);
   if (newc.length) card("info", `${newc.length} newcomer${newc.length === 1 ? "" : "s"} not in a class`, "First came in the last 60 days — invite them to a discipleship class",
-    PERMS.sms ? '<button type="button" class="btn small" data-go="msg:new">✉ Invite</button>' : PERMS.disciples ? '<button type="button" class="btn small" data-go="dis">Open People</button>' : "");
+    PERMS.sms ? '<button type="button" class="btn small" data-go="msg:new">✉ Invite</button>' : PERMS.disciples ? '<button type="button" class="btn small" data-go="dis">Open People</button>' : "", "new", newc);
   const due = M.fu.filter(f => parseD(f["Next Action Date"]) <= new Date(TODAY.getTime() + 2 * DAY));
-  if (due.length && PERMS.followups) card("warn", `${due.length} follow-up${due.length === 1 ? "" : "s"} due`, `${due.filter(f => parseD(f["Next Action Date"]) < TODAY).length} overdue`, '<button type="button" class="btn small" data-go="fu:">Open Follow-ups</button>');
+  if (due.length && PERMS.followups) card("warn", `${due.length} follow-up${due.length === 1 ? "" : "s"} due`, `${due.filter(f => parseD(f["Next Action Date"]) < TODAY).length} overdue`, '<button type="button" class="btn small" data-go="fu:">Open Follow-ups</button>', "due", due.map(f => f.FollowUpID));
   if (PERMS.review && typeof REV !== "undefined" && REV.items) { const n = REV.items.filter(revOpen).length;
-    if (n) card("info", "Records to check", `${n} possible duplicate${n === 1 ? "" : "s"} or missing details from imports`, '<button type="button" class="btn small" data-go="rev">Import review</button>'); }
+    if (n) card("info", "Records to check", `${n} possible duplicate${n === 1 ? "" : "s"} or missing details from imports`, '<button type="button" class="btn small" data-go="rev">Import review</button>', "rev", [String(n)]); }
   const box = $("#attnBox");
-  box.innerHTML = `<div class="hd"><h2>Needs your attention</h2></div>` + (cards.length ? `<div class="acards">${cards.join("")}</div>` : '<div class="notice">✓ All caught up — nothing needs action right now.</div>');
-  box.onclick = e => { const b = e.target.closest("[data-go]"); if (!b) return; const [k, a, c] = b.dataset.go.split(":");
+  box.innerHTML = `<div class="hd"><h2>Needs your attention</h2>${hiddenN.n ? `<button type="button" class="chip" id="attnShow">Show ${hiddenN.n} done</button>` : ""}</div>` + (cards.length ? `<div class="acards">${cards.join("")}</div>` : '<div class="notice">✓ All caught up — nothing needs action right now.</div>');
+  box.onclick = e => {
+    const dn = e.target.closest("[data-done]");
+    if (dn) { done[dn.dataset.done] = [...new Set((done[dn.dataset.done] || []).concat(dn.dataset.ids.split(",")))].slice(-2000);
+      try { localStorage.setItem(doneKey, JSON.stringify(done)); } catch (e2) {} toast("Done — it comes back only if something new needs attention."); renderAttention(M); return; }
+    if (e.target.closest("#attnShow")) { try { localStorage.removeItem(doneKey); } catch (e2) {} renderAttention(M); return; }
+    const b = e.target.closest("[data-go]"); if (!b) return; const [k, a, c] = b.dataset.go.split(":");
     if (k === "fu") { if (a) { FU.cat = a; FU.q = ""; } showView("fu"); }
     else if (k === "list") { $("#fuPanel").hidden = false; $("#fuPanel").scrollIntoView({behavior: "smooth", block: "start"}); }
     else if (k === "msg") messagePeople(a === "crit" ? crit.map(p => p.d.DiscipleID) : newc, a === "crit" ? "people who need follow-up now" : "newcomers not in a class");
@@ -1489,7 +1518,7 @@ function renderTable(M) {
   const total = rows.length; rows = rows.slice(0, state.limit || 25);
   $("#tbody").innerHTML = (rows.length ? rows.map(p => `<tr class="click" data-id="${esc(p.id)}" tabindex="0">
     <td><div class="person"><b>${esc(p.name)}</b><small>${esc(p.id)} · ${esc(p.d["Occupation Status"] || "")}</small></div></td>
-    <td>${esc(p.ph)}</td><td>${esc(p.discipler)}</td>
+    <td>${contactBar(p.d, true)}</td><td>${esc(p.discipler)}</td>
     <td class="num">${meter(p.rate, p.went, p.recorded)}</td><td class="num">${meter(p.comp, p.done, p.asg)}</td>
     <td>${p.last ? `${fmtD(p.last)} <small style="color:var(--ink-3)">· ${p.days}d ago</small>` : "—"}</td>
     <td>${pill(p.flag)}</td></tr>`).join("")
@@ -1825,6 +1854,27 @@ const catPill = d => isDisciple(d) ? '<span class="pill p-good">Disciple</span>'
 const enrolledIn = pid => DATA.Enrollments.filter(e => e.ProgramID === pid && (e.Status || "Enrolled") === "Enrolled").map(e => e.DiscipleID);
 const byName = (a, b) => fullName(a).localeCompare(fullName(b));
 /** Tap-to-call phone numbers for a person, if this user may see them. */
+/** Call · SMS · WhatsApp buttons for a person (or any number). After tapping, the app offers to log what happened. */
+function contactBar(d, small) {
+  const full = (d && DATA.Disciples.find(x => x.DiscipleID === d.DiscipleID)) || d || {};
+  const nums = [...new Set([full["Orange #"], full["Lonestar #"]].map(lrPhone).filter(Boolean))];
+  if (!nums.length) return `<span class="cbar none">${full["Orange #"] || full["Lonestar #"] ? "number not valid: " + esc(full["Orange #"] || full["Lonestar #"]) : "no phone number"}</span>`;
+  const n = nums[0], wa = n.replace("+", ""), id = esc(full.DiscipleID || "");
+  return `<span class="cbar${small ? " small" : ""}"><a class="cb call" href="tel:${n}" data-cid="${id}" data-cvia="Phone call" title="Call ${esc(localPhone(n))}">📞 <span>${esc(localPhone(n))}</span></a><a class="cb" href="sms:${n}" data-cid="${id}" data-cvia="SMS" title="Send an SMS">💬 SMS</a><a class="cb wa" href="https://wa.me/${wa}" target="_blank" rel="noopener" data-cid="${id}" data-cvia="WhatsApp" title="WhatsApp">WhatsApp</a>${nums[1] ? `<a class="cb" href="tel:${nums[1]}" data-cid="${id}" data-cvia="Phone call" title="Call the other number">📞 ${esc(localPhone(nums[1]))}</a>` : ""}</span>`;
+}
+/* after calling or messaging someone: offer to log it as a follow-up (Follow-ups fills in the person and how) */
+document.addEventListener("click", e => {
+  const a = e.target.closest(".cbar a[data-cid]"); if (!a || !a.dataset.cid || !PERMS.followups) return;
+  e.stopPropagation();
+  const id = a.dataset.cid, via = a.dataset.cvia;
+  setTimeout(() => {
+    if (VIEW === "fu") { fuChoose(id); if ($("#fType")) $("#fType").value = via; return; }
+    const bar = $("#logBar"); bar.hidden = false;
+    bar.innerHTML = `<span>${via === "Phone call" ? "Called" : "Messaged"} <b>${esc(fullName(person(id) || {DiscipleID: id}))}</b>. Log what happened?</span><button type="button" class="btn small primary" id="logGo">Log follow-up</button><button type="button" class="btn small" id="logNo">Not now</button>`;
+    $("#logGo").onclick = () => { bar.hidden = true; showView("fu"); fuChoose(id); if ($("#fType")) $("#fType").value = via; $("#fNotes") && $("#fNotes").focus(); };
+    $("#logNo").onclick = () => { bar.hidden = true; };
+  }, 600);
+}, true);
 const phoneLinks = d => { const full = DATA.Disciples.find(x => x.DiscipleID === d.DiscipleID) || d;
   return [full["Orange #"], full["Lonestar #"]].filter(Boolean).map(n => ` · <a class="tel" href="tel:${esc(String(n).replace(/[^\d+]/g, ""))}">${esc(n)}</a>`).join(""); };
 function segHTML(name, cur, choices) {
@@ -1876,7 +1926,7 @@ function fieldsHTML(spec, rec, prefix) {
     else if (type === "textarea") input = `<textarea id="${id}" data-f="${esc(f)}">${esc(v)}</textarea>`;
     else if (type === "year") input = `<input type="number" id="${id}" data-f="${esc(f)}" value="${esc(v)}" min="1900" max="${TODAY.getFullYear()}" inputmode="numeric" placeholder="e.g. 1998">`;
     else if (type === "date") input = `<input type="date" id="${id}" data-f="${esc(f)}" value="${esc(String(v).slice(0, 10))}"${x.noFuture ? ` max="${todayStr()}"` : ""}>`;
-    else input = `<input type="${type}" id="${id}" data-f="${esc(f)}" value="${esc(v)}"${type === "tel" && !x.ph ? ` inputmode="tel" placeholder="${/lonestar/i.test(f) ? "0886… or 0555…" : /orange/i.test(f) ? "0770… or 0777…" : "e.g. 0770 123 456"}"` : type === "tel" ? ' inputmode="tel"' : ""}${x.ph ? ` placeholder="${esc(x.ph)}"` : ""}>`;
+    else input = `<input type="${type}" id="${id}" data-f="${esc(f)}" value="${esc(v)}"${type === "tel" && !x.ph ? ` inputmode="tel" placeholder="${/lonestar/i.test(f) ? "0886… or 0555…" : /orange/i.test(f) ? "0770…, 0777… or 0776…" : "e.g. 0770 123 456"}"` : type === "tel" ? ' inputmode="tel"' : ""}${x.ph ? ` placeholder="${esc(x.ph)}"` : ""}>`;
     return `<div class="field${x.full ? " full" : ""}"><label for="${id}">${esc(label)}${req}</label>${input}${x.hint ? `<span class="hint">${esc(x.hint)}</span>` : ""}</div>`;
   }).join("");
 }
@@ -2302,7 +2352,7 @@ function ovPeople(key, title, hint, rows, more) {
   return `<div class="ovsec"><div class="hd"><h3>${title} <span class="pill p-mute">${rows.length}</span></h3><span class="actions">${PERMS.sms ? `<button type="button" class="btn small" data-ovmsg="${key}">✉ Message</button>` : ""}${PERMS.download ? `<button type="button" class="btn small" data-ovdl="${key}">⬇ Contact list</button>` : ""}</span></div>
     ${hint ? `<p class="note">${hint}</p>` : ""}
     <div class="ovlist">${show.map(r => { const d = person(r.id) || {DiscipleID: r.id};
-      return `<div class="row"><div class="r-main"><b>${esc(fullName(d))}</b><small>${esc(r.why)}${phoneLinks(d)}</small></div>${r.btn || ""}</div>`; }).join("")}</div>
+      return `<div class="row"><div class="r-main"><b>${esc(fullName(d))}</b><small>${esc(r.why)}</small>${contactBar(d, true)}</div>${r.btn || ""}</div>`; }).join("")}</div>
     ${rows.length > show.length ? `<p class="note">and ${rows.length - show.length} more — download the contact list to see everyone.</p>` : ""}${more || ""}</div>`;
 }
 function wireOvDownloads(pane, lists) {
@@ -3132,6 +3182,8 @@ const isTop = () => !!USER && ["Admin", "Center Leader"].includes(USER.role);
 const localPhone = n => n ? n.replace(/^\+231(\d{3})(\d{3})(\d{3})$/, "0$1 $2 $3") : "";
 const leaderPhone = l => l ? (lrPhone(l["Orange #"]) || lrPhone(l["Lonestar #"])) : "";
 const DEC_SHORT = {"Born again": "born again", "Rededicated to Christ": "rededicated", "Follow Jesus in discipleship": "discipleship", "Responded to the Word of God": "responded to the Word"};
+/** The counselor's number: from Users & programs, or the one typed here last time. */
+const handPhone = c => { if (!c) return ""; const p = leaderPhone(c); if (p) return p; try { return localStorage.getItem("rll-cphone-" + c.LeaderID) || ""; } catch (e) { return ""; } };
 const handDec = d => decisionsOf(d.DiscipleID)[0];
 const handState = d => d["Counselor Reached"] ? "reached" : d["Counselor Sent"] ? "waiting" : "tosend";
 /** Full details for WhatsApp. */
@@ -3160,16 +3212,18 @@ function handoffHTML(arr) {
   return (noC ? `<div class="notice warn">${noC} new decision${noC === 1 ? " has" : "s have"} no counselor yet — give them one under <b>New decisions</b> first.</div>` : "")
     + (ids.length ? ids.map(cid => { const c = DATA.Leaders.find(l => String(l.LeaderID) === String(cid)) || {LeaderID: cid, "Full Name": leaderName(cid)};
       const list = by[cid].sort((a, b) => ({tosend: 0, waiting: 1, reached: 2}[handState(a)] - {tosend: 0, waiting: 1, reached: 2}[handState(b)]) || byName(a, b));
-      const n = k => list.filter(d => handState(d) === k).length, ph = leaderPhone(c);
-      return `<div class="hoff" data-c="${esc(cid)}"><div class="hoffhd"><b>${esc(c["Full Name"])}</b><small>${ph ? esc(localPhone(ph)) : '<span class="warnt">no phone number — add it on Users &amp; programs</span>'} · <b>${n("tosend")}</b> to send · <b>${n("waiting")}</b> waiting to hear back · ${n("reached")} reached</small></div>
+      const n = k => list.filter(d => handState(d) === k).length, ph = handPhone(c);
+      return `<div class="hoff" data-c="${esc(cid)}"><div class="hoffhd"><b>${esc(c["Full Name"])}</b><small>${ph ? esc(localPhone(ph)) : '<span class="warnt">no valid phone number on Users &amp; programs</span>'} · <b>${n("tosend")}</b> to send · <b>${n("waiting")}</b> waiting to hear back · ${n("reached")} reached</small></div>
         ${list.map(d => { const h = handState(d), x = handDec(d);
           const stTxt = h === "tosend" ? '<span class="pill p-crit">Not sent yet</span>' : h === "waiting" ? `<span class="pill p-warn">Sent ${dstr(d["Counselor Sent"])} by ${esc(d["Counselor Sent Via"] || "")} — waiting</span>` : `<span class="pill p-good">Reached ${dstr(d["Counselor Reached"])} ✓</span>`;
           return `<div class="hrow"><label class="sp"><input type="checkbox" data-p="${esc(d.DiscipleID)}"${h === "tosend" ? " checked" : ""}${h === "reached" ? " disabled" : ""}>
             <span class="r-main"><b>${esc(fullName(d))}</b><small>${x ? "✝ " + esc(DEC_LABEL[x.Decision] || x.Decision) + " · " + dstr(x.Date) : "no decision recorded"}${d["Counselor Reached Note"] ? " · " + esc(d["Counselor Reached Note"]) : ""}</small></span></label>
+            <div class="hcontact">${contactBar(d, true)}</div>
             <span class="actions">${stTxt}${h !== "tosend" && h !== "reached" ? `<button type="button" class="btn small" data-reach="${esc(d.DiscipleID)}">✓ Reached</button><button type="button" class="btn small" data-noreach="${esc(d.DiscipleID)}">✗ Not reachable</button>` : ""}</span></div>`; }).join("")}
+        <label class="sline hophone">Send to number <input type="tel" inputmode="tel" data-cphone value="${esc(ph ? localPhone(ph) : "")}" placeholder="e.g. 0776 123 456"></label>
         <div class="actions hoffbtns"><span class="note">Send the ticked people:</span>
-          <button type="button" class="btn small primary" data-via="WhatsApp"${ph ? "" : " disabled"}>WhatsApp (full details)</button>
-          <button type="button" class="btn small" data-via="SMS"${ph ? "" : " disabled"}>SMS (short)</button>
+          <button type="button" class="btn small primary" data-via="WhatsApp">WhatsApp (full details)</button>
+          <button type="button" class="btn small" data-via="SMS">SMS (short)</button>
           <button type="button" class="btn small" data-via="Phone call">Told by phone call</button><button type="button" class="btn small" data-via="In person">Given in person</button></div>
         <div class="hoffask" hidden></div></div>`; }).join("")
       : '<div class="empty">Nobody is waiting for a counselor hand-off. Give people counselors under <b>New decisions</b>, or on their page in People.</div>');
@@ -3186,7 +3240,10 @@ function wireHandoff(list) {
     const vb = e.target.closest("[data-via]"); if (!vb || vb.disabled) return;
     const ids = [...box.querySelectorAll("input[data-p]:checked")].map(i => i.dataset.p);
     if (!ids.length) return toast("Tick at least one person.", true);
-    const people = ids.map(person).filter(Boolean), via = vb.dataset.via, ph = leaderPhone(c), ask = box.querySelector(".hoffask");
+    const people = ids.map(person).filter(Boolean), via = vb.dataset.via, ask = box.querySelector(".hoffask");
+    const typed = box.querySelector("[data-cphone]"), ph = lrPhone(typed ? typed.value : "") || handPhone(c);
+    if ((via === "WhatsApp" || via === "SMS") && !ph) { toast("Type the counselor's phone number first (e.g. 0776 123 456).", true); if (typed) typed.focus(); return; }
+    if (typed && lrPhone(typed.value)) { try { localStorage.setItem("rll-cphone-" + cid, lrPhone(typed.value)); } catch (e2) {} }
     const record = () => act(vb, () => api("handoffSent", TOKEN, cid, ids, via), `Recorded: ${ids.length} sent to ${c["Full Name"]} by ${via}.`).catch(() => {});
     if (via === "Phone call" || via === "In person") { if (confirm(`Record that ${c["Full Name"]} was given ${ids.length === 1 ? fullName(people[0]) : ids.length + " people"} ${via === "Phone call" ? "by phone call" : "in person"}?`)) record(); return; }
     const text = via === "WhatsApp" ? handoffWhatsApp(c, people) : handoffSMS(c, people);
@@ -3227,7 +3284,7 @@ function decisionRow(x) {
   const d = person(x.DiscipleID) || {"First Name": x["Disciple Name"] || x.DiscipleID};
   const top = ["Admin", "Center Leader"].includes(USER.role);
   return `<div class="row click fu-dec" data-id="${esc(x.DiscipleID)}" data-dec="${esc(x.DecisionID)}"><div class="r-main"><b>${esc(fullName(d))}</b>
-    <small>✝ ${esc(x.Decision || "")} · ${esc(x.Meeting || dstr(x.Date))}${phoneOf(d) ? " · " + esc(phoneOf(d)) : ""}</small>
+    <small>✝ ${esc(x.Decision || "")} · ${esc(x.Meeting || dstr(x.Date))}</small>${contactBar(d, true)}
     <small>${x.CounselorID ? "Counselor: " + esc(leaderName(x.CounselorID)) : '<b style="color:var(--crit)">No counselor yet</b>'}${x["Last Follow-up"] ? " · last contact " + dstr(x["Last Follow-up"]) : ""}</small>
     ${top && (x.Status || "New") !== "Closed" ? `<div class="fu-assign"><select data-assign="${esc(x.DecisionID)}" aria-label="Assign counselor">${opt("", x.CounselorID ? "Change counselor…" : "Assign a counselor…")}${counselorsFor(d).map(l => opt(l.LeaderID, l["Full Name"])).join("") || '<option value="" disabled>No ' + (genderOf(d.Gender) === "Male" ? "male" : "female") + ' counselor yet — set genders on Users &amp; programs</option>'}</select></div>` : ""}</div>
     <div class="actions">${decPill(x)}${PERMS.followups ? '<span class="pill p-good">Log</span>' : ""}</div></div>`;
@@ -3250,7 +3307,7 @@ function lrPhone(raw) {
   if (d.length === 12 && d.startsWith("231")) n = d.slice(3);
   else if (d.length === 10 && d.startsWith("0")) n = d.slice(1);
   else if (d.length === 9) n = d;
-  return /^(77|88|55|22)\d{7}$/.test(n) ? "+231" + n : "";
+  return /^(7\d|8\d|5\d|22)\d{7}$/.test(n) ? "+231" + n : "";   // Orange 077/076…, Lonestar 088/055…
 }
 const prettyPhone = n => n ? n.replace(/^\+231(\d{3})(\d{3})(\d{3})$/, "+231 $1 $2 $3") : "";
 const GSM7 = "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà";
@@ -3578,7 +3635,7 @@ function renderFu() {
     $("#fCatTitle").textContent = "Search results"; $("#fCatNote").textContent = `${hits.length}${hits.length === 40 ? "+" : ""} found`; $("#fCatHelp").textContent = "";
     list.innerHTML = hits.length ? hits.map(d => { const ds = decisionsOf(d.DiscipleID).filter(decOpen), p = st[d.DiscipleID] || {};
       const tags = [ds.length ? `<span class="pill p-crit">✝ decision</span>` : "", isDisciple(d) && p.flag && p.flag !== "good" && p.flag !== "part" ? pill(p.flag) : "", !isDisciple(d) ? '<span class="pill p-mute">Participant</span>' : ""].join("");
-      return `<div class="row click" data-id="${esc(d.DiscipleID)}"><div class="r-main"><b>${esc(fullName(d))}</b><small>${esc(d.DiscipleID)}${phoneOf(d) ? " · " + esc(phoneOf(d)) : ""}${p.last ? ` · last attended ${fmtD(p.last)}` : ""}</small></div><div class="actions">${tags}</div></div>`; }).join("")
+      return `<div class="row click" data-id="${esc(d.DiscipleID)}"><div class="r-main"><b>${esc(fullName(d))}</b>${contactBar(d, true)}<small>${esc(d.DiscipleID)}${p.last ? ` · last attended ${fmtD(p.last)}` : ""}</small></div><div class="actions">${tags}</div></div>`; }).join("")
       : '<div class="empty">Nobody matches. Only people you follow up are searched.</div>';
   } else {
     const [, title, help] = FU_CATS.find(c => c[0] === FU.cat);
@@ -3589,9 +3646,9 @@ function renderFu() {
     if (FU.cat === "hand") { list.innerHTML = handoffHTML(arr); wireHandoff(list); }
     else if (FU.cat.startsWith("d")) list.innerHTML = shown.length ? shown.map(decisionRow).join("") : `<div class="empty">${FU.cat === "dnew" ? "No new decisions waiting. 🙌" : "Nothing here."}</div>`;
     else if (FU.cat === "absent") list.innerHTML = shown.length ? shown.map(d => { const p = st[d.DiscipleID];
-      return `<div class="row click" data-id="${esc(d.DiscipleID)}"><div class="r-main"><b>${esc(fullName(d))}</b><small>${p.last ? `Last attended ${fmtD(p.last)} (${p.days} days)` : "Not seen at a meeting yet"}${p.rate != null ? ` · ${pct(p.rate)} attendance` : ""}${phoneOf(d) ? " · " + esc(phoneOf(d)) : ""}</small></div>${pill(p.flag)}</div>`; }).join("") : '<div class="empty">Everyone is on track. 🙌</div>';
+      return `<div class="row click" data-id="${esc(d.DiscipleID)}"><div class="r-main"><b>${esc(fullName(d))}</b><small>${p.last ? `Last attended ${fmtD(p.last)} (${p.days} days)` : "Not seen at a meeting yet"}${p.rate != null ? ` · ${pct(p.rate)} attendance` : ""}</small>${contactBar(d, true)}</div>${pill(p.flag)}</div>`; }).join("") : '<div class="empty">Everyone is on track. 🙌</div>';
     else list.innerHTML = shown.length ? shown.map(d => { const p = st[d.DiscipleID] || {};
-      return `<div class="row click" data-id="${esc(d.DiscipleID)}"><div class="r-main"><b>${esc(fullName(d))}</b><small>${p.last ? `Last attended ${fmtD(p.last)} (${p.days} days ago)` : "Not seen at a meeting yet"}${phoneOf(d) ? " · " + esc(phoneOf(d)) : ""}</small></div><span class="pill p-mute">Log</span></div>`; }).join("") : '<div class="empty">Nobody in this group.</div>';
+      return `<div class="row click" data-id="${esc(d.DiscipleID)}"><div class="r-main"><b>${esc(fullName(d))}</b><small>${p.last ? `Last attended ${fmtD(p.last)} (${p.days} days ago)` : "Not seen at a meeting yet"}</small>${contactBar(d, true)}</div><span class="pill p-mute">Log</span></div>`; }).join("") : '<div class="empty">Nobody in this group.</div>';
     if (arr.length > FU.showN) list.insertAdjacentHTML("beforeend", `<div class="row"><button class="chip" id="fMore">Show ${Math.min(40, arr.length - FU.showN)} more of ${arr.length - FU.showN}</button></div>`);
   }
   const fm = $("#fMore"); if (fm) fm.onclick = () => { FU.showN += 40; renderFu(); };
@@ -3617,7 +3674,7 @@ function fuChoose(id, keep) {
   FU.who = id || ""; $("#fWho").value = FU.who;
   const d = FU.who ? DATA.Disciples.find(x => x.DiscipleID === FU.who) : null;
   $("#fWhoQ").hidden = !!d; $("#fWhoList").innerHTML = "";
-  $("#fWhoCard").innerHTML = d ? `<div class="notice" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span><b>${esc(fullName(d))}</b> · ${esc(d.DiscipleID)}${phoneOf(d) ? ` · <a class="tel" href="tel:${esc(phoneOf(d).replace(/[^\d+]/g, ""))}">${esc(phoneOf(d))}</a>` : ""}${d.CounselorID ? " · counselor " + esc(leaderName(d.CounselorID)) : ""}</span><button type="button" class="btn small" id="fWhoX">Change</button></div>` : "";
+  $("#fWhoCard").innerHTML = d ? `<div class="notice" style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><span><b>${esc(fullName(d))}</b> · ${esc(d.DiscipleID)}${d.CounselorID ? " · counselor " + esc(leaderName(d.CounselorID)) : ""}<br>${contactBar(d)}</span><button type="button" class="btn small" id="fWhoX">Change</button></div>` : "";
   if (d) $("#fWhoX").onclick = () => { fuChoose(""); $("#fWhoQ").focus(); };
   const open = d ? decisionsOf(d.DiscipleID).filter(decOpen) : [], box = $("#fDecBox");
   box.hidden = !open.length;
@@ -3876,7 +3933,7 @@ function revPersonHTML(d, side, it) {
   const progs = DATA.Enrollments.filter(e => e.DiscipleID === d.DiscipleID && (e.Status || "Enrolled") === "Enrolled").map(e => progOf(e.ProgramID)["Program Name"]).filter(Boolean);
   const leader = DATA.Leaders.find(l => l.DiscipleID === d.DiscipleID);
   const g = d.Gender || "";
-  const f = (k, label, type = "text") => `<div class="field"><label>${esc(label)}</label><input type="${type}" data-f="${esc(k)}" value="${esc(d[k] || "")}"${type === "tel" ? ` inputmode="tel" placeholder="${/lonestar/i.test(k) ? "0886… or 0555…" : "0770… or 0777…"}"` : ""}></div>`;
+  const f = (k, label, type = "text") => `<div class="field"><label>${esc(label)}</label><input type="${type}" data-f="${esc(k)}" value="${esc(d[k] || "")}"${type === "tel" ? ` inputmode="tel" placeholder="${/lonestar/i.test(k) ? "0886… or 0555…" : "0770…, 0777… or 0776…"}"` : ""}></div>`;
   return `<div class="revp" data-id="${esc(d.DiscipleID)}">
     <div class="revp-h"><div><b>${esc(fullName(d))}</b><small>${esc(d.DiscipleID)}</small></div>${catPill(d)}</div>
     <div class="revp-facts">
