@@ -810,6 +810,28 @@ body:not(.simple) .advtoggle{display:none!important}
 .gapt{color:var(--crit,#b42318);font-weight:700}
 .clsarea{padding:8px 0;border-top:1px solid var(--line)}.clsarea:first-of-type{border-top:0}.chipsrow{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .maplegend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--ink-2)}.maplegend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+
+/* folded filters and tools (phones) */
+details.pfold > summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13.5px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;box-sizing:border-box;max-width:100%}
+details.pfold > summary::-webkit-details-marker{display:none}
+details.pfold > summary::after{content:"▾";font-size:11px;color:var(--ink-3)}
+details.pfold[open] > summary::after{content:"▴"}
+details.pfold > summary span{font-weight:500;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details.pfold > summary b{color:var(--brand)}
+details.pfold[open] > summary{margin-bottom:8px}
+details.pfold.inl{display:contents}
+details.pfold.inl > .pfbody{display:contents}
+@media (min-width:901px){details.pfold > summary{display:none}details.pfold.inl{display:contents}}
+@media (max-width:900px){
+  details.pfold.inl{display:block;width:100%}
+  details.pfold.inl[open] > .pfbody{display:flex;flex-wrap:wrap;gap:8px}
+  .panel:not(.fopen) .tools .fx{display:none}
+  .tools .fx{display:contents}
+  .dfgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #v-dis .topbar .filters .btn{padding:8px 12px;font-size:13.5px}
+  #v-dash .topbar details.pfold{width:100%}
+}
+@media (min-width:901px){.tools .fx{display:contents}}
 </style>
 </head>
 <body>
@@ -866,12 +888,13 @@ body:not(.simple) .advtoggle{display:none!important}
         <h1>Disciples</h1>
         <p id="subtitle">Loading…</p>
       </div>
+      <details class="pfold" data-fold="dash"><summary id="dashFoldSum">⚙ Showing…</summary>
       <div class="filters">
         <div class="field"><label for="fProgram">Program</label><select id="fProgram"><option value="">All programs</option></select></div>
         <div class="field"><label for="fCat">People</label><select id="fCat"><option value="Disciple">Disciples</option><option value="Meeting Participant">Meeting participants</option><option value="">Everyone</option></select></div>
         <div class="field"><label for="fPeriod">Period</label><select id="fPeriod"><option value="30">Last 30 days</option><option value="60" selected>Last 60 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option><option value="0">All time</option></select></div>
         <span class="badge" id="modeBadge">Sample data</span>
-      </div>
+      </div></details>
     </header>
 
     <section class="attn" id="attnBox" aria-label="Needs your attention"></section>
@@ -933,8 +956,8 @@ body:not(.simple) .advtoggle{display:none!important}
       <div class="grid">
         <section class="panel c4">
           <div class="tools"><input type="search" id="dQ" placeholder="Search name, ID or Peace House" aria-label="Search disciples" style="flex:1">
-            <select id="dCat" aria-label="Category"><option value="">Everyone</option><option value="Disciple">Disciples</option><option value="Meeting Participant">Participants</option></select>
-            <select id="dStatus" aria-label="Status"><option value="">All</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+            <span class="fx"><select id="dCat" aria-label="Category"><option value="">Everyone</option><option value="Disciple">Disciples</option><option value="Meeting Participant">Participants</option></select>
+            <select id="dStatus" aria-label="Status"><option value="">All</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select></span></div>
           <div class="dfbar"><button type="button" class="btn small" id="dFBtn" aria-expanded="false" aria-controls="dFilt">⚙ Filters <span class="pill p-good" id="dFN" hidden></span></button><span id="dCount"></span></div>
           <div class="dfilt" id="dFilt" hidden></div>
           <div class="chips dchips" id="dChips"></div>
@@ -1197,7 +1220,7 @@ body:not(.simple) .advtoggle{display:none!important}
     <li><b>Sign out</b> when you use someone else's phone: on a phone, tap your <b>name at the top right</b>, then <b>Sign out</b>. On a computer, <b>Sign out</b> is under your name on the left.</li>
   </ol>
   <div class="htip"><b>No network?</b> Marks you make are kept on your phone. When the network comes back, open the same screen and tap <b>Save</b>.</div>
-  <div class="htip"><b>Simple view.</b> Forms show the main details first. Tap <b>+ More details (optional)</b> for the rest. To see every option on every screen, tap your name (top right on a phone) → <b>Show more options</b>.</div>
+  <div class="htip"><b>Simple view.</b> Forms show the main details first — tap <b>+ More details (optional)</b> for the rest. On a phone, searches show just the search box: tap <b>⚙ Filters</b> to choose more, and the filters you chose stay visible as small chips (tap ✕ on one to remove it). To have every option open on every screen, tap your name (top right on a phone) → <b>Show more options</b>.</div>
   <div class="htip"><b>“A new version of the app is ready”</b> — save your work, then tap <b>Update now</b>. You stay signed in.</div>
 </section>
 
@@ -1790,6 +1813,8 @@ function render() {
   const pn = state.program ? M.progName[state.program] : fullDash() ? "All programs" : `Your ${mine.length === 1 ? "program" : mine.length + " programs"}: ${mine.map(p => p["Program Name"]).join(", ")}`;
   $("#subtitle").textContent = `${pn} · ${state.period ? `since ${fmtD(M.from)}` : "all time"} · ${M.people.length} ${state.cat === "Disciple" ? "active disciples" : state.cat ? "meeting participants" : "people"}`;
   renderAttention(M); renderKpis(M); renderTrend(M); renderTable(M); renderPrograms(M); renderDisciples(M);
+  const sel = id => { const e = $(id); return e && e.selectedIndex >= 0 ? e.options[e.selectedIndex].text : ""; };
+  $("#dashFoldSum").innerHTML = `⚙ <span>${esc([sel("#fProgram"), sel("#fCat"), sel("#fPeriod")].filter(Boolean).join(" · "))}</span> <b>Change</b>`;
 }
 
 /* =====================================================================
@@ -1895,7 +1920,7 @@ function closeMeMenu() { $("#meMenu").hidden = true; $("#meBadge").setAttribute(
 $("#meBadge").addEventListener("click", e => { e.stopPropagation(); const open = $("#meMenu").hidden; if (typeof closeMenu === "function") closeMenu(); $("#meMenu").hidden = !open; $("#meBadge").setAttribute("aria-expanded", String(open)); if (open) $("#meMenu button").focus(); });
 $("#meMenu").addEventListener("click", e => { const b = e.target.closest("[data-mm]"); if (!b) return; closeMeMenu();
   if (b.dataset.mm === "me") showView("me"); else if (b.dataset.mm === "help") $("#helpBtn").click(); else if (b.dataset.mm === "full") toggleFull(); else signOut(); });
-function toggleFull() { try { localStorage.setItem(FULLKEY(), isFull() ? "0" : "1"); } catch (e) {} applyMode(); toast(isFull() ? "More options shown on every screen." : "Simple view: optional details are under “+ More details”."); if (VIEW) showView(VIEW, true); }
+function toggleFull() { try { localStorage.setItem(FULLKEY(), isFull() ? "0" : "1"); } catch (e) {} applyMode(); Object.keys(FOLD).forEach(k => { if (k !== "_t") delete FOLD[k]; }); toast(isFull() ? "More options shown on every screen." : "Simple view: optional details are under “+ More details”."); if (VIEW) showView(VIEW, true); }
 document.addEventListener("click", e => { if (!$("#meMenu").hidden && !e.target.closest("#meMenu")) closeMeMenu(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#meMenu").hidden) { closeMeMenu(); $("#meBadge").focus(); } });
 
@@ -2086,6 +2111,7 @@ function showView(v, force) {
   document.querySelectorAll(".nav [data-view]").forEach(b => { if (b.dataset.view === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
   const cur = document.querySelector(`.nav [data-view="${v}"]`); $("#menuCur").textContent = cur ? cur.textContent.trim() : "Menu"; closeMenu(); markTab();
   RENDER[v]();
+  applyFolds();
   if (!force) window.scrollTo(0, 0);
 }
 document.querySelectorAll(".nav [data-view]").forEach(b => b.addEventListener("click", () => showView(b.dataset.view)));
@@ -2195,6 +2221,16 @@ function fieldsHTML(spec, rec, prefix) {
     return tog + `<div class="field${x.full ? " full" : ""}${x.adv ? " adv" : ""}"><label for="${id}">${esc(label)}${req}</label>${input}${x.hint ? `<span class="hint">${esc(x.hint)}</span>` : ""}</div>`;
   }).join("") + (anyAdv ? '<div class="field full advtoggle"><button type="button" class="linkbtn" data-advt aria-expanded="false">+ More details (optional)</button></div>' : "");
 }
+/* Folding: on a phone, filters and extra tools wait behind one button; on a computer (or with "Show more options") they are open.
+   The person's own choice is remembered while the app is open. */
+const FOLD = {};
+const foldAuto = () => innerWidth > 900 || isFull();
+function applyFolds() {
+  document.querySelectorAll("details.pfold[data-fold]").forEach(d => { const k = d.dataset.fold; d.open = k in FOLD ? FOLD[k] : foldAuto(); });
+  const f = $("#dFilt"); if (f && USER) { const open = "dis" in FOLD ? FOLD.dis : isFull(); /* People keeps its old way on a computer: filters open when asked */ if (f.hidden === open) { f.hidden = !open; $("#dFBtn").setAttribute("aria-expanded", String(open)); drawDisFilters(); } }
+}
+document.addEventListener("click", e => { const sm = e.target.closest("details.pfold[data-fold] > summary"); if (!sm) return; const d = sm.parentElement; setTimeout(() => { FOLD[d.dataset.fold] = d.open; }, 0); });
+window.addEventListener("resize", () => { clearTimeout(FOLD._t); FOLD._t = setTimeout(applyFolds, 200); });
 /* Simple mode (the usual): optional fields and rarely used buttons stay out of the way until asked for */
 const FULLKEY = () => "rll-full-" + (USER ? USER.id : "");
 function isFull() { try { const v = localStorage.getItem(FULLKEY()); if (v !== null) return v === "1"; } catch (e) {} return false; }
@@ -3064,9 +3100,13 @@ function dfLabels() {
 }
 function drawDisFilters() {
   const f = DIS.f, n = dfLabels().length;
-  $("#dFN").textContent = n; $("#dFN").hidden = !n;
-  $("#dChips").innerHTML = dfLabels().map(([k, t]) => `<button type="button" class="chip on" data-k="${k}" title="Remove this filter">${esc(t)} ✕</button>`).join("")
-    + (n ? '<button type="button" class="chip" data-k="*">Clear all</button>' : "");
+  const extra = [DIS.cat ? ["@cat", DIS.cat === "Disciple" ? "Disciples" : "Participants"] : null, DIS.status ? ["@status", DIS.status] : null].filter(Boolean);
+  const nn = n + extra.length;
+  $("#dFN").textContent = nn; $("#dFN").hidden = !nn;
+  $("#dChips").innerHTML = extra.map(([k, t]) => `<button type="button" class="chip on fxchip" data-k="${k}" title="Remove this filter">${esc(t)} ✕</button>`).join("")
+    + dfLabels().map(([k, t]) => `<button type="button" class="chip on" data-k="${k}" title="Remove this filter">${esc(t)} ✕</button>`).join("")
+    + (nn ? '<button type="button" class="chip" data-k="*">Clear all</button>' : "");
+  $("#dFBtn").closest(".panel").classList.toggle("fopen", !$("#dFilt").hidden);
   if ($("#dFilt").hidden) return;
   const sel = (k, label, opts) => `<label class="field"><span>${label}</span><select data-f="${k}">${opt("", "Any", !f[k])}${opts.map(([v, t]) => opt(v, t, f[k] === v)).join("")}</select></label>`;
   const vals = field => dfValues(field).map(x => [x.v, `${x.v} (${x.n})`]);
@@ -3090,14 +3130,15 @@ function drawDisFilters() {
     </div>
     <div class="dfdone"><button type="button" class="btn small" id="dFClear">Clear all</button><button type="button" class="btn small primary" id="dFClose">Done</button></div>`;
 }
-$("#dFBtn").addEventListener("click", () => { const h = !$("#dFilt").hidden; $("#dFilt").hidden = h; $("#dFBtn").setAttribute("aria-expanded", String(!h)); drawDisFilters(); });
+$("#dFBtn").addEventListener("click", () => { const h = !$("#dFilt").hidden; $("#dFilt").hidden = h; FOLD.dis = !h; $("#dFBtn").setAttribute("aria-expanded", String(!h)); drawDisFilters(); });
 $("#dFilt").addEventListener("change", e => { const k = e.target.dataset.f; if (!k) return; if (e.target.value) DIS.f[k] = e.target.value; else delete DIS.f[k]; dfSave(); renderDis(); });
 $("#dFilt").addEventListener("click", e => {
-  if (e.target.id === "dFClose") { $("#dFilt").hidden = true; $("#dFBtn").setAttribute("aria-expanded", "false"); drawDisFilters(); }
+  if (e.target.id === "dFClose") { $("#dFilt").hidden = true; FOLD.dis = false; $("#dFBtn").setAttribute("aria-expanded", "false"); drawDisFilters(); }
   if (e.target.id === "dFClear") { DIS.f = {}; dfSave(); renderDis(); }
 });
 $("#dChips").addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (!b) return; const k = b.dataset.k;
-  if (k === "*") DIS.f = {}; else if (k === "joined") { delete DIS.f.joinedFrom; delete DIS.f.joinedTo; } else delete DIS.f[k];
+  if (k === "@cat") { DIS.cat = ""; $("#dCat").value = ""; } else if (k === "@status") { DIS.status = ""; $("#dStatus").value = ""; }
+  else if (k === "*") { DIS.f = {}; DIS.cat = ""; $("#dCat").value = ""; DIS.status = ""; $("#dStatus").value = ""; } else if (k === "joined") { delete DIS.f.joinedFrom; delete DIS.f.joinedTo; } else delete DIS.f[k];
   dfSave(); renderDis(); });
 
 function renderDis() {
@@ -4990,25 +5031,30 @@ function renderChu() {
     <div class="grid">
     <section class="panel c12">
       <div class="actions chtools">${PERMS.churches ? '<button type="button" class="btn small primary" data-cht="new">+ Add church</button>' : ""}<button type="button" class="btn small" data-cht="map">🗺 Map</button>
+        ${(PERMS.churches && (PERMS.importLists || PERMS.disciples)) || (DATA.Mob && PERMS.mobManage) ? `<details class="pfold inl" data-fold="chtools"><summary>⋯ More tools</summary><span class="pfbody">
         ${PERMS.churches && PERMS.importLists ? '<button type="button" class="btn small" data-cht="import">⬆ Import churches</button>' : ""}
         ${PERMS.churches && PERMS.disciples ? `<button type="button" class="btn small" data-cht="link">🔗 Link people to churches${unlinkedNames ? ` (${unlinkedNames})` : ""}</button>` : ""}
-        ${DATA.Mob && PERMS.mobManage ? '<button type="button" class="btn small" data-cht="assign">👥 Give mapping work</button>' : ""}</div>
+        ${DATA.Mob && PERMS.mobManage ? '<button type="button" class="btn small" data-cht="assign">👥 Give mapping work</button>' : ""}</span></details>` : ""}</div>
       <div id="chTool"></div>
       <div class="chstats">${Object.keys(byArea).sort((a, b) => L("Area").indexOf(a) - L("Area").indexOf(b)).map(a => `<button type="button" class="chstat" data-area="${esc(a === "Area not set" ? "-" : a)}"><i style="background:${areaColor(a)}"></i><b>${esc(a)}</b><span>${byArea[a].n} · ${byArea[a].m} mapped</span></button>`).join("")}
         ${PERMS.disciples && noCh ? `<span class="note">${noCh} active people have no church linked.</span>` : ""}</div>
       <div class="lsearch"><input type="search" id="chQ" placeholder="Search a church, community, pastor" value="${esc(CH.q)}" aria-label="Search churches"><span class="note">${list.length} shown</span></div>
+      ${(() => { const act = [["area", "Area"], ["status", "Status"], ["miss", "Missing"], ["denom", "Denomination"], ["asg", "Given to"]].filter(([k]) => CH[k]);
+        return act.length ? `<div class="chips dchips">${act.map(([k, t]) => `<button type="button" class="chip on" data-chclr="${k}">${t}: ${esc(CH[k] === "-" ? "not set" : k === "asg" ? ((DATA.Mob.mappers.find(m => m.LeaderID === CH[k]) || {}).name || CH[k]) : k === "miss" ? "no " + CH[k] : CH[k])} ✕</button>`).join("")}</div>` : ""; })()}
+      <details class="pfold" data-fold="chfilt"><summary>⚙ Filters${[CH.area, CH.status, CH.miss, CH.denom, CH.asg].filter(Boolean).length ? ` <span class="pill p-good">${[CH.area, CH.status, CH.miss, CH.denom, CH.asg].filter(Boolean).length}</span>` : ""}</summary>
       <div class="dfgrid chfilt">${sel("area", "Area", L("Area").map(a => [a, a]).concat([["-", "Area not set"]]))}${sel("status", "Status", [["Not mapped", "Not mapped"], ["Mapped", "Mapped"], ["Checked", "Checked"]])}
         ${sel("miss", "Missing", [["location", "No location"], ["photo", "No photo"], ["pastor", "No pastor name"], ["pastor phone", "No pastor phone"], ["community", "No community"], ["area", "No area"]])}
         ${sel("denom", "Denomination", L("Denomination").map(a => [a, a]).concat([["-", "Not known"]]))}
-        ${DATA.Mob && DATA.Mob.mappers && DATA.Mob.mappers.length ? sel("asg", "Given to", DATA.Mob.mappers.map(m => [m.LeaderID, m.name])) : ""}</div>
+        ${DATA.Mob && DATA.Mob.mappers && DATA.Mob.mappers.length ? sel("asg", "Given to", DATA.Mob.mappers.map(m => [m.LeaderID, m.name])) : ""}</div></details>
       <div class="plist chlist">${list.slice(0, 400).map(c => `<button class="prow" data-ch="${esc(c.ChurchID)}"><span class="r-main"><b>${esc(c["Church Name"])}</b><small>${esc([c.Area, c.Community].filter(Boolean).join(" · ") || "no area")}${c["Pastor Name"] ? " · " + esc(c["Pastor Name"]) : ""}${PERMS.disciples && peopleOfChurch(c.ChurchID).length ? ` · 👥 ${peopleOfChurch(c.ChurchID).length}` : ""}</small>
         ${(c.missing || []).length ? `<span class="miss">Missing: ${esc(c.missing.join(", "))}</span>` : ""}</span>${chPill(c)}</button>`).join("") || '<div class="empty">No churches match.</div>'}</div>
     </section></div>`;
-  drawOutbox();
+  drawOutbox(); applyFolds();
   v.querySelector("#chQ").oninput = e => { CH.q = e.target.value; clearTimeout(CH.t); CH.t = setTimeout(() => { const p = e.target.selectionStart; renderChu(); const i = $("#chQ"); i.focus(); try { i.setSelectionRange(p, p); } catch (x) {} }, 250); };
   v.querySelectorAll("[data-chf]").forEach(s => s.onchange = () => { CH[s.dataset.chf] = s.value; renderChu(); });
   v.onclick = e => {
     const r = e.target.closest("[data-ch]"); if (r) { CH.sel = r.dataset.ch; renderChu(); scrollTo(0, 0); return; }
+    const cc = e.target.closest("[data-chclr]"); if (cc) { CH[cc.dataset.chclr] = ""; renderChu(); return; }
     const a = e.target.closest(".chstat"); if (a) { CH.area = CH.area === a.dataset.area ? "" : a.dataset.area; renderChu(); return; }
     const t = e.target.closest("[data-cht]"); if (t) { CH.tool = CH.tool === t.dataset.cht ? "" : t.dataset.cht; drawChTool(); }
   };
