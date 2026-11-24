@@ -67,3 +67,31 @@ The Apps Script link (`…/exec`) still opens the tracker in the browser, exactl
 - **Install guide:** https://duazonboystownlabors.github.io/duazonapp/install.html
 - **How to use:** https://duazonboystownlabors.github.io/duazonapp/help.html. Add `?role=reg`, `cl`, `pl`, `co` or `cen` to open on one role.
 - **Public homepage:** stays on Google Sites. Its **Team sign-in** and **Team: install the app** links point to the addresses above.
+
+## Modules (Nov 2026)
+
+- Each user has **module ticks**: Dashboard, Class attendance, Meetings, People, Follow-ups, Counselor hand-off, Assignments, Messages, Statistics, Admin tools.
+- The role gives the usual ticks; an Admin or Center Leader changes them per user under **Users & programs → Users** (stored in the Leaders column `Modules`; blank = usual for the role).
+- Ticks decide screens only; whose data someone sees still comes from what they lead or are given. The server checks every tick.
+- **Users & programs → App settings** switches a whole module off for everyone (currently: Assignments). Stored in the Apps Script's script properties, not in the sheet.
+
+## Built in Nov 2026 (one upload)
+
+- **Areas** — fixed list in the Lists tab (column `Area`), edited in Users & programs → App settings (rename carries over to records; areas in use cannot be removed). People have `Area` + typed community (`Address / Community`); old text kept in `Old Address`. "Sort old addresses" suggests areas (also used on import). Denominations list (column `Denomination`) edited there too.
+- **Churches** — `Churches` tab (ChurchID, name, denomination, area, community, address, pastor/contact names and phones, GPS, photo, status Not mapped/Mapped/Checked, Assigned To, history). Import from Excel (all sheets; sheet name = area when it matches). People link to a church with `ChurchID` ("Link people to churches" groups typed spellings). Church page lists who attends. Photos go to a Drive folder "RLL Church Photos" (shared by link) — the script needs Google Drive permission once.
+- **Mobilization** — tabs `Mob Drives` (outreaches open for reports), `Mob People` (name + phone; never mixed with People), `Mob Churches`. New role **Mobilizer**; modules **Churches**, **Mobilization**, **Manage mobilization**. Mobilizers see team counts, their own list (call/SMS/WhatsApp, message my list), and churches without phone numbers except those given to them. Mapping can be given by area (Leaders column `Map Areas`) or by church.
+- **Church report** = letter delivered (who received it) + the church's details and mapping (GPS, photo) in one save. Columns on `Mob Churches`: Letter Delivered, Delivered Date, Received By (+ optional Receiver Role/Phone/Proof Photo, unused in the simple form).
+- **Who came** (computed, nothing extra stored): people marked at the outreach program's meetings are matched by phone to `Mob People` (✓ came, per mobilizer) and grouped by their church (`ChurchID`, chosen on the newcomer form as "Their church"); churches with a letter but nobody yet are flagged. Leaders see it under Mobilization → 📊 Who came.
+- **Offline** (installed app only): after one online sign-in the phone keeps a mobilization-only copy (PIN stored as a hash); reports and church edits wait in an outbox and send automatically; repeated sends are ignored (client IDs).
+- **Simple view** (default): optional form fields under "+ More details"; "Show more options" in the name menu. **Today** screen for people without the dashboard (registrars, counselors).
+- **Messages filters**: church, decision progress, counselor, not seen for N weeks / never came, first came between dates; quick picks for church pastors & contacts by area and for people mobilized per outreach.
+- Tests: `test/` (mock Google + real Code.gs/Index.html, Playwright) — 176 checks incl. the installed app offline. Source copy kept with the outputs.
+
+## Agreed plan (Nov 2026)
+
+1. Modules per user + simpler tabs — **done**. Steps 2–6 below — **done** (see "Built in Nov 2026").
+2. Fixed **Area** list (VOA/R2 · Rock Crusher/Silver Beach/Sand Beach · Duazon · Transit · Boystown · Marshall Road · Scheiffelin Town/Disco Hill/Tower Hill · Others), editable by Admin, plus typed **Community**; a "Sort addresses" screen to fit old addresses into areas (old text kept).
+3. **Churches**: list with area, community, address, pastor, contact person, optional denomination, GPS, photo (shrunk on the phone); import from the existing Excel (columns: Names of Churches, Address, Pastor's name, Phone number, Contact Person Name, Phone number; several sheets, some named by area, some mixed); link people to churches ("Fix church names"); church statistics.
+4. **Mobilization**: public page on GitHub; reporters are portal users with a Report mobilization tick and their own code; two kinds of report (people mobilized: name + phone; church/organization mobilized). Admin activates the outreach/meeting being mobilized for, so reports are sorted per outreach. Mobilized people stay in Mobilization, never in People. Anyone with the mobilization tick can map any church and save partial details; mapping can be assigned by church or by area.
+5. Simple/Full mode and a "Today" screen per role.
+6. Messages: more filters (area, community, church, gender, age, decision, counselor, attendance, church pastors/contacts, mobilized people).

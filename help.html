@@ -66,7 +66,7 @@ footer{text-align:center;color:var(--ink-3);font-size:13px;padding:10px 16px 30p
 <div class="card">
   <p class="lead">Short, step-by-step help for each part of the app. Choose your role to see only what you need.</p>
   <div class="roles" id="roles" role="group" aria-label="Choose your role">
-    <button type="button" data-r="" aria-pressed="true">Everything</button><button type="button" data-r="reg" aria-pressed="false">Meeting registrar</button><button type="button" data-r="cl" aria-pressed="false">Class leader</button><button type="button" data-r="pl" aria-pressed="false">Program leader</button><button type="button" data-r="co" aria-pressed="false">Counselor</button><button type="button" data-r="cen" aria-pressed="false">Center leader / Admin</button><button type="button" data-r="vw" aria-pressed="false">Viewer</button>
+    <button type="button" data-r="" aria-pressed="true">Everything</button><button type="button" data-r="reg" aria-pressed="false">Meeting registrar</button><button type="button" data-r="cl" aria-pressed="false">Class leader</button><button type="button" data-r="pl" aria-pressed="false">Program leader</button><button type="button" data-r="co" aria-pressed="false">Counselor</button><button type="button" data-r="cen" aria-pressed="false">Center leader / Admin</button><button type="button" data-r="mob" aria-pressed="false">Mobilizer</button><button type="button" data-r="vw" aria-pressed="false">Viewer</button>
   </div>
   <p class="note" style="margin-top:12px">Not installed yet? See <a href="install.html">how to install the app</a>. Inside the app, tap <b>Help</b> in the menu.</p>
   <nav class="jump" id="jump" aria-label="Topics" style="margin-top:8px"></nav>
@@ -77,21 +77,28 @@ footer{text-align:center;color:var(--ink-3);font-size:13px;padding:10px 16px 30p
     <li><b>Sign in</b> with the access PIN your administrator gave you. Never share your PIN.</li>
     <li><b>Find your way.</b> On a phone, your main screens are the big buttons at the <b>bottom</b> of the screen. Tap <b>More</b> (bottom right) for every other screen, Help and Sign out. On a computer the screens are listed on the left.</li>
     <li><b>You only see what you are responsible for.</b> A class leader sees their class, a registrar sees the meetings given to them, and so on. Your name and role are shown at the top.</li>
-    <li><b>Sign out</b> when you use someone else's phone: tap <b>Sign out</b> next to your name.</li>
+    <li><b>Sign out</b> when you use someone else's phone: on a phone, tap your <b>name at the top right</b>, then <b>Sign out</b>. On a computer, <b>Sign out</b> is under your name on the left.</li>
   </ol>
   <div class="htip"><b>No network?</b> Marks you make are kept on your phone. When the network comes back, open the same screen and tap <b>Save</b>.</div>
+  <div class="htip"><b>Simple view.</b> Forms show the main details first. Tap <b>+ More details (optional)</b> for the rest. To see every option on every screen, tap your name (top right on a phone) → <b>Show more options</b>.</div>
   <div class="htip"><b>“A new version of the app is ready”</b> — save your work, then tap <b>Update now</b>. You stay signed in.</div>
 </section>
 
-<section class="hs" id="h-dash" data-roles="cen adm cl pl vw">
-  <h2>Dashboard and statistics</h2>
-  <figure class="shot"><img loading="lazy" src="help/dash.jpg" alt="The dashboard on a phone"></figure>
+<section class="hs" id="h-dash" data-roles="cen adm cl pl co vw">
+  <h2>Disciples (home)</h2>
+  <p>The app opens on <b>Disciples</b>: the people becoming disciples, what each one is doing now, and how to reach them.</p>
   <ul>
-    <li><b>Needs your attention</b> lists only what someone should act on now — decisions waiting, counselor hand-offs, people to follow up, classes not marked, newcomers to invite, follow-ups due — each with a button that takes you there. When there is nothing, it says <b>All caught up</b>. Dealt with a card? Tap <b>✓ Done</b>; it comes back only when someone new needs attention. People you have logged a follow-up for in the last 2 weeks leave the list by themselves. <b>Show … done</b> brings hidden cards back.</li>
-    <li><b>Four numbers</b> — attendance rate, people who came, new people and decisions — each with ▲ or ▼ compared with the period before.</li>
-    <li>The <b>attendance by week</b> chart and <b>each class and program</b> show where attendance is slipping. Leaders see only what they lead.</li>
-    <li>Use the choices at the top (program, people, period) to change what is counted.</li>
-    <li><b>Statistics</b> has the rest: spiritual journey, newcomers, discipler load, assignments, meeting types, gender, age, work, marital status, Peace Houses, and tables by area, church and counselor — every table can be downloaded.</li>
+    <li><b>Needs your attention</b> — only what someone should act on now (decisions waiting, hand-offs, classes not marked, newcomers to invite, follow-ups due). Tap <b>✓ Done</b> when it is dealt with.</li>
+    <li><b>Four numbers</b> — attendance rate, people who came, new people, decisions — with ▲ ▼ against the period before.</li>
+    <li><b>Flow into discipleship classes</b> — for the chosen period: people who came to meetings and outreaches → made a decision → reached by a counselor → joined a class → attending class now. Under it, each class: members, how many joined in the period, how many are attending now. Tap a class to see its disciples.</li>
+    <li><b>Disciples now</b> — every active disciple with what they are doing: <b>Attending</b> (came to class in the last 2 weeks), <b>Missing class</b> (2–5 weeks), <b>Absent</b> (longer, or never came since joining) or <b>Not in a class</b>. Each shows their class, when they last came, their area, counselor and last contact, a suggested next step, and <b>📞 call · 💬 SMS · WhatsApp</b>. Tap the buttons at the top to show one group; search, or filter by class or area. Tap a name to open their page.</li>
+    <li>Leaders see only the disciples in what they lead; counselors see theirs.</li>
+  </ul>
+  <h3>Statistics and insights</h3>
+  <ul>
+    <li><b>Statistics</b> opens with <b>Insights</b>: <b>What the numbers say</b> (plain sentences — where most people and disciples are, areas with many people but no class, classes whose members come from elsewhere, new disciples this month, how many of those mobilized came, which churches sent people), a table of <b>people, disciples, classes and churches by area</b>, <b>where class members live</b>, <b>mobilization: who came</b>, and a <b>map of the churches</b>.</li>
+    <li>Then attendance by week, each class and program, and all the other charts and tables — every table can be downloaded.</li>
+    <li>Set each class's <b>Area</b> (Users &amp; programs → Programs) so classes and areas can be compared.</li>
   </ul>
 </section>
 
@@ -230,10 +237,53 @@ footer{text-align:center;color:var(--ink-3);font-size:13px;padding:10px 16px 30p
   <h2>Running the tracker</h2>
   <ul>
     <li><b>Users &amp; programs</b> — add users with their role, PIN and <b>gender</b> (needed for counselors). Tick <b>Can download full details</b> only for people who need it. For each program set who leads it, who marks it, and <b>Who can attend</b> (Everyone, Women only, Men only).</li>
+    <li><b>Modules</b> — open a user under <b>Users</b> to see their ticks: Disciples (home), Class attendance, Meetings, People, Follow-ups, Counselor hand-off, Assignments, Messages, Statistics, Admin tools. The role gives the usual ticks; tick or untick to change them for that person only. <b>Use the usual modules for the role</b> puts them back. Ticks decide which screens someone gets — they still only see the classes, meetings and people they are given.</li>
+    <li><b>App settings</b> (a tab in Users &amp; programs) — switch a whole module off for everyone, e.g. <b>Assignments</b>. Nothing is deleted; switching it on brings it back.</li>
+    <li><b>Areas</b> — <b>Users &amp; programs → App settings</b>: the fixed list of areas (rename, reorder, add). Every person and church picks an area and types the community. <b>Sort old addresses into areas</b> suggests an area for each address typed before; check them and tap <b>Apply</b>. The old text is kept as “Old address”.</li>
+    <li><b>Mobilizer</b> role — for people who only report mobilization and map churches. They see nothing else.</li>
     <li><b>Import list</b> — bring in an Excel or CSV list. The app shows who already exists, who might be the same person and who is new before anything is saved. You can undo an import.</li>
     <li><b>Import review</b> — check possible duplicates and <b>merge</b> them, or fix missing details in one tap.</li>
     <li><b>Activity log</b> — every change, with who made it. Deleted records can be <b>restored</b> from here.</li>
     <li>In People, <b>⚙ Filters → Counselor → Counselor of the other gender</b> finds old assignments to correct.</li>
+  </ul>
+</section>
+
+<section class="hs" id="h-today" data-roles="reg co">
+  <h2>Today</h2>
+  <p>If you do not have the dashboard, the app opens on <b>Today</b>: one big button for each thing you do — the class or meeting to mark, your follow-ups, registering a person, mobilization. Tap a button to go straight there.</p>
+</section>
+
+<section class="hs" id="h-mob" data-roles="mob cen adm">
+  <h2>Mobilization</h2>
+  <p>Open <b>Mobilize</b>. At the top you see the outreach you are mobilizing for, how many people and churches the team has brought, and how many are yours.</p>
+  <ol class="hsteps">
+    <li><b>👤 Report people:</b> type each person's <b>name and phone</b> (tap <b>+ Add another</b> for more), then <b>Save people</b>. The same phone number is not counted twice.</li>
+    <li><b>⛪ Report a church:</b> type its name and choose it (or tap <b>+ It is not in the list</b>). Tick <b>✉ Invitation letter delivered</b>, type <b>who received it</b> and <b>their phone</b> (so they can be called to follow up). If the church is missing details, the form for them is right there — standing at the church, tap <b>📍 Mark the location</b> and take a photo. If everything is already on file, you only see a summary; tap <b>✏️ Update the church's details</b> or <b>↻ Update the location / photo</b> when something changed (e.g. a new building). Then <b>Save church report</b>: the letter and the church's details are saved together.</li>
+    <li><b>My list:</b> everyone you brought, with <b>📞 call</b>, <b>💬 SMS</b> and <b>WhatsApp</b>. <b>✉ Message my list</b> sends one SMS to all of them from your own phone.</li>
+    <li><b>Team:</b> how many each person on the team has brought, and how many of them <b>came</b> (counts only). On <b>My list</b>, people who came show <b>✓ came</b>.</li>
+  </ol>
+  <h3>Mapping churches</h3>
+  <ol class="hsteps">
+    <li>Open <b>Map churches</b>. <b>Given to you</b> lists the churches your leader asked you to map. You can also complete any other church.</li>
+    <li>Tap a church. Each one shows what is <b>missing</b> (location, photo, pastor…).</li>
+    <li><b>Stand at the church</b> and tap <b>📍 Mark the location</b>. Wait until the accuracy is <b>good</b> (±20 m or better), then tap <b>✓ Use this location</b>. GPS works without internet.</li>
+    <li>Tap <b>📷 Take a photo</b> of the building. It is made smaller on your phone so it costs little data.</li>
+    <li>Fill in what is missing and tap <b>Save</b>. Details already filled in are changed by your leaders only.</li>
+  </ol>
+  <div class="htip"><b>No internet?</b> In the installed app you can still report and map. Everything waits on your phone (<b>📤 waiting to send</b>) and is sent by itself when you are online — or tap <b>Send now</b>. If the app asks for your PIN when you are back online, enter it and the reports go. Don't sign out or clear the browser while reports are waiting. On iPhone, install the app to the home screen so nothing is lost.</div>
+  <div class="htip"><b>How “came” works:</b> when a registrar registers someone at the outreach, the app matches their phone number to the people mobilized, and records <b>Their church</b> (chosen on the newcomer form). Nothing has to be typed twice.</div>
+  <div class="htip hrole-only" data-roles="cen adm"><b>📊 Who came</b> (leaders): for each outreach — how many came, how many of the mobilized came (by mobilizer), and how many came from each church, with the churches that got a letter but sent nobody yet.</div>
+  <div class="htip hrole-only" data-roles="cen adm"><b>Leaders:</b> open <b>Outreaches</b> to open an outreach for reports (and close it when mobilization ends). <b>All reports</b> lists every report, by who reported it — tap <b>✓ Check</b>, or remove a wrong one. Give mapping work under <b>Churches → 👥 Give mapping work</b>: whole areas, or single churches.</div>
+</section>
+
+<section class="hs" id="h-chu" data-roles="cen adm">
+  <h2>Churches</h2>
+  <ul>
+    <li>Open <b>Churches</b>: every church with its area, what is missing, and how many of your people attend. Tap an area to show only its churches; use the filters for <b>No location</b>, <b>No photo</b>, denomination or who maps it.</li>
+    <li><b>🗺 Map</b> shows the mapped churches, coloured by area. On a church, <b>🧭 Directions</b> opens Google Maps from where you are.</li>
+    <li><b>⬆ Import churches</b> reads your Excel file (every sheet). A sheet named after an area puts its churches in that area; otherwise the area comes from the address. Churches already in the list are completed, never doubled.</li>
+    <li><b>🔗 Link people to churches</b> groups the church names typed on people's records (all spellings together). Choose the church each one means — or add it as a new church — and everyone in the group is linked. After that, each church shows <b>the people who attend</b>, and Messages can choose people by church.</li>
+    <li>On a person's page, choose their <b>Church</b> from the list.</li>
   </ul>
 </section>
 
