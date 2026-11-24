@@ -839,6 +839,9 @@ details.pfold.inl > .pfbody{display:contents}
 .pinbig{font-size:14px;color:var(--ink-2)}.pinbig b{font-family:var(--f-display);font-size:30px;letter-spacing:.12em;color:var(--ink);margin-left:6px}
 .sharep textarea{width:100%;font:inherit;font-size:14px}
 .sharep a.btn{text-decoration:none}
+
+/* quick start: saved data shown while the fresh data comes */
+body.stale::after{content:"Updating…";position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);z-index:90;background:var(--ink);color:var(--panel);font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;opacity:.88;pointer-events:none}
 </style>
 </head>
 <body>
@@ -1387,7 +1390,7 @@ details.pfold.inl > .pfbody{display:contents}
     <li><b>Modules</b> — open a user under <b>Users</b> to see their ticks: Disciples (home), Class attendance, Meetings, People, Follow-ups, Counselor hand-off, Assignments, Messages, Statistics, Admin tools. The role gives the usual ticks; tick or untick to change them for that person only. <b>Use the usual modules for the role</b> puts them back. Ticks decide which screens someone gets — they still only see the classes, meetings and people they are given.</li>
     <li><b>App settings</b> (a tab in Users &amp; programs) — switch a whole module off for everyone, e.g. <b>Assignments</b>. Nothing is deleted; switching it on brings it back.</li>
     <li><b>Areas</b> — <b>Users &amp; programs → App settings</b>: the fixed list of areas (rename, reorder, add). Every person and church picks an area and types the community. <b>Sort old addresses into areas</b> suggests an area for each address typed before; check them and tap <b>Apply</b>. The old text is kept as “Old address”.</li>
-    <li><b>Mobilizer</b> role — for people who only report mobilization and map churches. They see nothing else.</li>
+    <li><b>Mobilizer</b> role — for people who only report mobilization and map churches. They see nothing else. On their page, tick the <b>areas they work in</b> (or All areas).</li>
     <li><b>📤 Share sign-in details</b> — on a user's page under <b>Users</b>. The app makes a <b>new PIN</b> (the old one stops working — for safety the app never shows a saved PIN) and writes a message with the app link, how to install it, the PIN and the help guide for their role. Send it by <b>WhatsApp</b> or <b>SMS</b> to their number, or <b>Copy</b> it. When you add a new user, this opens straight away with the PIN you typed. The Activity log notes that it was sent, never the PIN.</li>
     <li><b>Import list</b> — bring in an Excel or CSV list. The app shows who already exists, who might be the same person and who is new before anything is saved. You can undo an import.</li>
     <li><b>Import review</b> — check possible duplicates and <b>merge</b> them, or fix missing details in one tap.</li>
@@ -1421,7 +1424,7 @@ details.pfold.inl > .pfbody{display:contents}
   <div class="htip"><b>No internet?</b> In the installed app you can still report and map. Everything waits on your phone (<b>📤 waiting to send</b>) and is sent by itself when you are online — or tap <b>Send now</b>. If the app asks for your PIN when you are back online, enter it and the reports go. Don't sign out or clear the browser while reports are waiting. On iPhone, install the app to the home screen so nothing is lost.</div>
   <div class="htip"><b>How “came” works:</b> when a registrar registers someone at the outreach, the app matches their phone number to the people mobilized, and records <b>Their church</b> (chosen on the newcomer form). Nothing has to be typed twice.</div>
   <div class="htip hrole-only" data-roles="cen adm"><b>📊 Who came</b> (leaders): for each outreach — how many came, how many of the mobilized came (by mobilizer), and how many came from each church, with the churches that got a letter but sent nobody yet.</div>
-  <div class="htip hrole-only" data-roles="cen adm"><b>Leaders:</b> open <b>Outreaches</b> to open an outreach for reports (and close it when mobilization ends). <b>All reports</b> lists every report, by who reported it — tap <b>✓ Check</b>, or remove a wrong one. Give mapping work under <b>Churches → 👥 Give mapping work</b>: whole areas, or single churches.</div>
+  <div class="htip hrole-only" data-roles="cen adm"><b>Leaders:</b> open <b>Outreaches</b> to open an outreach for reports (and close it when mobilization ends). <b>All reports</b> lists every report, by who reported it — tap <b>✓ Check</b>, or remove a wrong one. Set the <b>areas each mobilizer works in</b> on their page under <b>Users</b> (one, several, or All areas): they see and report only for those areas, and what they report is filed under their area. <b>Churches → 👥 Give mapping work</b> adds single churches outside their areas. <b>✓ Check</b> marks a report as confirmed (e.g. you called the person or church); every report counts as soon as it is saved, and <b>Remove</b> takes a wrong one out of all counts. “Checked X of Y” shows how much is confirmed; Insights can count checked reports only.</div>
 </section>
 
 <section class="hs" id="h-chu" data-roles="cen adm">
@@ -1536,15 +1539,18 @@ function model(o = state, D = dashView()) {
   const subs = D.Submissions.map(s => ({...s, a: asgById[s.AssignmentID]})).filter(s => s.a && inProg(s.a.ProgramID));
   const subsP = subs.filter(s => !s.a["Due Date"] || parseD(s.a["Due Date"]) >= from);
   const isIn = st => st === "Present" || st === "Late" || st === "Visitor";
+  // group once by person (instead of searching every list for every person)
+  const group = (list, key) => { const m = new Map(); list.forEach(x => { const k = x[key]; const a = m.get(k); if (a) a.push(x); else m.set(k, [x]); }); return m; };
+  const attPBy = group(attP, "DiscipleID"), subsPBy = group(subsP, "DiscipleID"), lastBy = new Map();
+  att.forEach(a => { if (!isIn(a.Status)) return; const t = parseD(a.s.Date).getTime(), c = lastBy.get(a.DiscipleID); if (c == null || t > c) lastBy.set(a.DiscipleID, t); });
 
   const people = disciples.map(d => {
     const id = d.DiscipleID;
-    const mine = attP.filter(a => a.DiscipleID === id && a.Status !== "Excused");
+    const mine = (attPBy.get(id) || []).filter(a => a.Status !== "Excused");
     const went = mine.filter(a => isIn(a.Status)).length;
-    const allMine = att.filter(a => a.DiscipleID === id && isIn(a.Status)).map(a => parseD(a.s.Date));
-    const last = allMine.length ? new Date(Math.max(...allMine)) : null;
+    const last = lastBy.has(id) ? new Date(lastBy.get(id)) : null;
     const days = last ? Math.round((TODAY - last) / DAY) : null;
-    const ms = subsP.filter(s => s.DiscipleID === id && s.Status !== "Excused");
+    const ms = (subsPBy.get(id) || []).filter(s => s.Status !== "Excused");
     const done = ms.filter(s => s.Status === "Done" || s.Status === "Late").length;
     const rate = mine.length ? went / mine.length : null, comp = ms.length ? done / ms.length : null;
     let flag = "good";
@@ -1577,20 +1583,21 @@ function model(o = state, D = dashView()) {
             enrolled: D.Enrollments.filter(e => e.ProgramID === p.ProgramID && (e.Status || "Enrolled") === "Enrolled").length};
   });
 
+  const pById = new Map(people.map(p => [p.id, p]));
   const fu = (D.FollowUps || []).filter(f => f["Next Action Date"] && parseD(f["Next Action Date"]) >= new Date(TODAY - 7 * DAY))
-    .filter(f => people.some(p => p.id === f.DiscipleID))
+    .filter(f => pById.has(f.DiscipleID))
     .sort((a,b) => parseD(a["Next Action Date"]) - parseD(b["Next Action Date"])).slice(0, 5)
-    .map(f => ({...f, who: people.find(p => p.id === f.DiscipleID)?.name, by: leaders[f["By (LeaderID)"]] || "—"}));
+    .map(f => ({...f, who: pById.get(f.DiscipleID).name, by: leaders[f["By (LeaderID)"]] || "—"}));
   const fu30 = (D.FollowUps || []).filter(f => parseD(f.Date) >= new Date(TODAY - 30 * DAY)).length;
 
   // attendance by meeting type (counts everyone who came, including visitors)
   const firstSeen = {};
   D.Attendance.forEach(a => { const s = sessById[a.SessionID]; if (!s || !isIn(a.Status)) return; const d = String(s.Date).slice(0, 10); if (!firstSeen[a.DiscipleID] || d < firstSeen[a.DiscipleID]) firstSeen[a.DiscipleID] = d; });
   const progType = Object.fromEntries(progs.map(p => [p.ProgramID, p.Type || p["Program Name"]]));
-  const tmap = new Map();
+  const tmap = new Map(), attBySess = group(D.Attendance, "SessionID");
   D.Sessions.filter(s => inProg(s.ProgramID) && parseD(s.Date) >= from).forEach(s => {
     const type = s["Meeting Type"] || progType[s.ProgramID] || "Other", t = tmap.get(type) || {type, meetings: 0, total: 0, firsts: 0, last: null};
-    const came = D.Attendance.filter(a => a.SessionID === s.SessionID && isIn(a.Status));
+    const came = (attBySess.get(s.SessionID) || []).filter(a => isIn(a.Status));
     t.meetings++; t.total += came.length; t.firsts += came.filter(a => firstSeen[a.DiscipleID] === String(s.Date).slice(0, 10)).length;
     const d = parseD(s.Date); if (!t.last || d > t.last) t.last = d; tmap.set(type, t);
   });
@@ -1850,7 +1857,17 @@ function busy(on) { busyN += on ? 1 : -1; $("#busy").hidden = busyN <= 0; }
 const API_URL = (window.RLL_CONFIG && window.RLL_CONFIG.API_URL) || "";
 const VIA_GOOGLE = !!(window.google && google.script && google.script.run);
 const NET_ERR = "Could not reach the tracker. Check your internet connection and try again — anything you marked is kept on this phone.";
+/* A save inside act() goes as "save, then send back the fresh data" — one trip instead of two. */
+let SAVE_CTX = null;
 function api(fn, ...args) {
+  const ctx = SAVE_CTX;
+  if (ctx && fn !== "saveAnd" && DATA && (DATA.saveAnd || []).includes(fn)) {
+    SAVE_CTX = null;
+    return apiRaw("saveAnd", args[0], fn, args.slice(1)).then(x => { if (x && x.fresh) ctx.fresh = x.fresh; return x && "r" in x ? x.r : x; });
+  }
+  return apiRaw(fn, ...args);
+}
+function apiRaw(fn, ...args) {
   busy(true);
   const done = (resolve, reject) => r => {
     busy(false);
@@ -1885,7 +1902,8 @@ function api(fn, ...args) {
 /** Runs a save/delete, shows the result, reloads data. */
 function act(btn, call, okMsg, errEl) {
   if (btn) btn.disabled = true; if (errEl) errEl.textContent = "";
-  return call().then(r => { toast(typeof okMsg === "function" ? okMsg(r) : okMsg); return reload().then(() => r); })
+  const ctx = {}; SAVE_CTX = ctx; let p; try { p = call(); } finally { SAVE_CTX = null; }
+  return p.then(r => { toast(typeof okMsg === "function" ? okMsg(r) : okMsg); return (ctx.fresh ? Promise.resolve(applyData(ctx.fresh, false)) : reload()).then(() => r); })
     .catch(err => { if (errEl) errEl.textContent = err.message; toast("Not saved — " + err.message, true); throw err; })
     .finally(() => { if (btn) btn.disabled = false; });
 }
@@ -1904,6 +1922,8 @@ $("#loginForm").addEventListener("submit", e => {
   api("login", pin).then(r => {
     TOKEN = r.token; try { sessionStorage.setItem("rll-token", TOKEN); } catch (e) {}
     OFFLINE.on = false; $("#offBar").hidden = true;
+    const c = r.user && readCache(r.user);
+    if (c && startFromCache(c)) return reload(false);
     return reload(true);
   }).then(() => { $("#login").hidden = true; keepOffline(pin); if (OUT.list().length) flushOutbox(false); })
     .catch(async err => {
@@ -1918,6 +1938,7 @@ function signOut() {
   const n = OUT.list().length;
   if (n && !confirm(`${n} report${n === 1 ? " is" : "s are"} still waiting to send. Sign out anyway? They stay on this phone and are sent when ${USER.name} signs in again.`)) return;
   if (!OFFLINE.on) api("logout", TOKEN).catch(() => {});
+  try { if (USER) localStorage.removeItem(CACHE_KEY(USER.id)); } catch (e) {}
   OFFLINE.on = false; $("#offBar").hidden = true; showLogin("");
 }
 $("#signout").addEventListener("click", signOut); $("#signoutM").addEventListener("click", signOut); $("#signoutTop").addEventListener("click", signOut);
@@ -1938,9 +1959,15 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && TOKEN && DATA && Date.now() - LOADED_AT > 60000 && !anyDirty()) reload().catch(() => {});
 });
 function reload(first) {
-  return api("getData", TOKEN).then(r => {
-    LOADED_AT = Date.now();
+  return api("getData", TOKEN).then(r => applyData(r, first));
+}
+function applyData(r, first) {
+  {
+    const wasStale = document.body.classList.contains("stale"); LOADED_AT = Date.now(); document.body.classList.remove("stale");
     DATA = r.data; USER = r.user; PERMS = r.perms;
+    // fresh data arrived while the person had started typing or marking on the saved copy: keep their screen, use the new data from the next action
+    const typing = el => el && /INPUT|TEXTAREA|SELECT/.test(el.tagName) && !!el.closest("#main");
+    if (wasStale && !first && (anyDirty() || typing(document.activeElement))) { TODAY = parseD(DATA.today); saveCache(r); return; }
     if (!first) keepOffline("");
     TODAY = parseD(DATA.today);
     fillCommunities("");
@@ -1951,7 +1978,24 @@ function reload(first) {
     }
     showView(first || !VIEW_ALLOWED(VIEW) ? (VIEW_ALLOWED(VIEW) ? VIEW : firstView()) : VIEW, true);
     if (first) setTimeout(() => showWelcome(false), 300);
-  });
+    saveCache(r);
+  }
+}
+/* Quick start: the last data is kept on this device and shown at once, then refreshed in the background. Removed on sign out. */
+const CACHE_KEY = id => "rll-cache-" + id;
+function saveCache(r) {
+  try { if (OFFLINE.on || !USER) return; const s = JSON.stringify({at: Date.now(), token: TOKEN, r});
+    if (s.length < 3.5e6) localStorage.setItem(CACHE_KEY(USER.id), s); else localStorage.removeItem(CACHE_KEY(USER.id)); } catch (e) {}
+}
+function readCache(id, token) {
+  try { const c = JSON.parse(localStorage.getItem(CACHE_KEY(id)) || "null"); if (!c || Date.now() - c.at > 7 * 864e5) return null; if (token && c.token !== token) return null; return c; } catch (e) { return null; }
+}
+function findCacheByToken(token) {
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith("rll-cache-")) { const c = readCache(k.slice(10), token); if (c) return c; } } } catch (e) {}
+  return null;
+}
+function startFromCache(c) {
+  try { applyData(c.r, true); document.body.classList.add("stale"); $("#login").hidden = true; return true; } catch (e) { document.body.classList.remove("stale"); return false; }
 }
 /** Community suggestions (typed before, in that area), so the same place is spelt the same way. */
 function fillCommunities(area) {
@@ -2143,7 +2187,8 @@ $("#tbody").addEventListener("click", openFromDash); $("#tbody").addEventListene
 $("#upcoming").addEventListener("click", openFromDash);
 let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => DATA && VIEW === "dash" && renderTrend(model()), 150); });
 
-const allStats = () => Object.fromEntries(model({program: "", period: 0, allStatus: true, cat: ""}, DATA).people.map(p => [p.id, p]));   // People and Follow-ups: everyone this user may see
+let _AS = null, _ASD = null;
+const allStats = () => { if (_ASD === DATA && _AS) return _AS; _ASD = DATA; return (_AS = Object.fromEntries(model({program: "", period: 0, allStatus: true, cat: "", TODAY}, DATA).people.map(p => [p.id, p]))); };   // People and Follow-ups: everyone this user may see
 const catPill = d => isDisciple(d) ? '<span class="pill p-good">Disciple</span>' : '<span class="pill p-mute">Meeting participant</span>';
 const enrolledIn = pid => DATA.Enrollments.filter(e => e.ProgramID === pid && (e.Status || "Enrolled") === "Enrolled").map(e => e.DiscipleID);
 const byName = (a, b) => fullName(a).localeCompare(fullName(b));
@@ -4251,6 +4296,10 @@ function drawSetupForm() {
       <input type="hidden" id="uf_link" data-f="DiscipleID" value="${esc(rec.DiscipleID || "")}">
       <div id="uLinked"></div></div>` : "";
   const curMarkers = new Set(String(rec.Markers || "").split(/[,;\s]+/).filter(Boolean));
+  const curAreas = String(rec["Map Areas"] || "").split(/\s*;\s*/).filter(Boolean);
+  const areaBox = users ? `<div class="field full" id="uAreaWrap"><label>Areas they work in (mobilization and mapping)</label>
+      <div class="checks" id="uAreas"><label><input type="checkbox" value="*"${curAreas.length ? "" : " checked"}> <b>All areas</b></label>${L("Area").map(a => `<label><input type="checkbox" value="${esc(a)}"${curAreas.includes(a) ? " checked" : ""}>${esc(a)}</label>`).join("")}</div>
+      <span class="hint">They see the churches in these areas and report for them. One area: what they report is filed under it.</span></div>` : "";
   const modBox = users ? `<div class="field full" id="uModWrap"><label>Modules — what this user can use</label>
       <div class="checks" id="uMods"></div>
       <span class="hint" id="uModHint"></span></div>` : "";
@@ -4258,7 +4307,7 @@ function drawSetupForm() {
       <div class="checks" id="uMarkers">${DATA.Leaders.filter(l => l.Role !== "Viewer").sort((a, b) => a["Full Name"].localeCompare(b["Full Name"])).map(l => `<label><input type="checkbox" value="${esc(l.LeaderID)}"${curMarkers.has(l.LeaderID) ? " checked" : ""}>${esc(l["Full Name"])} <small class="note">${esc(l.Role)}</small></label>`).join("")}</div>
       <span class="hint">They will see this class on Class attendance and can mark it on any date. The class leader, Center Leaders and Admins can always mark it.</span></div>`;
   pane.innerHTML = `<div class="ptitle"><div><h2>${title}</h2>${isNew ? "" : `<span class="note">${esc(users ? rec.LeaderID : rec.ProgramID)}</span>`}</div></div>
-    <form class="form-grid" id="uForm" novalidate>${linkBox}${fieldsHTML(spec, rec, "uf_")}${modBox}${markBox}
+    <form class="form-grid" id="uForm" novalidate>${linkBox}${fieldsHTML(spec, rec, "uf_")}${modBox}${areaBox}${markBox}
       <div class="notice full" id="uDup" hidden></div>
       <div class="err-box full" id="uErr"></div>
       ${users && !isNew && (USER.role === "Admin" || rec.Role !== "Admin") ? `<div class="full sharebox"><button type="button" class="btn" id="uShare">📤 Share sign-in details</button><span class="note">Sends the app link, how to install it and a <b>new PIN</b> by WhatsApp or SMS.</span><div id="uShareBox"></div></div>` : ""}
@@ -4289,11 +4338,17 @@ function drawSetupForm() {
       const rb = $("#uModReset"); if (rb) rb.onclick = () => { custom = false; SET.dirty = true; drawMods(); };
     };
     drawMods();
-    $("#uf_Role").addEventListener("change", () => { if (!custom) drawMods(); });
+    const showAreas = () => { const w = $("#uAreaWrap"); if (!w) return; const mods = SET.modsOf ? SET.modsOf() : ""; const list = mods === "" ? (MI.byRole[$("#uf_Role").value] || []) : mods;
+      w.hidden = !list.includes("Mobilization") && !list.includes("Manage mobilization"); };
+    $("#uAreas").addEventListener("change", e => { const all = $('#uAreas input[value="*"]'); if (e.target.value === "*" && e.target.checked) $("#uAreas").querySelectorAll('input:not([value="*"])').forEach(i => i.checked = false);
+      else if (e.target.value !== "*") all.checked = ![...$("#uAreas").querySelectorAll('input:not([value="*"])')].some(i => i.checked); SET.dirty = true; });
+    $("#uf_Role").addEventListener("change", () => { if (!custom) drawMods(); showAreas(); });
+    $("#uMods").addEventListener("change", () => setTimeout(showAreas, 0));
     $("#uMods").addEventListener("change", e => { if (e.target.type !== "checkbox") return;
       if (e.target.value === "Counselor hand-off" && e.target.checked) { const f = $('#uMods input[value="Follow-ups"]'); if (f) f.checked = true; }
       custom = true; SET.dirty = true; $("#uModHint").innerHTML = 'Changed for this person. <button type="button" class="linkbtn" id="uModReset">Use the usual modules for the role</button>'; $("#uModReset").onclick = () => { custom = false; drawMods(); }; });
     SET.modsOf = () => custom ? [...$("#uMods").querySelectorAll("input:checked")].map(i => i.value).concat($("#uf_Role").value === "Admin" ? ["Admin tools"] : []).filter((x, i, a) => a.indexOf(x) === i) : "";
+    showAreas();
   }
   if (!users) {   // a Program Leader is meant for outreaches and meetings, a Class Leader for discipleship classes
     const warn = () => {
@@ -4369,6 +4424,7 @@ function drawSetupForm() {
     SET.dirty = false;
     const payload = Object.assign(users ? {LeaderID: isNew ? "" : rec.LeaderID} : {ProgramID: isNew ? "" : rec.ProgramID}, o);
     if (users && SET.modsOf) { const m = SET.modsOf(); payload.Modules = m === "" ? "" : (m.length ? m : ["None"]); }
+    if (users && $("#uAreas")) { const all = $('#uAreas input[value="*"]').checked; payload["Map Areas"] = all ? [] : [...$("#uAreas").querySelectorAll("input:checked")].map(i => i.value).filter(v => v !== "*"); }
     if (!users) payload.markers = o.Type === CLASS_TYPE ? [...$("#uMarkers").querySelectorAll("input:checked")].map(i => i.value) : [];
     act($("#uSave"), () => api(users ? "saveUser" : "saveProgram", TOKEN, payload), isNew ? "Added." : "Saved.", $("#uErr"))
       .then(r => { SET.sel = users ? r.leaderId : r.programId; SET.mode = "edit"; renderSetup();
@@ -5231,12 +5287,12 @@ function drawAssign(box, list) {
   const mine = c => String(c["Assigned To"] || "").split(/[,;\s]+/).includes(who);
   box.innerHTML = `<div class="panel sub"><div class="hd"><h2>Give mapping work</h2></div>
     <label class="field"><span>Who will map</span><select id="asgWho">${M.map(m => opt(m.LeaderID, `${m.name} (${m.role})`, m.LeaderID === who)).join("")}</select></label>
-    <div class="field"><label>Whole areas (all churches there, also ones added later)</label><div class="checks" id="asgAreas">${L("Area").map(a => `<label><input type="checkbox" value="${esc(a)}"${me2.areas.includes(a) ? " checked" : ""}>${esc(a)}</label>`).join("")}</div></div>
-    <div class="field"><label>Or single churches (from the list below — use the filters to narrow it)</label><div class="checks asgch">${list.slice(0, 300).map(c => `<label><input type="checkbox" value="${esc(c.ChurchID)}"${mine(c) ? " checked" : ""}>${esc(c["Church Name"])} <small class="note">${esc(c.Area || "")}</small></label>`).join("") || '<span class="note">No churches in the list.</span>'}</div></div>
+    <p class="note">Works in: <b>${me2.areas.length ? esc(me2.areas.join(", ")) : "all areas"}</b> — they already see every church there. Change their areas on their page under <b>Users</b>. Here you can add single churches outside their areas.</p>
+    <div class="field"><label>Single churches (from the list below — use the filters to narrow it)</label><div class="checks asgch">${list.slice(0, 300).map(c => `<label><input type="checkbox" value="${esc(c.ChurchID)}"${mine(c) ? " checked" : ""}>${esc(c["Church Name"])} <small class="note">${esc(c.Area || "")}</small></label>`).join("") || '<span class="note">No churches in the list.</span>'}</div></div>
     <div class="actions"><button type="button" class="btn primary" id="asgGo">Save</button><span class="note">They see these under Mobilize → Map churches. They can still complete any church.</span></div></div>`;
   $("#asgWho").onchange = e => { CH.asgWho = e.target.value; drawAssign(box, list); };
   $("#asgGo").onclick = ev => {
-    const areas = [...box.querySelectorAll("#asgAreas input:checked")].map(i => i.value);
+    const areas = null;   // areas are set on the person's page
     const on = [...box.querySelectorAll(".asgch input")].filter(i => i.checked && !mine(churchById(i.value))).map(i => i.value);
     const off = [...box.querySelectorAll(".asgch input")].filter(i => !i.checked && mine(churchById(i.value))).map(i => i.value);
     act(ev.target, () => api("assignMapping", TOKEN, who, on, areas, off), "Mapping work saved.").then(() => { CH.tool = "assign"; drawChTool(); }).catch(() => {});
@@ -5257,7 +5313,7 @@ function renderMob() {
   v.innerHTML = `<header class="topbar"><div><h1>Mobilization</h1><p>${dr ? `For <b>${esc(dr.Name)}</b>` : "No outreach is open for reports right now."}</p></div>
       ${open.length > 1 ? `<div class="filters"><label class="field"><span>Outreach</span><select id="mobDrive">${open.map(d => opt(d.DriveID, d.Name, d.DriveID === MOB.drive)).join("")}</select></label></div>` : ""}</header>
     <div class="obox notice" hidden></div>
-    ${dr ? `<div class="mobkpi"><div><b>${T.people + wP}</b><span>people mobilized</span></div><div><b>${T.churches + wC}</b><span>churches · ✉ ${T.letters || 0} letter${T.letters === 1 ? "" : "s"}</span></div><div class="me"><b>${T.mine + wP}</b><span>by you${T.myChurches + wC ? ` · ${T.myChurches + wC} church${T.myChurches + wC === 1 ? "" : "es"}` : ""}${((M.results || {})[MOB.drive] || {}).byReporter && ((M.results || {})[MOB.drive].byReporter[USER.name]) ? ` · ✓ ${M.results[MOB.drive].byReporter[USER.name]} came` : ""}</span></div></div>` : ""}
+    ${dr ? `<div class="mobkpi"><div><b>${T.people + wP}</b><span>people mobilized${T.checkedPeople ? ` · ✓ ${T.checkedPeople} checked` : ""}</span></div><div><b>${T.churches + wC}</b><span>churches · ✉ ${T.letters || 0} letter${T.letters === 1 ? "" : "s"}</span></div><div class="me"><b>${T.mine + wP}</b><span>by you${T.myChurches + wC ? ` · ${T.myChurches + wC} church${T.myChurches + wC === 1 ? "" : "es"}` : ""}${((M.results || {})[MOB.drive] || {}).byReporter && ((M.results || {})[MOB.drive].byReporter[USER.name]) ? ` · ✓ ${M.results[MOB.drive].byReporter[USER.name]} came` : ""}</span></div></div>` : ""}
     <div class="seg mobtabs" role="tablist">${panes.map(([k, t]) => `<button type="button" data-mp="${k}" aria-pressed="${MOB.pane === k}">${t}</button>`).join("")}</div>
     <div id="mobPane"></div>`;
   drawOutbox();
@@ -5407,7 +5463,8 @@ function mobTeam(P, dr, T) {
   const RS = ((DATA.Mob.results || {})[MOB.drive]) || {byReporter: {}};
   P.innerHTML = `<section class="panel"><div class="hd"><h2>How the team is doing${dr ? " — " + esc(dr.Name) : ""}</h2></div>
     ${T.team.length ? `<div class="tblwrap"><table class="rg"><thead><tr><th>Who</th><th>People</th><th>✓ Came</th><th>Churches</th><th>✉ Letters</th></tr></thead><tbody>${T.team.map(x => `<tr${x.name === USER.name ? ' class="meRow"' : ""}><td>${esc(x.name)}${x.name === USER.name ? " (you)" : ""}</td><td>${x.people}</td><td>${RS.byReporter[x.name] || 0}</td><td>${x.churches}</td><td>${x.letters || 0}</td></tr>`).join("")}
-      <tr class="tot"><td>Everyone</td><td>${T.people}</td><td>${RS.mobCame || 0}</td><td>${T.churches}</td><td>${T.letters || 0}</td></tr></tbody></table></div>` : '<div class="empty">No reports yet.</div>'}
+      <tr class="tot"><td>Everyone</td><td>${T.people}</td><td>${RS.mobCame || 0}</td><td>${T.churches}</td><td>${T.letters || 0}</td></tr></tbody></table></div>
+      <p class="note">✓ Checked by leaders: ${T.checkedPeople || 0} of ${T.people} people · ${T.checkedChurches || 0} of ${T.churches} churches. Every report counts as soon as it is saved; checking only marks it as confirmed.</p>` : '<div class="empty">No reports yet.</div>'}
     <p class="note">“Came” = someone you mobilized was marked at the outreach (matched by phone number). Counts only — the names and phone numbers each person collected stay with them and the leaders.${OFFLINE.on ? " Counts are from the last time you were online." : ""}</p></section>`;
 }
 /* who came to the outreach — through a mobilizer, through a church, or neither */
@@ -5416,11 +5473,13 @@ function mobResults(P, dr, T) {
   if (!dr || !r) { P.innerHTML = '<div class="notice">Link the outreach to its program (under Outreaches) and mark attendance at its meeting to see who came.</div>'; return; }
   const pct = (a, b) => b ? Math.round(100 * a / b) + "%" : "—";
   P.innerHTML = `<section class="panel"><div class="hd"><h2>Who came to ${esc(dr.Name)}</h2><span class="note">${r.meetings} meeting date${r.meetings === 1 ? "" : "s"} counted</span></div>
+    <p class="note">✓ Checked by leaders: ${r.checkedPeople} of ${r.mobilized} people mobilized · ${r.checkedChurches} of ${r.churchesReached} churches. All reports count; checking marks them as confirmed.</p>
     <div class="mobkpi"><div><b>${r.came}</b><span>people came</span></div><div><b>${r.mobCame}</b><span>of ${r.mobilized} mobilized came (${pct(r.mobCame, r.mobilized)})</span></div><div><b>${r.came - r.noChurch}</b><span>came with a church linked</span></div></div>
     <div class="hd"><h2>By church</h2></div>
     ${r.churches.length ? `<div class="tblwrap"><table class="rg"><thead><tr><th>Church</th><th>Came</th><th>Reached</th></tr></thead><tbody>${r.churches.map(c => `<tr><td>${esc(c.name)}</td><td>${c.came}</td><td>${c.mobilized === "letter" ? "✉ letter" : c.mobilized === "reported" ? "no letter" : "—"}</td></tr>`).join("")}
       <tr><td><i>No church linked</i></td><td>${r.noChurch}</td><td></td></tr></tbody></table></div>` : '<div class="empty">Nobody who came has a church linked yet. Registrars choose “Their church” when registering newcomers; or link people under Churches.</div>'}
     ${r.lettersNoOne.length ? `<div class="notice"><b>Letter delivered, nobody came yet:</b> ${esc(r.lettersNoOne.join(", "))} — worth a follow-up call to the pastor.</div>` : ""}
+    ${Object.keys(r.byArea || {}).length > 1 || (Object.keys(r.byArea || {})[0] || "Area not set") !== "Area not set" ? `<div class="hd"><h2>By area</h2></div><div class="tblwrap"><table class="rg"><thead><tr><th>Area</th><th>Mobilized</th><th>Came</th></tr></thead><tbody>${Object.entries(r.byArea).sort((a, b) => b[1].mobilized - a[1].mobilized).map(([a, x]) => `<tr><td>${esc(a)}</td><td>${x.mobilized}</td><td>${x.came} (${pct(x.came, x.mobilized)})</td></tr>`).join("")}</tbody></table></div>` : ""}
     <div class="hd"><h2>By mobilizer</h2></div>
     ${Object.keys(r.byReporter).length ? `<div class="tblwrap"><table class="rg"><thead><tr><th>Mobilizer</th><th>Mobilized</th><th>Came</th></tr></thead><tbody>${(DATA.Mob.totals[MOB.drive].team || []).map(x => `<tr><td>${esc(x.name)}</td><td>${x.people}</td><td>${r.byReporter[x.name] || 0} (${pct(r.byReporter[x.name] || 0, x.people)})</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">No mobilized person matched yet. A match needs the same phone number at registration.</div>'}
   </section>`;
@@ -5446,7 +5505,7 @@ function mobAll(P) {
   const ppl = M.people.filter(x => x.DriveID === MOB.drive && (!by || x.Reporter === by)), chs = M.churches.filter(x => x.DriveID === MOB.drive && (!by || x.Reporter === by));
   const reporters = [...new Map(M.people.concat(M.churches).filter(x => x.DriveID === MOB.drive).map(x => [x.Reporter, x["Reporter Name"]])).entries()];
   const st = x => x.Status === "Checked" ? '<span class="pill p-good">Checked</span>' : `<button type="button" class="btn small" data-ck="${esc(x.MobID || x.MobCID)}" data-k="${x.MobID ? "person" : "church"}">✓ Check</button>`;
-  P.innerHTML = `<section class="panel"><div class="filters"><label class="field"><span>Reported by</span><select id="maBy">${opt("", "Everyone", !by)}${reporters.map(([id, n]) => opt(id, n, by === id)).join("")}</select></label></div>
+  P.innerHTML = `<section class="panel"><p class="note"><b>✓ Check</b> = you confirmed the report is genuine (for example, you called the person or the church). Reports count as soon as they are saved; <b>Remove</b> takes a wrong one out of every count.</p><div class="filters"><label class="field"><span>Reported by</span><select id="maBy">${opt("", "Everyone", !by)}${reporters.map(([id, n]) => opt(id, n, by === id)).join("")}</select></label></div>
     <div class="hd"><h2>People (${ppl.length})</h2>${ppl.length ? `<button type="button" class="btn small" id="maDl">⬇ Download</button>` : ""}</div>
     <div class="plist">${ppl.map(x => `<div class="prow static"><span class="r-main"><b>${esc(x.Name)}</b><small>${esc(x.Phone || "no phone")} · by ${esc(x["Reporter Name"])} · ${dstr(String(x.Date).slice(0, 10))}</small>${x.Phone ? contactBar({"Orange #": x.Phone}, true) : ""}</span><span class="actions">${st(x)}<button type="button" class="btn small ghost" data-rm="${esc(x.MobID)}" data-k="person">Remove</button></span></div>`).join("") || '<div class="empty">None.</div>'}</div>
     <div class="hd"><h2>Churches (${chs.length}) · ✉ ${chs.filter(x => x["Letter Delivered"] === "Yes").length} letters delivered</h2>${chs.length ? '<button type="button" class="btn small" id="maDlC">⬇ Download</button>' : ""}</div>
@@ -5590,9 +5649,16 @@ function drawFlow(box, M, rows) {
 /* =====================================================================
    INSIGHTS (Statistics): where people and disciples are, classes, churches, mobilization — and what it means
    ===================================================================== */
+let INS = {checked: false, busy: false};
 function renderInsights() {
   const box = $("#stInsights"), I = DATA.Insights; if (!box) return;
-  if (!I) { box.innerHTML = ""; return; }
+  if (!I) {
+    if (!DATA.hasInsights) { box.innerHTML = ""; return; }
+    box.innerHTML = '<p class="section-title">Insights</p><div class="loading">Working out the insights…</div>';
+    if (!INS.busy) { INS.busy = true; const d0 = DATA;
+      api("getInsights", TOKEN, INS.checked).then(r => { INS.busy = false; if (DATA !== d0) return; DATA.Insights = r; if (VIEW === "stats") renderInsights(); }, e => { INS.busy = false; box.innerHTML = `<div class="err-box">${esc(e.message)}</div>`; }); }
+    return;
+  }
   const P = n => Math.round(n * 100) + "%", A = I.areas.slice().sort((a, b) => b.people - a.people), tot = A.reduce((t, a) => t + a.people, 0), totD = A.reduce((t, a) => t + a.disciples, 0);
   const named = A.filter(a => a.area !== "Area not set");
   const say = [];
@@ -5622,7 +5688,7 @@ function renderInsights() {
   const mx = Math.max(1, ...A.map(a => a.people));
   box.innerHTML = `<p class="section-title">Insights</p>
     <div class="grid">
-    <section class="panel c12"><div class="hd"><h2>What the numbers say</h2></div>
+    <section class="panel c12"><div class="hd"><h2>What the numbers say</h2>${I.mob.length ? `<label class="scheck"><input type="checkbox" id="insChk"${I.checkedOnly ? " checked" : ""}> Count checked mobilization reports only</label>` : ""}</div>
       <ul class="says">${say.map(([i, t]) => `<li><span aria-hidden="true">${i}</span><span>${t}</span></li>`).join("") || "<li>Not enough data yet.</li>"}</ul></section>
     <section class="panel c12"><div class="hd"><h2>People, disciples and classes by area</h2></div>
       <div class="tblwrap"><table class="rg"><thead><tr><th>Area</th><th>People</th><th>Disciples</th><th>% disciples</th><th>Classes there</th><th>Churches</th></tr></thead><tbody>
@@ -5633,10 +5699,11 @@ function renderInsights() {
       ${I.classes.length ? I.classes.map(c => `<div class="clsarea"><b>${esc(c.name)}</b> <span class="note">meets in ${esc(c.area || c.location || "area not set")} · ${c.members} members</span>
         <div class="chipsrow">${Object.entries(c.memberAreas).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<span class="pill ${k === c.area ? "p-good" : "p-mute"}">${esc(k)} ${n}</span>`).join(" ")}</div></div>`).join("") : '<div class="empty">No classes yet.</div>'}</section>
     ${I.mob.length ? `<section class="panel c12"><div class="hd"><h2>Mobilization: who came</h2></div><div class="tblwrap"><table class="rg"><thead><tr><th>Outreach</th><th>Mobilized</th><th>Came</th><th>Churches reached</th><th>✉ Letters</th><th>Churches that sent people</th><th>Came from them</th><th>All who came</th></tr></thead><tbody>
-      ${I.mob.map(m => `<tr><td><b>${esc(m.name)}</b></td><td>${m.mobilized}</td><td>${m.mobCame}${m.mobilized ? ` <span class="note">(${P(m.mobCame / m.mobilized)})</span>` : ""}</td><td>${m.churchesReached}</td><td>${m.churchesLetter}</td>
+      ${I.mob.map(m => `<tr><td><b>${esc(m.name)}</b><br><small class="note">✓ checked: ${m.checkedPeople} people · ${m.checkedChurches} churches</small></td><td>${m.mobilized}</td><td>${m.mobCame}${m.mobilized ? ` <span class="note">(${P(m.mobCame / m.mobilized)})</span>` : ""}</td><td>${m.churchesReached}</td><td>${m.churchesLetter}</td>
         <td>${m.churchesSent}${m.churchesReached ? ` <span class="note">(${P(m.churchesSent / m.churchesReached)})</span>` : ""}</td><td>${m.fromMobChurches}</td><td>${m.came}</td></tr>`).join("")}</tbody></table></div></section>` : ""}
     ${I.churchPoints.length ? `<section class="panel c12"><div class="hd"><h2>Where the churches are</h2><span class="note">bigger circle = more of your people attend · colours = areas</span></div><div class="mapbox" id="insMap"></div><div class="maplegend">${[...new Set(I.churchPoints.map(c => c.area || "Area not set"))].map(a => `<span><i style="background:${areaColor(a)}"></i>${esc(a)}</span>`).join("")}</div></section>` : ""}
     </div>`;
+  const ck = $("#insChk"); if (ck) ck.onchange = () => { INS.checked = ck.checked; DATA.Insights = null; renderInsights(); };
   if (I.churchPoints.length) loadLeaflet().then(() => {
     const el = $("#insMap"); if (!el || el._done) return; el._done = 1;
     const m = mapOf(el), g = I.churchPoints.map(c => window.L.circleMarker([c.lat, c.lng], {radius: 6 + Math.min(14, c.people * 1.5), color: "#fff", weight: 2, fillColor: areaColor(c.area), fillOpacity: .9})
@@ -5652,7 +5719,8 @@ function renderInsights() {
   try { TOKEN = sessionStorage.getItem("rll-token") || ""; } catch (e) {}
   const p = OFFLINE.get();
   if (!TOKEN) { showLogin(navigator.onLine === false && p ? `No internet. ${p.user.name}: enter your PIN to report and map offline.` : ""); return; }
-  reload(true).then(() => { keepOffline(""); if (OUT.list().length) flushOutbox(false); }).catch(err => {
+  const c0 = findCacheByToken(TOKEN), quick = c0 && startFromCache(c0);
+  reload(!quick).then(() => { keepOffline(""); if (OUT.list().length) flushOutbox(false); }).catch(err => {
     if (isNetErr(err) && p && p.token === TOKEN) return enterOffline(p);
     if (!$("#login").hidden) return; $("#subtitle").textContent = err.message; });
 })();
