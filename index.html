@@ -832,6 +832,13 @@ details.pfold.inl > .pfbody{display:contents}
   #v-dash .topbar details.pfold{width:100%}
 }
 @media (min-width:901px){.tools .fx{display:contents}}
+
+.sharebox{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.sharebox #uShareBox{width:100%}
+.sharep{background:var(--panel-2);border-radius:12px;padding:12px;margin-top:6px}
+.pinbig{font-size:14px;color:var(--ink-2)}.pinbig b{font-family:var(--f-display);font-size:30px;letter-spacing:.12em;color:var(--ink);margin-left:6px}
+.sharep textarea{width:100%;font:inherit;font-size:14px}
+.sharep a.btn{text-decoration:none}
 </style>
 </head>
 <body>
@@ -1381,6 +1388,7 @@ details.pfold.inl > .pfbody{display:contents}
     <li><b>App settings</b> (a tab in Users &amp; programs) — switch a whole module off for everyone, e.g. <b>Assignments</b>. Nothing is deleted; switching it on brings it back.</li>
     <li><b>Areas</b> — <b>Users &amp; programs → App settings</b>: the fixed list of areas (rename, reorder, add). Every person and church picks an area and types the community. <b>Sort old addresses into areas</b> suggests an area for each address typed before; check them and tap <b>Apply</b>. The old text is kept as “Old address”.</li>
     <li><b>Mobilizer</b> role — for people who only report mobilization and map churches. They see nothing else.</li>
+    <li><b>📤 Share sign-in details</b> — on a user's page under <b>Users</b>. The app makes a <b>new PIN</b> (the old one stops working — for safety the app never shows a saved PIN) and writes a message with the app link, how to install it, the PIN and the help guide for their role. Send it by <b>WhatsApp</b> or <b>SMS</b> to their number, or <b>Copy</b> it. When you add a new user, this opens straight away with the PIN you typed. The Activity log notes that it was sent, never the PIN.</li>
     <li><b>Import list</b> — bring in an Excel or CSV list. The app shows who already exists, who might be the same person and who is new before anything is saved. You can undo an import.</li>
     <li><b>Import review</b> — check possible duplicates and <b>merge</b> them, or fix missing details in one tap.</li>
     <li><b>Activity log</b> — every change, with who made it. Deleted records can be <b>restored</b> from here.</li>
@@ -4253,6 +4261,7 @@ function drawSetupForm() {
     <form class="form-grid" id="uForm" novalidate>${linkBox}${fieldsHTML(spec, rec, "uf_")}${modBox}${markBox}
       <div class="notice full" id="uDup" hidden></div>
       <div class="err-box full" id="uErr"></div>
+      ${users && !isNew && (USER.role === "Admin" || rec.Role !== "Admin") ? `<div class="full sharebox"><button type="button" class="btn" id="uShare">📤 Share sign-in details</button><span class="note">Sends the app link, how to install it and a <b>new PIN</b> by WhatsApp or SMS.</span><div id="uShareBox"></div></div>` : ""}
       <div class="full actions"><button class="btn primary" type="submit" id="uSave">${isNew ? "Add" : "Save"}</button><button class="btn" type="button" id="uCancel">Cancel</button>${canDel ? '<button class="btn" type="button" id="uDel" style="margin-left:auto">Delete</button>' : ""}</div>
     </form>`;
   if (users && !isNew) $("#uf_pin").value = "";
@@ -4342,6 +4351,11 @@ function drawSetupForm() {
   }
   $("#uForm").addEventListener("input", () => SET.dirty = true);
   $("#uCancel").addEventListener("click", () => { SET.dirty = false; SET.mode = "view"; SET.sel = ""; renderSetup(); });
+  const sh = $("#uShare"); if (sh) sh.addEventListener("click", () => {
+    if ($("#uShareBox").innerHTML) { $("#uShareBox").innerHTML = ""; return; }
+    if (!confirm(`Make a new PIN for ${rec["Full Name"]} and share it?\n\nFor safety the app never shows a saved PIN, so sharing makes a new one. Their old PIN will stop working.`)) return;
+    act(sh, () => api("newPin", TOKEN, rec.LeaderID), "New PIN made.").then(r => drawShare($("#uShareBox"), rec, r.pin, false)).catch(() => {});
+  });
   if (canDel) $("#uDel").addEventListener("click", () => {
     if (!confirm(`Delete ${users ? rec["Full Name"] : rec["Program Name"]}? A copy is kept in the activity log.${users ? "\n\nTo keep their history, set “Can sign in” to No instead." : ""}`)) return;
     SET.dirty = false;
@@ -4357,8 +4371,38 @@ function drawSetupForm() {
     if (users && SET.modsOf) { const m = SET.modsOf(); payload.Modules = m === "" ? "" : (m.length ? m : ["None"]); }
     if (!users) payload.markers = o.Type === CLASS_TYPE ? [...$("#uMarkers").querySelectorAll("input:checked")].map(i => i.value) : [];
     act($("#uSave"), () => api(users ? "saveUser" : "saveProgram", TOKEN, payload), isNew ? "Added." : "Saved.", $("#uErr"))
-      .then(r => { SET.sel = users ? r.leaderId : r.programId; SET.mode = "edit"; renderSetup(); }).catch(() => { SET.dirty = true; });
+      .then(r => { SET.sel = users ? r.leaderId : r.programId; SET.mode = "edit"; renderSetup();
+        if (users && o.pin) { const u = DATA.Users.find(x => String(x.LeaderID) === String(r.leaderId)); if (u && $("#uShareBox")) drawShare($("#uShareBox"), u, o.pin, isNew); } })
+      .catch(() => { SET.dirty = true; });
   });
+}
+
+/* ---------- share sign-in details by WhatsApp / SMS / copy ---------- */
+const APP_LINK = (() => { try { if (location.protocol.startsWith("http") && !/script\.google|googleusercontent/.test(location.host)) return location.origin + location.pathname.replace(/[^/]*$/, ""); } catch (e) {} return "https://duazonboystownlabors.github.io/duazonapp/"; })();
+function shareText(u, pin) {
+  const first = String(u["Full Name"] || "").replace(/^(Pastor|Pst\.?|Bro\.?|Sis\.?|Rev\.?|Dr\.?|Elder|Deacon(ess)?)\s+/i, "").split(/\s+/)[0];
+  return `Hello ${first},\nYou now have access to the RLL Discipleship app (LivingSeed · ${(DATA.Settings && DATA.Settings.field) || "Duazon/Boystown Field"}) as ${u.Role}.\n\n`
+    + `1. Open the app: ${APP_LINK}\n2. Install it on your phone: ${APP_LINK}install.html\n3. Sign in with your PIN: ${pin}\n\n`
+    + `Keep your PIN private and do not share it.\nHow to use the app: ${APP_LINK}help.html?role=${ROLE_KEY[u.Role] || ""}`;
+}
+function drawShare(box, u, pin, fresh) {
+  const nums = [u["Orange #"], u["Lonestar #"]].map(lrPhone).filter(Boolean);
+  box.innerHTML = `<div class="sharep"><div class="pinbig" aria-label="PIN">PIN <b>${esc(pin)}</b></div>
+    <p class="note">${fresh ? "The PIN you just typed." : "New PIN — the old one no longer works."} Send it only to ${esc(u["Full Name"])}.</p>
+    <label class="field"><span>Message (you can edit it)</span><textarea id="shText" rows="9">${esc(shareText(u, pin))}</textarea></label>
+    <label class="field"><span>Send to</span><input type="tel" id="shTo" inputmode="tel" value="${esc(nums[0] ? localPhone(nums[0]) : "")}" placeholder="e.g. 0776 123 456"></label>
+    <div class="actions"><a class="btn primary" id="shWa" target="_blank" rel="noopener">WhatsApp</a><a class="btn" id="shSms">💬 SMS</a><button type="button" class="btn" id="shCopy">Copy</button></div>
+    <p class="note">The PIN is not kept on this screen — once you leave, make a new one to share again.</p></div>`;
+  const upd = () => { const n = lrPhone($("#shTo").value), t = $("#shText").value;
+    $("#shWa").href = n ? `https://wa.me/${n.replace("+", "")}?text=${encodeURIComponent(t)}` : `https://wa.me/?text=${encodeURIComponent(t)}`;
+    $("#shSms").href = smsLink(n ? [n] : [], t); };
+  $("#shTo").oninput = upd; $("#shText").oninput = upd; upd();
+  const logIt = via => api("logPinShared", TOKEN, u.LeaderID, via).catch(() => {});
+  $("#shWa").onclick = () => logIt("WhatsApp"); $("#shSms").onclick = () => logIt("SMS");
+  $("#shCopy").onclick = () => { const t = $("#shText").value;
+    (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("Copied — paste it in a message."), () => { $("#shText").select(); document.execCommand("copy"); toast("Copied."); });
+    logIt("copy"); };
+  box.scrollIntoView({behavior: "smooth", block: "center"});
 }
 
 /* =====================================================================
