@@ -889,6 +889,7 @@ body.stale::after{content:"Updating…";position:fixed;top:calc(env(safe-area-in
   </div>
 
   <main class="main" id="main">
+    <div class="offbar" id="verBar" hidden>⚠️ <b>The server is older than the app.</b> Some changes (such as mobilizer areas) are not saved. In Apps Script, paste the new <b>Code.gs</b>, then <b>Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy</b>.</div>
     <div class="offbar" id="offBar" hidden>📵 <b>No internet</b> — you can report and map. Everything is kept on this phone and sent when you are online. <button type="button" class="linkbtn" data-flush>Try now</button></div>
     <div class="mestrip" id="meStrip"><button type="button" class="me-link" id="meStripBtn" aria-label="Open my profile"><span class="avatar" id="avatarM">?</span><span class="me-txt"><b id="whoNameM">—</b><small>Signed in as <span id="whoRoleM"></span></small></span></button><button type="button" class="signout-m" id="signoutTop">Sign out</button></div>
     <!-- ================= DASHBOARD ================= -->
@@ -1954,6 +1955,7 @@ document.addEventListener("click", e => { if (!$("#meMenu").hidden && !e.target.
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#meMenu").hidden) { closeMeMenu(); $("#meBadge").focus(); } });
 
 let LOADED_AT = 0;
+const APP_BUILD = "2026.11.25";   // must match SERVER_VERSION in Code.gs
 /** Coming back to the app after a while: fetch fresh data (new assignments, other people's marks) unless something is unsaved. */
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && TOKEN && DATA && Date.now() - LOADED_AT > 60000 && !anyDirty()) reload().catch(() => {});
@@ -1968,6 +1970,7 @@ function applyData(r, first) {
     // fresh data arrived while the person had started typing or marking on the saved copy: keep their screen, use the new data from the next action
     const typing = el => el && /INPUT|TEXTAREA|SELECT/.test(el.tagName) && !!el.closest("#main");
     if (wasStale && !first && (anyDirty() || typing(document.activeElement))) { TODAY = parseD(DATA.today); saveCache(r); return; }
+    { const vb = $("#verBar"); if (vb) vb.hidden = !(isTop() && String(DATA.serverVersion || "") < APP_BUILD); }
     if (!first) keepOffline("");
     TODAY = parseD(DATA.today);
     fillCommunities("");
@@ -4428,6 +4431,9 @@ function drawSetupForm() {
     if (!users) payload.markers = o.Type === CLASS_TYPE ? [...$("#uMarkers").querySelectorAll("input:checked")].map(i => i.value) : [];
     act($("#uSave"), () => api(users ? "saveUser" : "saveProgram", TOKEN, payload), isNew ? "Added." : "Saved.", $("#uErr"))
       .then(r => { SET.sel = users ? r.leaderId : r.programId; SET.mode = "edit"; renderSetup();
+        if (users && Array.isArray(payload["Map Areas"])) { const u = DATA.Users.find(x => String(x.LeaderID) === String(r.leaderId)) || {};
+          const want = payload["Map Areas"].join("; "), got = String(u["Map Areas"] || "");
+          if (want !== got && $("#uErr")) $("#uErr").textContent = `The areas were not kept by the server (it has "${got || "All areas"}"). The server is probably an older version: in Apps Script, deploy a New version of Code.gs.`; }
         if (users && o.pin) { const u = DATA.Users.find(x => String(x.LeaderID) === String(r.leaderId)); if (u && $("#uShareBox")) drawShare($("#uShareBox"), u, o.pin, isNew); } })
       .catch(() => { SET.dirty = true; });
   });
